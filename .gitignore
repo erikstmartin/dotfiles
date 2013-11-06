@@ -1,0 +1,10 @@
+.vim/bundle/
+.vim/.cache/
+tmp/
+vendor/bundle/
+*.swp
+*.swo
+.DS_Store
+TAGS
+tags
+.vim/.netrwhist

@@ -1,0 +1,9 @@
+[submodule "vendor/deps/prezto"]
+	path = vendor/deps/prezto
+	url = git@github.com:sorin-ionescu/prezto.git
+[submodule ".vim/bundle/neobundle.vim"]
+	path = .vim/bundle/neobundle.vim
+	url = git@github.com:Shougo/neobundle.vim.git
+[submodule "vendor/deps/gocode"]
+	path = vendor/deps/gocode
+	url = git@github.com:nsf/gocode.git

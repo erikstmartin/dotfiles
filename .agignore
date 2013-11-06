@@ -1,0 +1,24 @@
+# directories
+.bundle/
+.idea/
+.rspec/
+.vagrant/
+.vim/bundle/
+.vim/.cache/
+images/
+log/
+logs/
+tmp/
+vendor/
+
+" files
+*.bak
+*.gemtags*
+*.log*
+*.old
+*.pdf*
+*.sql*
+*.tags*
+*.tmp*
+*.swp
+*.swo

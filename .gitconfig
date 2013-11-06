@@ -1,0 +1,47 @@
+[user]
+	name = Erik St. Martin
+	email = alakriti@gmail.com
+[apply]
+  whitespace=warn
+[color]
+	branch = auto
+	diff = auto
+	status = auto
+  ui=true
+[help]
+  autocorrect = 1
+[status]
+  submodule = 1
+[push]
+  # Only push branches that have been set up to track a remote branch.
+  default = current
+[alias]
+  rl = reflog
+  ls = log -S
+  s = status --short
+  a = add
+  c = commit -m
+  au = add -u :/
+  rm = rm
+  b = branch
+  m = merge --no-ff
+  mff = merge --ff-only
+  p = pull
+  pu = push
+  f = fetch
+  st = stash
+  stp = stash pop
+  d = diff
+  co = checkout
+  l = log --graph --pretty=format':%C(yellow)%h%C(green)%d%Creset %s %C(white) %an, %ar%Creset'
+  unstage = reset HEAD
+  staged = diff --cached
+  unstaged = diff
+[core]
+	excludesfile = ~/.gitignore
+[difftool "sourcetree"]
+	cmd = opendiff \"$LOCAL\" \"$REMOTE\"
+	path = 
+[mergetool "sourcetree"]
+	cmd = /Applications/SourceTree.app/Contents/Resources/opendiff-w.sh \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\"
+	trustExitCode = true
