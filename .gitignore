@@ -8,3 +8,4 @@ vendor/bundle/
 TAGS
 tags
 .vim/.netrwhist
+.vim/local_bundle
