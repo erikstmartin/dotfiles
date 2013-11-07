@@ -57,7 +57,6 @@ NeoBundleLazy 'troydm/pb.vim', {'autoload':{'functions':["has('mac')"]}} " OSX p
 
 " Themes
 NeoBundle 'mtortonesi/vim-irblack'
-"NeoBundle 'chriskempson/base16-vim'
 
 " HTML / CSS
 NeoBundleLazy 'cakebaker/scss-syntax.vim', {'autoload':{'filetypes':['scss','sass']}}

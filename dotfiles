@@ -61,6 +61,22 @@ class DotfilesCLI < Thor
   desc "uninstall", "Removes symlinks in home directory"
   def uninstall
     say "uninstalling"
+    `rm ~/.zprezto`
+    `rm ~/.zpreztorc`
+    `rm ~/.zshrc`
+    `rm ~/.zlogin`
+    `rm ~/.zlogout`
+    `rm ~/.zprofile`
+    `rm -rf ~/.vim`
+    `rm ~/.vimrc`
+    `rm ~/.gvimrc`
+    `rm ~/.gitconfig`
+    `rm ~/.gitignore`
+    `rm ~/.aginore`
+    `rm ~/.ctags`
+    `rm ~/.tmux.conf`
+    `rm ~/.gemrc`
+    `rm -rf ~/.rbenv`
   end
 
   desc "update", "Updates dependencies"
@@ -76,6 +92,9 @@ class DotfilesCLI < Thor
 
       say "updating prezto"
       `cd vendor/deps/prezto && git pull origin master`
+
+      say "updating base16-iterm2"
+      `cd vendor/deps/base16-iterm2 && git pull origin master`
     end
   end
 end
