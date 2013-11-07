@@ -18,8 +18,8 @@ brew-unload() {
 export GIT_SSL_NO_VERIFY=true
 
 # Customize to your needs...
-export GOROOT=/Users/erikstmartin/go/go
-export GOPATH=/Users/erikstmartin/go
+export GOROOT=~/go/go
+export GOPATH=~/go
 export JIRA_URL=https://jira.clarityservices.com
 export PYTHONPATH=/usr/local/lib/python2.7/site-packages
 
