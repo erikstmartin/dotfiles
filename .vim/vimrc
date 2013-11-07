@@ -50,6 +50,7 @@ NeoBundle 'tpope/vim-commentary'
 NeoBundle 'Chiel92/vim-autoformat'                 " Autoformat code
 NeoBundle 'ervandew/supertab'
 NeoBundle 'marijnh/tern_for_vim', { 'build': { 'mac': 'npm install', 'unix': 'npm install' }}
+NeoBundle 'scrooloose/nerdtree'
 
 " OSX Only
 NeoBundleLazy 'troydm/pb.vim', {'autoload':{'functions':["has('mac')"]}} " OSX pastebuffer interaction
