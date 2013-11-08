@@ -94,7 +94,7 @@ class DotfilesCLI < Thor
       `cd vendor/deps/prezto && git pull origin master`
 
       say "updating base16-iterm2"
-      `cd vendor/deps/base16-iterm2 && git pull origin master`
+      `cd vendor/deps/base16-iterm2.git && git pull origin master`
     end
   end
 end

@@ -2,7 +2,6 @@
 " Plugin Manager
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 if has('vim_starting')
-  set nocompatible
   set runtimepath +=~/.vim/bundle/neobundle.vim/
 endif
 
@@ -48,7 +47,6 @@ NeoBundle 'terryma/vim-multiple-cursors' " Sublime style multiple selections
 NeoBundle 'kana/vim-submode'
 NeoBundle 'tpope/vim-commentary'
 NeoBundle 'Chiel92/vim-autoformat'                 " Autoformat code
-NeoBundle 'ervandew/supertab'
 NeoBundle 'marijnh/tern_for_vim', { 'build': { 'mac': 'npm install', 'unix': 'npm install' }}
 NeoBundle 'scrooloose/nerdtree'
 

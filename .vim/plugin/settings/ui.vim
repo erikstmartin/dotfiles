@@ -16,7 +16,7 @@ set matchtime=2 		" Speed things up
 set lazyredraw 			" Don't redraw while executing macros (good performance)
 set ttimeout
 set ttimeoutlen=1
-set timeoutlen=750              " Don't wait so long for next keypress
+set timeoutlen=2000              " Don't wait so long for next keypress
 set magic			" Regular expressions
 set showcmd 			" Display incomplete commands
 set noshowmode 			" Don't display the mode we're in (done in airline)
@@ -45,6 +45,11 @@ set virtualedit=onemore         " Give one virtual space at end of line
 set splitbelow                  " open horizontal splits below by default
 set splitright                  " open vertical splits to right by default
 set colorcolumn=+1              " Column width indicator
+set nosmartindent               " do not auto ident
+set cindent
+set pastetoggle=
+"set switchbuf=usetab,newtab "switch to the existing tab if the buffer is open, or creating a new one if not
+set nocompatible
 
 if has('conceal')
   set conceallevel=1
