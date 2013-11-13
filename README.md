@@ -2,10 +2,6 @@
 
 A collection of tools, scripts, configuration to make my shell and vim more awesome
 
-Assumptions (to be fixed later):
-- This repo will be located at ~/Dropbox/dotfiles
-- Go will be located at ~/go/go (only matters if you're developing Go)
-
 ### Install
 
 The Thor script used to do the install assumes you have Ruby 2.0 and Bundler installed

@@ -82,7 +82,7 @@ NeoBundleLazy 'tpope/vim-rbenv', {'autoload':{'filetypes':['eruby', 'ruby', 'erb
 NeoBundle 'tpope/vim-bundler'
 NeoBundleLazy 'KurtPreston/vim-autoformat-rails', {'autoload':{'filetypes':['eruby', 'ruby', 'erb']}}         
 
-NeoBundleLocal ~/.vim/local_bundle
+NeoBundleLocal ~/.vim_bundle
 
 NeoBundleCheck
 

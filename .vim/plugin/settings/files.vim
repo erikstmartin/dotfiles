@@ -36,8 +36,7 @@ autocmd BufWritePost,FileWritePost *.rb :Start! ctags -R . "`rvm gemdir`/gems/*
 
 " For .go files we also want to be able to search tags within the GOPATH for packages we are using, as well as the std library
 autocmd BufWritePre *.go :Fmt " Automatically run 'go fmt' on write
-"autocmd BufWritePost,FileWritePost *.go call vimproc#system_bg('ctags -R . $GOPATH/src/**/*.go $GOROOT/src/pkg/**/*.go')
-autocmd BufWritePost,FileWritePost *.go :Start! ctags -R . `~/go/go/bin/go env GOPATH`/src/**/*.go `~/go/go/bin/go env GOROOT`/src/pkg/**/*.go
+autocmd BufWritePost,FileWritePost *.go :Start! ctags -R . `go env GOPATH`/src/**/*.go `go env GOROOT`/src/pkg/**/*.go
 
 autocmd BufWritePost .vimrc,_vimrc,vimrc,.gvimrc,_gvimrc,gvimrc execute ':AirlineRefresh'
 
