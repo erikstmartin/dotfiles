@@ -20,7 +20,9 @@ class DotfilesCLI < Thor
       case RUBY_PLATFORM
       when /linux/              
       when /darwin/
-        `brew install zsh cscope ctags bazaar git git-extras hub lua luajit mercurial tmux the_silver_searcher zsh-lovers rbenv ruby-build rbenv-binstubs rbenv-gem-rehash nodejs cmake autoconf ack automake openssl ssh-copy-id tmate watch`
+        `ruby -e "$(curl -fsSL https://raw.github.com/mxcl/homebrew/go/install)"`
+        `brew tap nviennot/tmate`
+        `brew install zsh cscope ctags bazaar git git-extras hub lua luajit mercurial tmux the_silver_searcher zsh-lovers rbenv ruby-build rbenv-binstubs rbenv-gem-rehash nodejs cmake autoconf ack automake openssl ssh-copy-id tmate watch imagemagick redis elasticsearch dnsmasq`
         `brew install macvim --with-cscope --with-lua --with-luajit --with-python --override-system-vim --HEAD`
         `brew linkapps macvim`
       end
@@ -29,6 +31,14 @@ class DotfilesCLI < Thor
     # Set login shell to zsh
     Bundler.with_clean_env do
       `chsh -s /bin/zsh`
+    end
+
+    # Install Go from source
+    Bundler.with_clean_env do
+      if !File.exist?("~/go")
+        `mkdir ~/go`
+        `cd ~/go && hg clone -u default https://code.google.com/p/go && cd ~/go/go/src && ./all.bash`
+      end
     end
 
     # setup Go plugins for vim
@@ -92,7 +102,12 @@ class DotfilesCLI < Thor
   desc "update", "Updates dependencies"
   def update
     Bundler.with_clean_env do
-      # TODO: Update Go?
+      say "updating homebrew"
+      #`brew update && brew upgrade`
+
+      say "updating Go"
+      #`cd ~/go/go/src && hg pull && hg up && ./all.bash`
+
       say "updating gocode"
       `cd vendor/deps/gocode && git pull origin master && go build`
       `mv #{__dir__}/vendor/deps/gocode/gocode /usr/local/gocode`

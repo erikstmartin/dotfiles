@@ -53,5 +53,4 @@ alias gstp='g stp'
 alias gd='g d'
 alias gx='gitx'
 
-export PATH=$GOPATH/bin:/usr/local/share/npm/bin/:$GOROOT/bin:/opt/local/bin:/usr/local/mongodb/bin:/usr/local/mysql/bin:/usr/local/sbin:/usr/local/bin:$PATH
-PATH=$PATH:$HOME/.rvm/bin # Add RVM to PATH for scripting
+export PATH=./bin:$GOPATH/bin:/usr/local/share/npm/bin/:$GOROOT/bin:/opt/local/bin:/usr/local/mongodb/bin:/usr/local/mysql/bin:/usr/local/sbin:/usr/local/bin:$PATH
