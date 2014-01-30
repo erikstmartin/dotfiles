@@ -1,4 +1,8 @@
-colorscheme ir_black
+set nocompatible
+
+"colorscheme ir_black
+colorscheme base16-default
+set background=light
 
 set cmdheight=1 		" Height of command bar
 set shortmess=a                 " Show shorter messages
@@ -14,9 +18,9 @@ set hlsearch 			" Highlight matches
 set showmatch 			" Briefly jump to matching brace
 set matchtime=2 		" Speed things up
 set lazyredraw 			" Don't redraw while executing macros (good performance)
-set ttimeout
+"set ttimeout
 set ttimeoutlen=1
-set timeoutlen=2000              " Don't wait so long for next keypress
+set timeoutlen=750              " Don't wait so long for next keypress
 set magic			" Regular expressions
 set showcmd 			" Display incomplete commands
 set noshowmode 			" Don't display the mode we're in (done in airline)
@@ -36,8 +40,7 @@ set showbreak=↪\ \ 		" string to put before wrapped screen lines
 set display+=lastline 		" show last line even if it doesnt fit in the window
 set number 			" show line numbers
 set viewoptions=folds,options,cursor,unix,slash     "unix/windows compatibility
-set background=dark
-set updatetime=750
+set updatetime=2000
 "set cursorline
 set listchars=tab:│\ ,trail:•,extends:❯,precedes:❮
 set fcs=vert:│

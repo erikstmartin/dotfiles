@@ -1,3 +1,5 @@
+set nocompatible
+
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Plugin Manager
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -11,6 +13,7 @@ call neobundle#rc(expand('~/.vim/bundle/'))
 NeoBundleFetch 'Shougo/neobundle.vim'
 NeoBundle 'Shougo/vimproc', {'build' : {'mac' : 'make -f make_mac.mak', 'unix' : 'make -f make_unix.mak'}}
 
+NeoBundle 'chriskempson/base16-vim'
 NeoBundle 'rking/ag.vim' 			          " search
 NeoBundle 'bling/vim-airline' 			    " statusline
 NeoBundle 'airblade/vim-gitgutter'
@@ -38,11 +41,11 @@ NeoBundle 'Valloric/YouCompleteMe', {'build': {'unix': './install.sh --clang-com
 NeoBundle 'SirVer/ultisnips'
 NeoBundle 'terryma/vim-smooth-scroll'
 NeoBundle 'ethanvandenberg22/unite-ultisnips'
-NeoBundle 'myusuf3/numbers.vim'          " better line numbers
+"NeoBundle 'myusuf3/numbers.vim'          " better line numbers
 NeoBundle 'Lokaltog/TagHighlight'        " tag highlighting
 NeoBundle 'matze/vim-move'               " line-wise up/down shift selected blocks
 NeoBundle 'Yggdroot/indentLine'
-NeoBundle 'chip/vim-fat-finger'          " spelling corrections
+"NeoBundle 'chip/vim-fat-finger'          " spelling corrections
 NeoBundle 'terryma/vim-multiple-cursors' " Sublime style multiple selections
 NeoBundle 'kana/vim-submode'
 NeoBundle 'tpope/vim-commentary'

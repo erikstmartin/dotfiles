@@ -9,6 +9,7 @@ set vb t_vb=
 
 if has("gui_macvim")
   set guifont=Source\ Code\ Pro\ for\ Powerline:h14
+  set transparency=2
 elseif has("Win32")
   set guifont=Consolas:h11
   set transparency=2

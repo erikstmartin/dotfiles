@@ -53,4 +53,5 @@ alias gstp='g stp'
 alias gd='g d'
 alias gx='gitx'
 
-export PATH=./bin:$GOPATH/bin:/usr/local/share/npm/bin/:$GOROOT/bin:/opt/local/bin:/usr/local/mongodb/bin:/usr/local/mysql/bin:/usr/local/sbin:/usr/local/bin:$PATH
+export PATH=./bin:$GOPATH/bin:/usr/local/share/npm/bin:$GOROOT/bin:/opt/local/bin:/usr/local/mongodb/bin:/usr/local/mysql/bin:/usr/local/sbin:/usr/local/bin:$PATH
+eval "$(direnv hook $0)"
