@@ -43,17 +43,17 @@ class DotfilesCLI < Thor
 
     # setup Go plugins for vim
     empty_directory "~/.vim_bundle"
-    create_link "~/.vim_bundle/go", "#{go_root}/misc/vim"
-    `sudo echo "#{go_root}/bin" > /etc/paths.d/go`
+    #create_link "~/.vim_bundle/go", "#{go_root}/misc/vim"
+    #`sudo echo "#{go_root}/bin" > /etc/paths.d/go`
 
     # compile gocode
-    Bundler.with_clean_env do
-      puts "compiling gocode"
-      `cd #{__dir__}/vendor/deps/gocode && go build`
-      `mv #{__dir__}/vendor/deps/gocode/gocode /usr/local/gocode`
-    end
+    #Bundler.with_clean_env do
+    #  puts "compiling gocode"
+    #  `cd #{__dir__}/vendor/deps/gocode && go build`
+    #  `mv #{__dir__}/vendor/deps/gocode/gocode /usr/local/gocode`
+    #end
 
-    create_link "~/.vim_bundle/gocode", "#{__dir__}/vendor/deps/gocode/vim"
+    #create_link "~/.vim_bundle/gocode", "#{__dir__}/vendor/deps/gocode/vim"
 
     # install zsh / zprezto
     create_link "~/.zprezto", File.join(__dir__, "vendor/deps/prezto")
@@ -108,11 +108,11 @@ class DotfilesCLI < Thor
       say "updating Go"
       #`cd ~/go/go/src && hg pull && hg up && ./all.bash`
 
-      say "updating gocode"
-      `cd vendor/deps/gocode && git pull origin master && go build`
-      `mv #{__dir__}/vendor/deps/gocode/gocode /usr/local/gocode`
+      #say "updating gocode"
+      #`cd vendor/deps/gocode && git pull origin master && go build`
+      #`mv #{__dir__}/vendor/deps/gocode/gocode /usr/local/gocode`
 
-      create_link "~/.vim_bundle/gocode", "#{__dir__}/vendor/deps/gocode/vim"
+      #create_link "~/.vim_bundle/gocode", "#{__dir__}/vendor/deps/gocode/vim"
 
       say "updating neobundle"
       `cd .vim/bundle/neobundle.vim && git pull origin master`

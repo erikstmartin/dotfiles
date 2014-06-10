@@ -32,11 +32,11 @@ endtry
 autocmd BufWritePost .vimrc,_vimrc,vimrc,.gvimrc,_gvimrc,gvimrc so $MYVIMRC | if has('gui_running') | so $MYGVIMRC | endif
 
 " For .rb files we also want to search tags in our gems as well (TODO: not sure if the exec for rvm works, also might want to use rbenv)
-autocmd BufWritePost,FileWritePost *.rb :Start! ctags -R . "`rvm gemdir`/gems/*
+"autocmd BufWritePost,FileWritePost *.rb :Start! ctags -R . "`rvm gemdir`/gems/*
 
 " For .go files we also want to be able to search tags within the GOPATH for packages we are using, as well as the std library
-autocmd BufWritePre *.go :Fmt " Automatically run 'go fmt' on write
-autocmd BufWritePost,FileWritePost *.go :Start! ctags -R . `go env GOPATH`/src/**/*.go `go env GOROOT`/src/pkg/**/*.go
+"autocmd BufWritePre *.go :Fmt " Automatically run 'go fmt' on write
+"autocmd BufWritePost,FileWritePost *.go :Start! ctags -R . `go env GOPATH`/src/**/*.go `go env GOROOT`/src/pkg/**/*.go
 
 autocmd BufWritePost .vimrc,_vimrc,vimrc,.gvimrc,_gvimrc,gvimrc execute ':AirlineRefresh'
 
