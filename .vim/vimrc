@@ -42,7 +42,6 @@ NeoBundle 'Valloric/YouCompleteMe', {'build': {'unix': './install.sh --clang-com
 NeoBundle 'SirVer/ultisnips'
 NeoBundle 'terryma/vim-smooth-scroll'
 NeoBundle 'ethanvandenberg22/unite-ultisnips'
-NeoBundle 'Lokaltog/TagHighlight'        " tag highlighting
 NeoBundle 'Yggdroot/indentLine'
 NeoBundle 'kana/vim-submode'
 NeoBundle 'tpope/vim-commentary'
