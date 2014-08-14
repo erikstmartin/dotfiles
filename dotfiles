@@ -22,7 +22,7 @@ class DotfilesCLI < Thor
       when /darwin/
         `ruby -e "$(curl -fsSL https://raw.github.com/mxcl/homebrew/go/install)"`
         `brew tap nviennot/tmate`
-        `brew install zsh cscope ctags bazaar git git-extras hub lua luajit mercurial tmux the_silver_searcher zsh-lovers rbenv ruby-build rbenv-binstubs rbenv-gem-rehash nodejs cmake autoconf ack automake openssl ssh-copy-id tmate watch imagemagick redis elasticsearch dnsmasq`
+        `brew install zsh cscope ctags bazaar git git-extras hub lua luajit mercurial tmux the_silver_searcher zsh-lovers rbenv ruby-build rbenv-binstubs rbenv-gem-rehash cmake autoconf ack automake openssl ssh-copy-id watch imagemagick`
         `brew install macvim --with-cscope --with-lua --with-luajit --with-python --override-system-vim --HEAD`
         `brew linkapps macvim`
       end
