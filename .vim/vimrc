@@ -13,6 +13,7 @@ call neobundle#rc(expand('~/.vim/bundle/'))
 NeoBundleFetch 'Shougo/neobundle.vim'
 NeoBundle 'Shougo/vimproc', {'build' : {'mac' : 'make -f make_mac.mak', 'unix' : 'make -f make_unix.mak'}}
 
+NeoBundle 'fatih/vim-go' " Go
 NeoBundle 'chriskempson/base16-vim'
 NeoBundle 'rking/ag.vim' 			          " search
 NeoBundle 'bling/vim-airline' 			    " statusline
@@ -41,16 +42,11 @@ NeoBundle 'Valloric/YouCompleteMe', {'build': {'unix': './install.sh --clang-com
 NeoBundle 'SirVer/ultisnips'
 NeoBundle 'terryma/vim-smooth-scroll'
 NeoBundle 'ethanvandenberg22/unite-ultisnips'
-"NeoBundle 'myusuf3/numbers.vim'          " better line numbers
 NeoBundle 'Lokaltog/TagHighlight'        " tag highlighting
-NeoBundle 'matze/vim-move'               " line-wise up/down shift selected blocks
 NeoBundle 'Yggdroot/indentLine'
-"NeoBundle 'chip/vim-fat-finger'          " spelling corrections
-NeoBundle 'terryma/vim-multiple-cursors' " Sublime style multiple selections
 NeoBundle 'kana/vim-submode'
 NeoBundle 'tpope/vim-commentary'
 NeoBundle 'Chiel92/vim-autoformat'                 " Autoformat code
-NeoBundle 'marijnh/tern_for_vim', { 'build': { 'mac': 'npm install', 'unix': 'npm install' }}
 NeoBundle 'scrooloose/nerdtree'
 
 " OSX Only
@@ -65,7 +61,6 @@ NeoBundleLazy 'cakebaker/scss-syntax.vim', {'autoload':{'filetypes':['scss','sas
 NeoBundleLazy 'hail2u/vim-css3-syntax', {'autoload':{'filetypes':['css','scss','sass']}}
 NeoBundleLazy 'ap/vim-css-color', {'autoload':{'filetypes':['css','scss','sass','less','styl']}}
 
-NeoBundleLazy 'Haml', {'autoload':{'filetypes':['eruby', 'sass','scss', 'haml']}}
 NeoBundleLazy 'mattn/emmet-vim', {'autoload':{'filetypes':['html','css','sass','scss','less']}} " HTML completion
 
 " Javascript
