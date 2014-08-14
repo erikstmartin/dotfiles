@@ -38,6 +38,9 @@ autocmd BufWritePost,FileWritePost *.rb :Start! ctags -R . "`rvm gemdir`/gems/*
 autocmd BufWritePre *.go :Fmt " Automatically run 'go fmt' on write
 autocmd BufWritePost,FileWritePost *.go :Start! ctags -R . `go env GOPATH`/src/**/*.go `go env GOROOT`/src/pkg/**/*.go
 
+" For .php files
+"autocmd BufWritePost,FileWritePost *.php :Start! ctags -R .
+
 autocmd BufWritePost .vimrc,_vimrc,vimrc,.gvimrc,_gvimrc,gvimrc execute ':AirlineRefresh'
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
