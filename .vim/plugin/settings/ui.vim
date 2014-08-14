@@ -32,7 +32,7 @@ set novisualbell 		" No annoying bells
 set vb
 set t_vb=
 set winminheight=0
-set relativenumber
+"set relativenumber
 set laststatus=2                " Show status line all the time
 set ambiwidth=single
 set helpheight=30 		" Set window height when opening vim help windows
