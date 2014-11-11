@@ -2,7 +2,6 @@
 # vim: set filetype=ruby
 
 # TODO: jslint
-#       Ensure Go is in MacVim's path
 #       setup linux to install dependencies
 
 require 'rubygems'
@@ -14,15 +13,12 @@ class DotfilesCLI < Thor
 
   desc "install", "Creates symlinks in home directory"
   def install
-
     # install dependencies (mac only, TODO: unix)
     Bundler.with_clean_env do
       case RUBY_PLATFORM
       when /linux/              
       when /darwin/
-        `ruby -e "$(curl -fsSL https://raw.github.com/mxcl/homebrew/go/install)"`
-        `brew tap nviennot/tmate`
-        `brew install zsh cscope ctags bazaar git git-extras hub lua luajit mercurial tmux the_silver_searcher zsh-lovers rbenv ruby-build rbenv-binstubs rbenv-gem-rehash cmake autoconf ack automake openssl ssh-copy-id watch imagemagick`
+        `brew install go zsh cscope ctags bazaar git git-extras hub lua luajit mercurial tmux the_silver_searcher zsh-lovers rbenv ruby-build rbenv-binstubs rbenv-gem-rehash cmake autoconf ack automake openssl ssh-copy-id watch`
         `brew install macvim --with-cscope --with-lua --with-luajit --with-python --override-system-vim --HEAD`
         `brew linkapps macvim`
       end
@@ -33,27 +29,8 @@ class DotfilesCLI < Thor
       `chsh -s /bin/zsh`
     end
 
-    # Install Go from source
-    Bundler.with_clean_env do
-      if !File.exist?("~/go")
-        `mkdir ~/go`
-        `cd ~/go && hg clone -u default https://code.google.com/p/go && cd ~/go/go/src && ./all.bash`
-      end
-    end
-
     # setup Go plugins for vim
     empty_directory "~/.vim_bundle"
-    #create_link "~/.vim_bundle/go", "#{go_root}/misc/vim"
-    #`sudo echo "#{go_root}/bin" > /etc/paths.d/go`
-
-    # compile gocode
-    #Bundler.with_clean_env do
-    #  puts "compiling gocode"
-    #  `cd #{__dir__}/vendor/deps/gocode && go build`
-    #  `mv #{__dir__}/vendor/deps/gocode/gocode /usr/local/gocode`
-    #end
-
-    #create_link "~/.vim_bundle/gocode", "#{__dir__}/vendor/deps/gocode/vim"
 
     # install zsh / zprezto
     create_link "~/.zprezto", File.join(__dir__, "vendor/deps/prezto")
@@ -102,26 +79,14 @@ class DotfilesCLI < Thor
   desc "update", "Updates dependencies"
   def update
     Bundler.with_clean_env do
-      say "updating homebrew"
-      #`brew update && brew upgrade`
-
-      say "updating Go"
-      #`cd ~/go/go/src && hg pull && hg up && ./all.bash`
-
-      #say "updating gocode"
-      #`cd vendor/deps/gocode && git pull origin master && go build`
-      #`mv #{__dir__}/vendor/deps/gocode/gocode /usr/local/gocode`
-
-      #create_link "~/.vim_bundle/gocode", "#{__dir__}/vendor/deps/gocode/vim"
-
       say "updating neobundle"
       `cd .vim/bundle/neobundle.vim && git pull origin master`
 
       say "updating prezto"
-      `cd vendor/deps/prezto && git pull origin master`
+      `cd vendor/deps/prezto && git checkout master && git pull origin master && git submodule update --init --recursive`
 
       say "updating base16-iterm2"
-      `cd vendor/deps/base16-iterm2.git && git pull origin master`
+      `cd vendor/deps/base16-iterm2.git && git checkout master && git pull origin master`
     end
   end
 

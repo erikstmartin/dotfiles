@@ -7,7 +7,7 @@ if has('vim_starting')
   set runtimepath +=~/.vim/bundle/neobundle.vim/
 endif
 
-call neobundle#rc(expand('~/.vim/bundle/'))
+call neobundle#begin(expand('~/.vim/bundle/'))
 
 " Let NeoBundle manage NeoBundle
 NeoBundleFetch 'Shougo/neobundle.vim'
@@ -17,36 +17,28 @@ NeoBundle 'fatih/vim-go' " Go
 NeoBundle 'chriskempson/base16-vim'
 NeoBundle 'rking/ag.vim' 			          " search
 NeoBundle 'bling/vim-airline' 			    " statusline
-NeoBundle 'airblade/vim-gitgutter'
+"NeoBundle 'airblade/vim-gitgutter'
 NeoBundle 'Shougo/unite.vim' 			      " completion window
 NeoBundle 'Shougo/unite-outline' 
 NeoBundleLazy 'tsukkee/unite-tag', {'autoload':{'unite_sources':['tag','tag/file']}}
 NeoBundle 'scrooloose/syntastic' 		    " syntax check on buffer save
 NeoBundle 'vim-scripts/vim-startify'    " start screen
 NeoBundle 'tomtom/tlib_vim'             " VimL utility functions 
-NeoBundle 'Shougo/vimshell.vim'         " shell
 NeoBundle 'scrooloose/nerdtree'
 NeoBundle 'tpope/vim-fugitive'			    " git
-NeoBundle 'tpope/vim-git'
 NeoBundleLazy 'tpope/vim-markdown', {'autoload':{'filetypes':['markdown', 'md']}}
 NeoBundle 'tpope/vim-repeat'
 NeoBundle 'tpope/vim-surround'
 NeoBundle 'airblade/vim-rooter'         " sets current working directory based on project files (vcs, rakefile, etc)
 NeoBundleLazy 'godlygeek/tabular', {'autoload':{'commands':'Tabularize'}}
 NeoBundle 'majutsushi/tagbar'
-NeoBundle 'malkomalko/projections.vim'
-NeoBundle 'sjl/clam.vim'
 NeoBundle 'tpope/vim-dispatch' " build tasks FTW
-NeoBundle 'tpope/vim-scriptease'
 NeoBundle 'Valloric/YouCompleteMe', {'build': {'unix': './install.sh --clang-completer --system-libclang', 'mac': './install.sh --clang-completer'}}
 NeoBundle 'SirVer/ultisnips'
-NeoBundle 'terryma/vim-smooth-scroll'
-NeoBundle 'ethanvandenberg22/unite-ultisnips'
-NeoBundle 'Yggdroot/indentLine'
-NeoBundle 'kana/vim-submode'
-NeoBundle 'tpope/vim-commentary'
 NeoBundle 'Chiel92/vim-autoformat'                 " Autoformat code
-NeoBundle 'scrooloose/nerdtree'
+
+" Git
+NeoBundle 'tpope/vim-git', {'autoload':{'filetypes':['gitcommit','gitconfig', 'gitrebase', 'gitsendmail']}}
 
 " OSX Only
 NeoBundleLazy 'troydm/pb.vim', {'autoload':{'functions':["has('mac')"]}} " OSX pastebuffer interaction
@@ -58,15 +50,14 @@ NeoBundle 'mtortonesi/vim-irblack'
 " HTML / CSS
 NeoBundleLazy 'cakebaker/scss-syntax.vim', {'autoload':{'filetypes':['scss','sass']}}
 NeoBundleLazy 'hail2u/vim-css3-syntax', {'autoload':{'filetypes':['css','scss','sass']}}
-NeoBundleLazy 'ap/vim-css-color', {'autoload':{'filetypes':['css','scss','sass','less','styl']}}
+NeoBundleLazy 'ap/vim-css-color', {'autoload':{'filetypes':['css','scss','sass','less']}}
 
 NeoBundleLazy 'mattn/emmet-vim', {'autoload':{'filetypes':['html','css','sass','scss','less']}} " HTML completion
 
 " Javascript
-NeoBundleLazy 'kchmck/vim-coffee-script', {'autoload':{'filetypes':['coffee']}}
 NeoBundleLazy 'pangloss/vim-javascript', {'autoload':{'filetypes':['javascript', 'js']}}
 NeoBundleLazy 'maksimr/vim-jsbeautify', {'autoload':{'filetypes':['javascript', 'js']}}
-NeoBundleLazy 'leshill/vim-json', {'autoload':{'filetypes':['javascript','json', 'js']}}
+NeoBundleLazy 'leshill/vim-json', {'autoload':{'filetypes':['json']}}
 
 " Ruby
 NeoBundleLazy 'janx/vim-rubytest', {'autoload':{'filetypes':['eruby', 'ruby', 'erb']}}
@@ -76,10 +67,14 @@ NeoBundleLazy 'vim-ruby/vim-ruby', {'autoload':{'filetypes':['eruby', 'ruby', 'e
 NeoBundleLazy 'kana/vim-textobj-user', {'autoload':{'filetypes':['eruby', 'ruby', 'erb']}}
 NeoBundleLazy 'nelstrom/vim-textobj-rubyblock', {'autoload':{'filetypes':['eruby', 'ruby', 'erb']}}
 NeoBundleLazy 'tpope/vim-rbenv', {'autoload':{'filetypes':['eruby', 'ruby', 'erb']}}
-NeoBundle 'tpope/vim-bundler'
 NeoBundleLazy 'KurtPreston/vim-autoformat-rails', {'autoload':{'filetypes':['eruby', 'ruby', 'erb']}}         
+NeoBundle 'tpope/vim-bundler'
+NeoBundle 'tpope/gem-ctags'
 
-NeoBundleLocal ~/.vim_bundle
+" Vim
+NeoBundleLazy 'tpope/vim-scriptease', {'autoload':{'filetypes':['vim']}}
+
+call neobundle#end()
 
 NeoBundleCheck
 

@@ -17,7 +17,7 @@ gem install bundler
 <pre>
 cd ~/Dropbox
 git clone git@github.com:erikstmartin/dotfiles.git
-git submodule init && git submodule update
+git submodule update --init --recursive
 cd dotfiles
 bundle install
 ./dotfiles install

@@ -15,11 +15,10 @@ brew-unload() {
 }
 
 # Git blows up because of CA for SSL, ignore it
-export GIT_SSL_NO_VERIFY=true
+#export GIT_SSL_NO_VERIFY=true
 
 # Customize to your needs...
 export GOPATH=~
-export JIRA_URL=https://jira.clarityservices.com
 export PYTHONPATH=/usr/local/lib/python2.7/site-packages
 
 conflicts='grep -rI "<<<" *'
@@ -27,7 +26,6 @@ conflicts='grep -rI "<<<" *'
 # Utils
 #alias retag_ruby="/usr/local/bin/ctags --extra=+f --exclude=.git --exclude=test --exclude='*.html' --exclude='*.haml' --exclude=Makefile --exclude='*.js' --exclude='*.css' --exclude='*.sass' --exclude='*.yml' --exclude=Rakefile --exclude=tmp --exclude=spec --exclude=Gemfile --exclude=Gemfile.lock --exclude=README --exclude=log -R * `rvm gemdir`/gems/*"
 #alias retag_go='pushd .;cd $GOPATH;/usr/local/bin/ctags --exclude=.git --exclude="*_test.go" --totals=yes -R $GOPATH/src/**/*.go $GOROOT/src/pkg/**/*.go;popd'
-alias reload='source ~/.zshrc'
 
 # Git aliases
 alias g='hub'
@@ -50,16 +48,14 @@ alias gf='g f'
 alias gst='g st'
 alias gstp='g stp'
 alias gd='g d'
-alias gx='gitx'
 
-export PATH=./bin:$GOPATH/bin:/Users/erik/node_modules/.bin:/opt/local/bin:/usr/local/mysql/bin:/usr/local/sbin:/usr/local/bin:$PATH
+export PATH=./bin:$GOPATH/bin:$HOME/node_modules/.bin:/opt/local/bin:/usr/local/sbin:/usr/local/bin:$PATH
 
 # Tab Completion of .ssh/known_hosts
 local knownhosts
 knownhosts=( ${${${${(f)"$(<$HOME/.ssh/known_hosts)"}:#[0-9]*}%%\ *}%%,*} ) 
 zstyle ':completion:*:(ssh|scp|sftp):*' hosts $knownhosts
 
-eval "$(direnv hook $0)"
 ###-begin-npm-completion-###
 #
 # npm command completion script
@@ -114,4 +110,5 @@ elif type compctl &>/dev/null; then
 fi
 ###-end-npm-completion-###
 #
-#export DOCKER_HOST=tcp://192.168.1.166:2375
+
+export DOCKER_HOST=tcp://192.168.1.200:2375

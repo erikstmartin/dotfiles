@@ -4,9 +4,6 @@
 [submodule ".vim/bundle/neobundle.vim"]
 	path = .vim/bundle/neobundle.vim
 	url = git@github.com:Shougo/neobundle.vim.git
-[submodule "vendor/deps/gocode"]
-	path = vendor/deps/gocode
-	url = git@github.com:nsf/gocode.git
 [submodule "vendor/deps/base16-iterm2.git"]
 	path = vendor/deps/base16-iterm2.git
 	url = git@github.com:chriskempson/base16-iterm2.git

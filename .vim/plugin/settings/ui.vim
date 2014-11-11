@@ -1,6 +1,7 @@
 set nocompatible
 
-colorscheme ir_black
+let base16colorspace=256  " Access colors present in 256 colorspace, used with base16-shell
+"colorscheme ir_black
 colorscheme base16-default
 set background=dark
 

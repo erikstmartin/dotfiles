@@ -1,5 +1,5 @@
 function! g:UltiSnips_Complete()
-  call UltiSnips_ExpandSnippet()
+  call UltiSnips#ExpandSnippet()
   if g:ulti_expand_res == 0
     if pumvisible()
       return "\<C-n>"

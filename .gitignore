@@ -9,4 +9,4 @@ TAGS
 tags
 .vim/.netrwhist
 .vim/local_bundle
-kratos.local.etcd/
+*.local.etcd/
