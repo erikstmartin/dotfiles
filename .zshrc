@@ -18,7 +18,6 @@ brew-unload() {
 #export GIT_SSL_NO_VERIFY=true
 
 # Customize to your needs...
-export GOPATH=~
 export PYTHONPATH=/usr/local/lib/python2.7/site-packages
 
 conflicts='grep -rI "<<<" *'
