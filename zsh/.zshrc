@@ -23,7 +23,7 @@ conflicts='grep -rI "<<<" *'
 #alias vncstop="vncserver -kill :1"
 
 # Git aliases
-alias g='hub'
+alias g='git'
 
 alias gl='g l'
 alias grl='g rl'

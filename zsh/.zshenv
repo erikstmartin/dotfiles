@@ -76,5 +76,4 @@ if [[ "$OSTYPE" == linux* ]]; then
   eval $(dircolors ~/.dircolors)
 fi
 
-# Rbenv
 export GOPATH=~
