@@ -4,7 +4,7 @@ if [[ -s $HOME/.zprezto/init.zsh ]]; then
 fi
 
 # aliases
-#alias vim='vim -g'
+alias vi="vim"
 
 brew-load() {
   launchctl load ~/Library/LaunchAgents/homebrew.mxcl.$1.plist
@@ -17,14 +17,10 @@ brew-unload() {
 # Git blows up because of CA for SSL, ignore it
 #export GIT_SSL_NO_VERIFY=true
 
-# Customize to your needs...
-export PYTHONPATH=/usr/local/lib/python2.7/site-packages
-
 conflicts='grep -rI "<<<" *'
 
-# Utils
-#alias retag_ruby="/usr/local/bin/ctags --extra=+f --exclude=.git --exclude=test --exclude='*.html' --exclude='*.haml' --exclude=Makefile --exclude='*.js' --exclude='*.css' --exclude='*.sass' --exclude='*.yml' --exclude=Rakefile --exclude=tmp --exclude=spec --exclude=Gemfile --exclude=Gemfile.lock --exclude=README --exclude=log -R * `rvm gemdir`/gems/*"
-#alias retag_go='pushd .;cd $GOPATH;/usr/local/bin/ctags --exclude=.git --exclude="*_test.go" --totals=yes -R $GOPATH/src/**/*.go $GOROOT/src/pkg/**/*.go;popd'
+#alias vncstart="vncserver -geometry 1440x900 -alwaysshared -autokill -dpi 96 :1"
+#alias vncstop="vncserver -kill :1"
 
 # Git aliases
 alias g='hub'
@@ -110,4 +106,6 @@ fi
 ###-end-npm-completion-###
 #
 
+export TERM=xterm-256color
+export XDG_CONFIG_HOME=~/.config
 export DOCKER_HOST=tcp://192.168.1.200:2375

@@ -1,3 +1,8 @@
+# Ensure that a non-login, non-interactive shell has a defined environment.
+#if [[ "$SHLVL" -eq 1 && ! -o LOGIN && -s "${ZDOTDIR:-$HOME}/.zprofile" ]]; then
+#  source "${ZDOTDIR:-$HOME}/.zprofile"
+#fi
+
 #
 # Browser
 #
@@ -67,6 +72,9 @@ if [[ ! -d "$TMPPREFIX" ]]; then
   mkdir -p "$TMPPREFIX"
 fi
 
+if [[ "$OSTYPE" == linux* ]]; then
+  eval $(dircolors ~/.dircolors)
+fi
+
 # Rbenv
-export RBENV_ROOT=/usr/local/var/rbenv
 export GOPATH=~
