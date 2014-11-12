@@ -4,26 +4,23 @@ A collection of tools, scripts, configuration to make my shell and vim more awes
 
 ### Install
 
-The Thor script used to do the install assumes you have Ruby 2.0 and Bundler installed
-
-##### TODO: Install Ruby
-
-##### Install Bundler
-<pre>
-gem install bundler
-</pre>
+This repo is meant to store configuration files which are then symlinked by using GNU Stow. You'll want to install it via your standard package manager.
 
 ##### Download / Install dotfiles
 <pre>
-cd ~/Dropbox
+cd ~/
 git clone git@github.com:erikstmartin/dotfiles.git
 git submodule update --init --recursive
 cd dotfiles
-bundle install
-./dotfiles install
 </pre>
 
-This may take a while as it will install a bunch of packages via homebrew (will eventaully support apt-get when run on linux)
+##### Link dotfiles
+
+You can choose which configuration files you'd like to use individually
+<pre>
+cd ~/dotfiles
+stow -vv vim
+</pre>
 
 ##### Install Vim plugins
 The first time you open vim it will prompt you to install any plugins mentioned in the vimrc file that have not been installed already (in this case all of them). This may take some time.
@@ -32,12 +29,20 @@ The first time you open vim it will prompt you to install any plugins mentioned 
 vim
 </pre>
 
-##### Install Fonts
+I use NeoBundle to manage my plugins, you can periodically update it from within vim using the following command
+
+<pre>
+:NeoBundleUpdate
+</pre>
+
+##  Fonts
 Both the vim setup, and zsh setup make use of a font provided with power-line fonts in the vendor/deps directory, you'll need to install them and set them up
 
-Doubleclick / install all fonts in the following directory
+##### Install Powerline Fonts
 <pre>
-vendor/deps/powerline-fonts/SourceCodePro
+cd
+_vendor/powerline-fonts
+./install.sh
 </pre>
 
 ##### Setup iTerm2 to use Fonts / Colors
@@ -45,13 +50,13 @@ vendor/deps/powerline-fonts/SourceCodePro
 ###### Font
 Open iTerm2 and go to Preferences &gt; Text
 
-Change font for both "Regular Font" and "Non-ASCII Font" to _Source Code Pro for Powerline_. If you wish for the font size in your terminal to match the font size in the vim configuration, set your font size to _14pt_.
+Change font for both "Regular Font" and "Non-ASCII Font" to `Source Code Pro for Powerline`. If you wish for the font size in your terminal to match the font size in the vim configuration, set your font size to _14pt_.
 
 ###### Colors
 
-Open iTerm2 and go to Preferences &gt; Colors
+Open iTerm2 and go to Preferences &gt; Profiles &gt; Colors
 Click "Load Presets..."
 Click "Import"
-Navigate to and select "~/Dropbox/dotfiles/vendor/deps/base16-iterm2.git/base16-bright.dark.itermcolors"
+Navigate to and select `_vendor/base16-iterm2/base16-default.dark.256.itermcolors`
 
-Now you can click "Load Presets..." again and select "base16-bright.dark"
+Now you can click "Load Presets..." again and select "base16-default.dark.256"

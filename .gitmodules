@@ -1,12 +1,15 @@
-[submodule "vendor/deps/prezto"]
-	path = vendor/deps/prezto
+[submodule "zsh/.zprezto"]
+	path = zsh/.zprezto
 	url = git@github.com:sorin-ionescu/prezto.git
-[submodule ".vim/bundle/neobundle.vim"]
-	path = .vim/bundle/neobundle.vim
+[submodule "vim/.vim/bundle/neobundle.vim"]
+	path = vim/.vim/bundle/neobundle.vim
 	url = git@github.com:Shougo/neobundle.vim.git
-[submodule "vendor/deps/base16-iterm2.git"]
-	path = vendor/deps/base16-iterm2.git
+[submodule "_vendor/base16-iterm2"]
+	path = _vendor/base16-iterm2
 	url = git@github.com:chriskempson/base16-iterm2.git
-[submodule "vendor/deps/base16-shell"]
-	path = vendor/deps/base16-shell
+[submodule "_vendor/base16-shell"]
+	path = _vendor/base16-shell
 	url = git@github.com:chriskempson/base16-shell.git
+[submodule "_vendor/powerline-fonts"]
+	path = _vendor/powerline-fonts
+	url = git@github.com:Lokaltog/powerline-fonts.git
