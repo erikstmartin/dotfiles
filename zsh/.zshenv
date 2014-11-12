@@ -67,6 +67,4 @@ if [[ ! -d "$TMPPREFIX" ]]; then
   mkdir -p "$TMPPREFIX"
 fi
 
-# Rbenv
-export RBENV_ROOT=/usr/local/var/rbenv
 export GOPATH=~
