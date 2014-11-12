@@ -8,7 +8,6 @@ allow_bold = true
 dynamic_title = true
 urgent_on_bell = true
 clickable_url = true
-#font = Monospace 9
 font = Source Code Pro 12
 scrollback_lines = 1000
 search_wrap = true
@@ -31,48 +30,33 @@ browser = google-chrome-stable
 #modify_other_keys = false
 
 [colors]
-foreground = #c5c8c6
-foreground_bold = #ffffff
-background = #0f0f0f
-
-# if unset, will reverse foreground and background
-highlight = #d6d6d6
-
-# colors from color0 to color254 can be set
-# Black + Grey
-color0 = #1d1f21
-color8 = #969896
-
-# Red + Bright Red
-color1 = #912226
-color9 = #cc6666
-
-# Green + Bright Green
-color2 = #778900
-color10 = #b5bd68
-
-# Yellow (Orange) + Bright Yellow (Yellow)
-color3 = #ae7b00
-color11 = #f0c674
-
-# Blue + Bright Blue
-color4 = #1d2594
-color12 = #81a2be
-
-# Magenta (Purple) + Bright Magenta
-color5 = #682a9b
-color13 = #b294bb
-
-# Cyan (Aqua) + Bright Cyan
-color6 = #2b6651
-color14 = #8abeb7
-
-# Light Grey (Selection) + White (Current Line)
-color7 = #929593
-color15 = #ecebec
+color0 = #181818
+color1 = #ab4642
+color2 = #a1b56c
+color3 = #f7ca88
+color4 = #7cafc2
+color5 = #ba8baf
+color6 = #86c1b9
+color7 = #d8d8d8
+color8 = #585858
+color9 = #ab4642
+color10 = #a1b56c
+color11 = #f7ca88
+color12 = #7cafc2
+color13 = #ba8baf
+color14 = #86c1b9
+color15 = #f8f8f8
+color16 = #dc9656
+color17 = #a16946
+color18 = #282828
+color19 = #383838
+color20 = #b8b8b8
+color21 = #e8e8e8
+foreground = #d8d8d8
+background = #181818
 
 [hints]
-foreground = #55FFFF
+#foreground = #55FFFF
 #font = Monospace 12
 #foreground = #dcdccc
 #background = #3f3f3f
