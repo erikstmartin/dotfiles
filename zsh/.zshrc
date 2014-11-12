@@ -27,7 +27,7 @@ conflicts='grep -rI "<<<" *'
 #alias retag_go='pushd .;cd $GOPATH;/usr/local/bin/ctags --exclude=.git --exclude="*_test.go" --totals=yes -R $GOPATH/src/**/*.go $GOROOT/src/pkg/**/*.go;popd'
 
 # Git aliases
-alias g='hub'
+alias g='git'
 
 alias gl='g l'
 alias grl='g rl'
