@@ -14,9 +14,6 @@ brew-unload() {
   launchctl unload ~/Library/LaunchAgents/homebrew.mxcl.$1.plist
 }
 
-# Git blows up because of CA for SSL, ignore it
-#export GIT_SSL_NO_VERIFY=true
-
 conflicts='grep -rI "<<<" *'
 
 #alias vncstart="vncserver -geometry 1440x900 -alwaysshared -autokill -dpi 96 :1"
@@ -43,8 +40,6 @@ alias gf='g f'
 alias gst='g st'
 alias gstp='g stp'
 alias gd='g d'
-
-export PATH=./bin:$GOPATH/bin:$HOME/node_modules/.bin:/opt/local/bin:/usr/local/sbin:/usr/local/bin:$PATH
 
 # Tab Completion of .ssh/known_hosts
 local knownhosts
@@ -105,7 +100,3 @@ elif type compctl &>/dev/null; then
 fi
 ###-end-npm-completion-###
 #
-
-export TERM=xterm-256color
-export XDG_CONFIG_HOME=~/.config
-export DOCKER_HOST=tcp://192.168.1.200:2375
