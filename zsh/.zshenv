@@ -72,8 +72,4 @@ if [[ ! -d "$TMPPREFIX" ]]; then
   mkdir -p "$TMPPREFIX"
 fi
 
-if [[ "$OSTYPE" == linux* ]]; then
-  eval $(dircolors ~/.dircolors)
-fi
-
 export GOPATH=~
