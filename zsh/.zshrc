@@ -41,6 +41,11 @@ alias gst='g st'
 alias gstp='g stp'
 alias gd='g d'
 
+# Direnv only if it's installed
+if command -v direnv >/dev/null 2>&1; then
+  eval "$(direnv hook zsh)"
+fi
+
 # Tab Completion of .ssh/known_hosts
 local knownhosts
 knownhosts=( ${${${${(f)"$(<$HOME/.ssh/known_hosts)"}:#[0-9]*}%%\ *}%%,*} ) 
