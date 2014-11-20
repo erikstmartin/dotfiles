@@ -28,7 +28,7 @@ font pango:Source Code Pro for Powerline 10
 floating_modifier $mod
 
 # start a terminal
-bindsym $mod+Return exec termite
+bindsym $mod+Return exec ~/bin/sensible-terminal
 
 # kill focused window
 bindsym $mod+Shift+q kill
@@ -143,16 +143,39 @@ mode "resize" {
 
 bindsym $mod+r mode "resize"
 
+# Colors
+set $color0 #181818
+set $color1 #ab4642
+set $color2 #a1b56c
+set $color3 #f7ca88
+set $color4 #7cafc2
+set $color5 #ba8baf
+set $color6 #86c1b9
+set $color7 #d8d8d8
+set $color8 #585858
+
+# set some nice colors      border     background  text
+client.focused              $color4    $color4     $color0
+client.unfocused            $color0    $color0     $color7
+client.focused_inactive     $color0    $color0     $color4
+client.urgent               $color1    $color1     $color0
+
 # Start i3bar to display a workspace bar (plus the system information i3status
 # finds out, if available)
 bar {
 	i3bar_command i3bar
 	position top
 	font pango:Source Code Pro for Powerline 10 
-        #status_command i3status
+  colors {
+    background          $color0
+    statusline          $color7
+    separator           $color7
+    focused_workspace   $color4    $color0    $color4
+    active_workspace    $color4    $color4    $color0
+    inactive_workspace  $color0    $color0    $color7
+    urgent_workspace    $color1    $color0    $color4
+                                                                  }
+    #status_command i3status
 }
 
-#--glx-no-stencil, --paint-on-overlay, --glx-no-rebind-pixmap, and --glx-swap-method 3 --vsync opengl --glx-use-copysubbuffermesa
-exec --no-startup-id compton -CGb --backend glx --glx-swap-method 3 --paint-on-overlay --glx-no-stencil --vsync opengl
-exec --no-startup-id feh --bg-fill ~/arch-linux-background.jpg
-exec --no-startup-id conky -c ~/.conkyrc
+exec --no-startup-id ~/bin/i3-startup

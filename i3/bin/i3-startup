@@ -1,0 +1,22 @@
+#!/bin/sh
+
+# Handle being run inside VMWare VM
+if command -v vmware-user > /dev/null 2>&1; then
+    exec vmware-user
+fi
+
+# Compton
+if command -v compton > /dev/null 2>&1; then
+    #--glx-no-stencil, --paint-on-overlay, --glx-no-rebind-pixmap, and --glx-swap-method 3 --vsync opengl --glx-use-copysubbuffermesa
+    exec compton -CGb --backend glx --glx-swap-method 3 --paint-on-overlay --glx-no-stencil --vsync opengl
+fi
+
+# feh - background
+if command -v feh > /dev/null 2>&1; then
+  exec feh --bg-fill ~/background.jpg
+fi
+
+# Conky
+if command -v conky > /dev/null 2>&1; then
+    exec conky -c ~/.conkyrc
+fi
