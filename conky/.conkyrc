@@ -6,7 +6,8 @@ total_run_times 0
 net_avg_samples 1
 cpu_avg_samples 1
 short_units 1
-temperature_unit fahrenheit
+temperature_unit celsius
+nvidia_display :0
 
 format_human_readable
 
@@ -18,7 +19,7 @@ no_buffers yes
 # - Text settings - #
 #####################
 use_xft yes
-xftfont Source Code Pro for Powerline:size=8
+xftfont Source Code Pro for Powerline:size=12
 override_utf8_locale yes
 text_buffer_size 2048
 
@@ -34,15 +35,14 @@ own_window_hints undecorated,below,sticky,skip_taskbar,skip_pager
 alignment top_right
 gap_x 25
 gap_y 40
-minimum_size 300 600 
-maximum_width 300
-
-default_bar_size 60 8
+minimum_size 512 1440 
+maximum_width 1024
 
 #########################
 # - Graphics settings - #
 #########################
-draw_shades no
+draw_shades yes
+draw_graph_borders yes
 
 default_color CCCCCC
 color0 99C3E3
@@ -54,61 +54,73 @@ color3 white
 TEXT
 ${color}${voffset -10}${font Source Code Pro for Powerline:size=26}${alignc}${time %l:%M%p}${font}${color}
 ${voffset 2}${alignc}${time %A, %B %d, %Y}
-${hr 2}
-${goto 6}${voffset 4}${font conkycolorslogos:size=32}a${font Source Code Pro for Powerline:style=Bold:size=14}${color3}${goto 55}${voffset -30}${nodename}${font}${color}
-${voffset 5}${goto 55}Kernel: ${alignr}${color2}${kernel}${color}
-${goto 55}Uptime: ${alignr}${color2}${uptime}${color}
-${goto 55}Load: ${alignr}${color2}${loadavg}${color}
-${goto 55}Users: ${alignr 8}${color2}${user_number}${color}
+${hr 1}
+${goto 6}${voffset 4}${color2}${font conkycolorslogos:size=52}a${font Source Code Pro for Powerline:style=Bold:size=20}${color3}${goto 95}${voffset -50}${nodename}${font}${color}
+${voffset 5}${goto 95}Kernel: ${alignr}${color2}${kernel}${color}
+${goto 95}Uptime: ${alignr}${color2}${uptime}${color}
+${goto 95}Load: ${alignr}${color2}${loadavg}${color}
+#${loadgraph}
+${goto 95}Users: ${alignr 8}${color2}${user_number}${color}
 
 ${color}CPU ${hr 2}
-${voffset 4}${font ConkyColors:size=16}c${font}${offset -20}${voffset 6}${cpubar cpu0 4,17}${color}${voffset -16}${goto 32}Frequency: ${alignr}${color0}${freq_g (1)} GHz${color}
-${voffset 0}${goto 32}Total: ${font Source Code Pro for Powerline:style=Bold:size=8}${color1}${cpu cpu0}%${color}${font} ${alignr}${color}${cpugraph cpu0 8,60 1E90FF 0084C8}${color}
-${voffset 0}${goto 32}Processes: ${alignr}${color2}${processes} (${running_processes} running)${color}
-${voffset 0}${goto 32}Threads: ${alignr}${color2}${threads}${color}
-#${voffset 4}${goto 32}CPU1: ${font Source Code Pro for Powerline:style=Bold:size=8}${color1}${cpu cpu1}%${color}${font} ${alignr}${color0}${cpugraph cpu1 8,60 1E90FF 0084C8}${color}
-#${goto 32}CPU2: ${font Source Code Pro for Powerline:style=Bold:size=8}${color1}${cpu cpu2}%${color}${font} ${alignr}${color}${cpugraph cpu2 8,60 1E90FF 0084C8}${color}
-#${goto 32}CPU3: ${font Source Code Pro for Powerline:style=Bold:size=8}${color1}${cpu cpu3}%${color}${font} ${alignr}${color}${cpugraph cpu3 8,60 1E90FF 0084C8}${color}
-#${goto 32}CPU4: ${font Source Code Pro for Powerline:style=Bold:size=8}${color1}${cpu cpu4}%${color}${font} ${alignr}${color}${cpugraph cpu4 8,60 1E90FF 0084C8}${color}
-#${goto 32}CPU5: ${font Source Code Pro for Powerline:style=Bold:size=8}${color1}${cpu cpu5}%${color}${font} ${alignr}${color}${cpugraph cpu5 8,60 1E90FF 0084C8}${color}
-#${goto 32}CPU6: ${font Source Code Pro for Powerline:style=Bold:size=8}${color1}${cpu cpu6}%${color}${font} ${alignr}${color}${cpugraph cpu6 8,60 1E90FF 0084C8}${color}
-#${goto 32}CPU7: ${font Source Code Pro for Powerline:style=Bold:size=8}${color1}${cpu cpu7}%${color}${font} ${alignr}${color}${cpugraph cpu7 8,60 1E90FF 0084C8}${color}
-#${goto 32}CPU8: ${font Source Code Pro for Powerline:style=Bold:size=8}${color1}${cpu cpu8}%${color}${font} ${alignr}${color}${cpugraph cpu8 8,60 1E90FF 0084C8}${color}
+${voffset 2}${font conkycolorslogos:size=30}i${font}${voffset -30}
+${voffset -18}${goto 64}Frequency: ${alignr}${color0}${freq_g (1)} GHz${color}
+${voffset 0}${goto 64}Total: ${font} ${font Source Code Pro for Powerline:style=Bold:size=12}${alignr}${color1}${cpu cpu0}%${color}${font}
+${voffset 0}${goto 64}Temperature: ${font}${alignr}${color2}${execi 30 sensors | grep 'Physical id 0' | cut -c18-22} ${execi 30 sensors | grep 'Physical id 1' | cut -c18-22}${color}${font}
+${voffset 0}${goto 64}Processes: ${alignr}${color2}${processes} (${running_processes} running)${color}
+${voffset 0}${goto 64}Threads: ${alignr}${color2}${threads}${color}
+#${voffset 4}${goto 64}CPU1: ${font Source Code Pro for Powerline:style=Bold:size=12}${color1}${cpu cpu1}%${color}${font} ${alignr}${color0}${cpugraph cpu1 8,60 1E90FF 0084C8}${color}
+#${goto 64}CPU2: ${font Source Code Pro for Powerline:style=Bold:size=12}${color1}${cpu cpu2}%${color}${font} ${alignr}${color}${cpugraph cpu2 8,60 1E90FF 0084C8}${color}
+#${goto 64}CPU3: ${font Source Code Pro for Powerline:style=Bold:size=12}${color1}${cpu cpu3}%${color}${font} ${alignr}${color}${cpugraph cpu3 8,60 1E90FF 0084C8}${color}
+#${goto 64}CPU4: ${font Source Code Pro for Powerline:style=Bold:size=12}${color1}${cpu cpu4}%${color}${font} ${alignr}${color}${cpugraph cpu4 8,60 1E90FF 0084C8}${color}
+#${goto 64}CPU5: ${font Source Code Pro for Powerline:style=Bold:size=12}${color1}${cpu cpu5}%${color}${font} ${alignr}${color}${cpugraph cpu5 8,60 1E90FF 0084C8}${color}
+#${goto 64}CPU6: ${font Source Code Pro for Powerline:style=Bold:size=12}${color1}${cpu cpu6}%${color}${font} ${alignr}${color}${cpugraph cpu6 8,60 1E90FF 0084C8}${color}
+#${goto 64}CPU7: ${font Source Code Pro for Powerline:style=Bold:size=12}${color1}${cpu cpu7}%${color}${font} ${alignr}${color}${cpugraph cpu7 8,60 1E90FF 0084C8}${color}
+#${goto 64}CPU8: ${font Source Code Pro for Powerline:style=Bold:size=12}${color1}${cpu cpu8}%${color}${font} ${alignr}${color}${cpugraph cpu8 8,60 1E90FF 0084C8}${color}
 
-${voffset 5}${font}${goto 32}${voffset -10}Name: ${alignr 13}CPU${alignr}RAM
-${goto 32}${voffset -5.5}${stippled_hr 1}
-${voffset -1}${goto 32}${top name 1} ${goto 241}${top cpu 1}${alignr }${top mem 1}
-${voffset -1}${goto 32}${top name 2} ${goto 241}${top cpu 2}${alignr }${top mem 2}
-${voffset -1}${goto 32}${top name 3} ${goto 241}${top cpu 3}${alignr }${top mem 3}
-${voffset -1}${goto 32}${top name 4} ${goto 241}${top cpu 4}${alignr }${top mem 4}
+${voffset 5}${font}${goto 64}${voffset -10}Name: ${goto 455}CPU${alignr}RAM
+${goto 64}${voffset -5.5}${stippled_hr 1}
+${voffset -1}${goto 64}${top name 1} ${goto 430}${top cpu 1}${alignr }${top mem 1}
+${voffset -1}${goto 64}${top name 2} ${goto 430}${top cpu 2}${alignr }${top mem 2}
+${voffset -1}${goto 64}${top name 3} ${goto 430}${top cpu 3}${alignr }${top mem 3}
+${voffset -1}${goto 64}${top name 4} ${goto 430}${top cpu 4}${alignr }${top mem 4}
 
 MEM ${hr 2}
-${voffset 2}${font ConkyColors:size=15}g${font}${color}${goto 32}${voffset -7}RAM: ${font Source Code Pro for Powerline:style=Bold:size=8}${color1}$memperc%${color}${font}${color}${alignr}F: ${font Source Code Pro for Powerline:style=Bold:size=8}${color0}${memeasyfree}${color}${font} U: ${font Source Code Pro for Powerline:style=Bold:size=8}${color0}${mem}${color}${font}
-${offset 1}${membar 4,17}${font}${goto 32}${voffset 5}Name ${goto 190}MEM${goto 225}RES${alignr}VIRT
-${goto 32}${voffset -5.5}${stippled_hr 1}
-${voffset -1}${goto 32}${top_mem name 1} ${goto 185}${top_mem mem 1}${goto 225}${top_mem mem_res 1}${alignr }${top_mem mem_vsize 1}
-${voffset -1}${goto 32}${top_mem name 2} ${goto 185}${top_mem mem 2}${goto 225}${top_mem mem_res 2}${alignr }${top_mem mem_vsize 2}
-${voffset -1}${goto 32}${top_mem name 3} ${goto 185}${top_mem mem 3}${goto 225}${top_mem mem_res 3}${alignr }${top_mem mem_vsize 3}
-${voffset -1}${goto 32}${top_mem name 4} ${goto 185}${top_mem mem 4}${goto 225}${top_mem mem_res 4}${alignr }${top_mem mem_vsize 4}
+${voffset 2}${font ConkyColors:size=30}g${font}${color}${goto 64}${voffset -22}RAM: ${voffset -1}${font Source Code Pro for Powerline:style=Bold:size=12}${color1}$memperc%${color}${font}${voffset 1}${alignr}F: ${voffset -1}${font Source Code Pro for Powerline:style=Bold:size=12}${color0}${memeasyfree}${color}${font}${voffset 1} U: ${voffset -1}${font Source Code Pro for Powerline:style=Bold:size=12}${color0}${mem}${color}${font}
+${font}${goto 64}${voffset 5}Name ${goto 350}MEM${goto 435}RES${alignr}VIRT
+${goto 64}${voffset -5.5}${stippled_hr 1}
+${voffset -1}${goto 64}${top_mem name 1} ${goto 325}${top_mem mem 1}${goto 430}${top_mem mem_res 1}${alignr }${top_mem mem_vsize 1}
+${voffset -1}${goto 64}${top_mem name 2} ${goto 325}${top_mem mem 2}${goto 430}${top_mem mem_res 2}${alignr }${top_mem mem_vsize 2}
+${voffset -1}${goto 64}${top_mem name 3} ${goto 325}${top_mem mem 3}${goto 430}${top_mem mem_res 3}${alignr }${top_mem mem_vsize 3}
+${voffset -1}${goto 64}${top_mem name 4} ${goto 325}${top_mem mem 4}${goto 430}${top_mem mem_res 4}${alignr }${top_mem mem_vsize 4}
+
+GPU ${hr 2}
+${font conkycolorslogos:size=30}n${font}
+${voffset -48}${goto 64}Frequency: ${alignr}${color2}${nvidia gpufreq}Mhz${color}
+${goto 64}Mem Frequency: ${alignr}${color2}${nvidia memfreq}Mhz${color}
+${goto 64}Temp: ${alignr}${color2}${nvidia temp}${color}
 
 HDD ${hr 2}
-${goto 4}${voffset 4}${font ConkyColors:size=16}i${font}${voffset -7}${goto 32}I/O: ${font Source Code Pro for Powerline:style=Bold:size=8}${color1}${diskio}${color}${font}${alignr 8}${color}R: ${font Source Code Pro for Powerline:style=Bold:size=8}${color0}${diskio_read}${color}${font} W: ${font Source Code Pro for Powerline:style=Bold:size=8}${color0}${diskio_write}${color}${font}  ${diskiograph 8,60 1E90FF 0084C8}${color}
-${voffset 6}${font ConkyColors:size=15}i${font}${color}${goto 32}${voffset -7}System: ${font Source Code Pro for Powerline:style=Bold:size=8}${color1}${fs_free_perc /}%${color}${font}
-${offset 1}${fs_bar 4,17 /}${color}${goto 32}F: ${font Source Code Pro for Powerline:style=Bold:size=8}${color0}${fs_free /}${color}${font} U: ${font Source Code Pro for Powerline:style=Bold:size=8}${color0}${fs_used /}${color}${font}
-${voffset -29}${offset 165}${voffset 2}${font ConkyColors:size=15}i${font}${color}${goto 197}${voffset -7}Data: ${font Source Code Pro for Powerline:style=Bold:size=8}${color1}${fs_free_perc /home}%${color}${font}
-${offset 166}${fs_bar 4,17 /home}${color}${goto 197}F: ${font Source Code Pro for Powerline:style=Bold:size=8}${color0}${fs_free /home}${color}${font} U: ${font Source Code Pro for Powerline:style=Bold:size=8}${color0}${fs_used /home}${color}${font}
+${goto 4}${voffset 4}${font ConkyColors:size=30}i${font}${voffset -25}${goto 64}I/O: ${font Source Code Pro for Powerline:style=Bold:size=12}${color1}${diskio}${color}${font}${alignr 8}${color}R: ${font Source Code Pro for Powerline:style=Bold:size=12}${color0}${diskio_read}${color}${font} W: ${font Source Code Pro for Powerline:style=Bold:size=12}${color0}${diskio_write}${voffset -2}${color}${font}${voffset 4}  ${diskiograph 8,60 1E90FF 0084C8}${color}
+${voffset 8}${goto 64}${font ConkyColors:size=14}i${font}${color}${goto 95}${voffset -7}System: ${font Source Code Pro for Powerline:style=Bold:size=12}${color1}${fs_free_perc /}%${color}${font}
+${goto 64}${fs_bar 6,20 /}${color}${goto 95}F: ${font Source Code Pro for Powerline:style=Bold:size=12}${color0}${fs_free /}${color}${font} U: ${font Source Code Pro for Powerline:style=Bold:size=12}${color0}${fs_used /}${color}${font}
+${goto 300}${voffset -41}${font ConkyColors:size=14}i${font}${color}${goto 350}${voffset -7}System: ${font Source Code Pro for Powerline:style=Bold:size=12}${color1}${fs_free_perc /}%${color}${font}
+${goto 301}${fs_bar 6,20 /}${color}${goto 350}F: ${font Source Code Pro for Powerline:style=Bold:size=12}${color0}${fs_free /}${color}${font} U: ${font Source Code Pro for Powerline:style=Bold:size=12}${color0}${fs_used /}${color}${font}
 
 NET ${hr 2}
-${if_up enp9s0}
-${voffset -4}${font conkycolors:size=13}A${font}${goto 32}${voffset -8}Local IP: ${alignr}${color2}${addr enp9s0}${color}
-${voffset 12}${font}${goto 32}${voffset -6}Up: ${font Source Code Pro for Powerline:style=Bold:size=8}${color0}${upspeed enp9s0}${color}${font}${goto 135}Total: ${font Source Code Pro for Powerline:style=Bold:size=8}${color0}${totalup enp9s0}${color}${font} ${alignr}${upspeedgraph enp9s0 8,60 1E90FF 0084C8}
-${voffset 6}${font}${goto 32}${voffset -4}Down: ${font Source Code Pro for Powerline:style=Bold:size=8}${color0}${downspeed enp9s0}${font}${color}${goto 135}Total: ${font Source Code Pro for Powerline:style=Bold:size=8}${color0}${totaldown enp9s0}${color}${font} ${alignr}${downspeedgraph enp9s0 8,60 1E90FF 0084C8}
+${if_up enp4s0f1}
+${voffset -12}${font conkycolors:size=30}A${font}${goto 64}${voffset -32}Local IP: ${alignr}${color2}${addr enp4s0f1}${color}
+${voffset 12}${font}${goto 64}${voffset -6}Up: ${font Source Code Pro for Powerline:style=Bold:size=12}${color0}${upspeed enp4s0f1}${color}${font}${goto 195}Total: ${font Source Code Pro for Powerline:style=Bold:size=12}${color0}${totalup enp4s0f1}${color}${font} ${alignr}${upspeedgraph enp9s0 8,60 1E90FF 0084C8}
+${voffset 6}${font}${goto 64}${voffset -4}Down: ${font Source Code Pro for Powerline:style=Bold:size=12}${color0}${downspeed enp4s0f1}${font}${color}${goto 195}Total: ${font Source Code Pro for Powerline:style=Bold:size=12}${color0}${totaldown enp4s0f1}${color}${font} ${alignr}${downspeedgraph enp9s0 8,60 1E90FF 0084C8}
 ${endif}
-${goto 32}TCP Conns: ${font Source Code Pro for Powerline:style=Bold:size=8}${color1}${tcp_portmon 1 65535 count}${color}${font}${alignr 4}IN: ${font Source Code Pro for Powerline:style=Bold:size=8}${color0}${tcp_portmon 1 32767 count}${color}${font} OUT: ${font Source Code Pro for Powerline:style=Bold:size=8}${color0}${tcp_portmon 32768 65535 count}${color}${font}
-${voffset -5.5}${goto 32}${stippled_hr 1}
-${font Source Code Pro for Powerline:size=8}${texeci 30 ss -tnp -o state established | awk 'NR <= 1 {next} {printf("         %s -> %s\n",$4,$3)}'}
+LOGGING ${hr 2}
+${execi 10 journalctl | tail -n3 | fold -w50}
+#${goto 64}TCP Conns: ${font Source Code Pro for Powerline:style=Bold:size=12}${color1}${tcp_portmon 1 65535 count}${color}${font}${alignr 4}IN: ${font Source Code Pro for Powerline:style=Bold:size=12}${color0}${tcp_portmon 1 32767 count}${color}${font} OUT: ${font Source Code Pro for Powerline:style=Bold:size=12}${color0}${tcp_portmon 32768 65535 count}${color}${font}
+#${voffset -5.5}${goto 64}${stippled_hr 1}
+#${font Source Code Pro for Powerline:size=12}${texeci 30 ss -tnp -o state established | awk 'NR <= 1 {next} {printf("         %s -> %s\n",$4,$3)}'}
 
-DOCKER ${hr 2}
-${voffset 4}${font conkycolors:size=13}d${font}${voffset -6}${goto 32}Containers: ${alignr}${color2}${execi 30 docker ps -a | awk 'NR <= 1 {next} {print $1}' | wc -l} (${execi 30 docker ps | awk 'NR <= 1 {next} {print $1}' | wc -l} running)${color}
-${voffset -5.5}${goto 32}${stippled_hr 1}
-${font Source Code Pro for Powerline:size=8}${execi 30 docker ps | awk 'NR <=1 {next} {print $2}' | sort | uniq -c | awk '{printf("          %-3u\t\t%s\n", $1, $2)}'} 
+#DOCKER ${hr 2}
+#${voffset 4}${font conkycolors:size=13}d${font}${voffset -6}${goto 64}Containers: ${alignr}${color2}${execi 30 docker ps -a | awk 'NR <= 1 {next} {print $1}' | wc -l} (${execi 30 docker ps | awk 'NR <= 1 {next} {print $1}' | wc -l} running)${color}
+#${voffset -5.5}${goto 64}${stippled_hr 1}
+#${font Source Code Pro for Powerline:size=12}${execi 30 docker ps | awk 'NR <=1 {next} {print $2}' | sort | uniq -c | awk '{printf("          %-3u\t\t%s\n", $1, $2)}'} 
+#

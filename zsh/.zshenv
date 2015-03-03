@@ -73,9 +73,9 @@ fi
 
 export GOPATH=~
 export PATH=./bin:$GOPATH/bin:/usr/local/go/bin:$HOME/node_modules/.bin:/opt/local/bin:/usr/local/sbin:/usr/local/bin:$PATH
-export TERM=xterm-256color
+#export TERM=xterm-256color
 export XDG_CONFIG_HOME=~/.config
-export DOCKER_HOST=tcp://192.168.1.200:2375
+#export DOCKER_HOST=tcp://192.168.1.200:2375
 
 # Git blows up because of CA for SSL, ignore it
 #export GIT_SSL_NO_VERIFY=true

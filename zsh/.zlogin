@@ -6,8 +6,3 @@
     zcompile "$zcompdump"
   fi
 } &!
-
-if [ -f ~/.ztheme ];
-  source ~/.ztheme
-then
-fi

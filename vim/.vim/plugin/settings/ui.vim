@@ -19,7 +19,8 @@ set hlsearch 			" Highlight matches
 set showmatch 			" Briefly jump to matching brace
 set matchtime=2 		" Speed things up
 set lazyredraw 			" Don't redraw while executing macros (good performance)
-"set ttimeout
+"set notimeout
+set ttimeout
 set ttimeoutlen=1
 set timeoutlen=750              " Don't wait so long for next keypress
 set magic			" Regular expressions

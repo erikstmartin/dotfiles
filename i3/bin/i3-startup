@@ -2,36 +2,36 @@
 
 # Handle being run inside VMWare VM
 if command -v vmware-user > /dev/null 2>&1; then
-    exec --no-startup-id vmware-user
+    vmware-user &
 fi
 
 # feh - background
 if command -v feh > /dev/null 2>&1; then
-  exec --no-startup-id feh --bg-fill ~/background.jpg
+  feh --bg-fill ~/background.jpg &
 fi
 
 # parcelite - clipboard management
 if command -v parcellite > /dev/null 2>&1; then
-  exec --no-startup-id parcellite
+  parcellite &
 fi
 
 # gnome-settings-daemon - theme gtk apps
 if command -v gnome-settings-daemon > /dev/null 2>&1; then
-  exec --no-startup-id gnome-settings-daemon
+  gnome-settings-daemon &
+fi
+
+# nm-applet (used for vpn etc)
+if command -v nm-applet > /dev/null 2>&1; then
+  nm-applet &
 fi
 
 # Conky
 if command -v conky > /dev/null 2>&1; then
-    exec -no-startup-id conky -c ~/.conkyrc
-fi
-
-# nvidia-settings
-if command -v nvidia-settings > /dev/null 2>&1; then
-    exec -no-startup-id nvidia-settings --load-config-only
+    conky -c ~/.conkyrc &
 fi
 
 # Compton (MUST BE LAST)
 if command -v compton > /dev/null 2>&1; then
     #--glx-no-stencil, --paint-on-overlay, --glx-no-rebind-pixmap, and --glx-swap-method 3 --vsync opengl --glx-use-copysubbuffermesa
-    exec compton -CGb -d --backend glx --glx-swap-method undefined --paint-on-overlay --glx-no-stencil --vsync opengl
+    compton -CGb --backend glx --glx-swap-method undefined --paint-on-overlay --glx-no-stencil --vsync opengl &
 fi

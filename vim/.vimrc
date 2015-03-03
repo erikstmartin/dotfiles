@@ -91,6 +91,7 @@ set ttyfast			  " this is the 21st century, people
 set noesckeys 		" disable recognition of keys sending an escape sequence when in insert mode
 set nrformats-=octal      "always assume decimal numbers
 set nocompatible
+set mouse=a
 set ttymouse=xterm2
 
 let loaded_matchparen = 1 " this should fix issue with long lines 

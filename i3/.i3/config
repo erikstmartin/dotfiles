@@ -176,7 +176,7 @@ bar {
     inactive_workspace  $color0    $color0    $color7
     urgent_workspace    $color1    $color0    $color4
                                                                   }
-    #status_command i3status
+    status_command i3status -c ~/.i3/i3status.conf
 }
 
 exec --no-startup-id ~/bin/i3-startup
