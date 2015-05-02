@@ -11,7 +11,6 @@ call neobundle#begin(expand('~/.vim/bundle/'))
 
 " Let NeoBundle manage NeoBundle
 NeoBundleFetch 'Shougo/neobundle.vim'
-NeoBundle 'Shougo/vimproc', {'build' : {'mac' : 'make -f make_mac.mak', 'unix' : 'make -f make_unix.mak'}}
 
 NeoBundle 'fatih/vim-go' " Go
 NeoBundle 'chriskempson/base16-vim'
@@ -22,7 +21,7 @@ NeoBundle 'Shougo/unite.vim' 			      " completion window
 NeoBundle 'Shougo/unite-outline' 
 NeoBundleLazy 'tsukkee/unite-tag', {'autoload':{'unite_sources':['tag','tag/file']}}
 NeoBundle 'scrooloose/syntastic' 		    " syntax check on buffer save
-NeoBundle 'vim-scripts/vim-startify'    " start screen
+"NeoBundle 'vim-scripts/vim-startify'    " start screen
 NeoBundle 'tomtom/tlib_vim'             " VimL utility functions 
 NeoBundle 'scrooloose/nerdtree'
 NeoBundle 'tpope/vim-fugitive'			    " git
