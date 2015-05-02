@@ -3,6 +3,7 @@
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 set gdefault " Assume the /g flag on :s substitutions to replace all matches in a line
 set grepprg=ag\ --nogroup\ --column\ --smart-case\ --nocolor\ --follow 
+let g:ctrlp_user_command = 'ag %s -l --nocolor -g ""'
 set grepformat=%f:%l:%c:%m
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""

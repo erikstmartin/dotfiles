@@ -4,7 +4,7 @@ function! g:UltiSnips_Complete()
     if pumvisible()
       return "\<C-n>"
     else
-      call UltiSnips_JumpForwards()
+      call UltiSnips#JumpForwards()
       if g:ulti_jump_forwards_res == 0
         return "\<TAB>"
       endif

@@ -2,6 +2,7 @@
 " Settings
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 set clipboard=unnamed           " Set clipboard
+set clipboard+=unnamedplus      " Set clipboard for nvim
 set expandtab                   " Use spaces instead of tabs
 set smarttab                    " Be smart when using tabs
 set autoindent                  " Always set autoindenting on
@@ -21,6 +22,4 @@ set backspace=indent,eol,start
 
 if exists('$TMUX')
   set clipboard=
-else
-  set clipboard=unnamed   " sync with OS clipboard
 endif

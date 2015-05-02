@@ -144,6 +144,11 @@ mode "resize" {
 
 bindsym $mod+r mode "resize"
 
+# Empathy                                                                                                            
+for_window [title="^Contact List"] floating enable
+for_window [class="^Empathy$"] floating enable
+for_window [title="^Empathy$"] floating enable
+
 # Colors
 set $color0 #181818
 set $color1 #ab4642

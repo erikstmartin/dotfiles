@@ -10,9 +10,6 @@ if [[ -s $HOME/.ztheme ]]; then
   source $HOME/.ztheme
 fi
 
-# aliases
-alias vi="vim"
-
 brew-load() {
   launchctl load ~/Library/LaunchAgents/homebrew.mxcl.$1.plist
 }
@@ -22,9 +19,6 @@ brew-unload() {
 }
 
 conflicts='grep -rI "<<<" *'
-
-#alias vncstart="vncserver -geometry 1440x900 -alwaysshared -autokill -dpi 96 :1"
-#alias vncstop="vncserver -kill :1"
 
 # Git aliases
 alias g='git'
@@ -47,6 +41,18 @@ alias gf='g f'
 alias gst='g st'
 alias gstp='g stp'
 alias gd='g d'
+
+# Kill all running containers.
+alias dockerkillall='docker kill $(docker ps -q)'
+
+# Delete all stopped containers.
+alias dockercleanc='printf "\n>>> Deleting stopped containers\n\n" && docker rm $(docker ps -a -q)'
+
+# Delete all untagged images.
+alias dockercleani='printf "\n>>> Deleting untagged images\n\n" && docker rmi $(docker images -q -f dangling=true)'
+
+# Delete all stopped containers and untagged images.
+alias dockerclean='dockercleanc || true && dockercleani'
 
 # Direnv only if it's installed
 if command -v direnv >/dev/null 2>&1; then
@@ -112,3 +118,5 @@ elif type compctl &>/dev/null; then
 fi
 ###-end-npm-completion-###
 
+BASE16_SHELL="$HOME/dotfiles/_vendor/base16-shell/base16-default.dark.sh"
+[[ -s $BASE16_SHELL ]] && source $BASE16_SHELL

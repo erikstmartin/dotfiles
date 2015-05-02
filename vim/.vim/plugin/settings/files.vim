@@ -29,7 +29,7 @@ try
 catch
 endtry
 
-autocmd BufWritePost .vimrc,_vimrc,vimrc,.gvimrc,_gvimrc,gvimrc so $MYVIMRC | if has('gui_running') | so $MYGVIMRC | endif
+"autocmd BufWritePost .vimrc,_vimrc,vimrc,.gvimrc,_gvimrc,gvimrc so $MYVIMRC | if has('gui_running') | so $MYGVIMRC | endif
 
 " For .rb files we also want to search tags in our gems as well (TODO: not sure if the exec for rvm works, also might want to use rbenv)
 "autocmd BufWritePost,FileWritePost *.rb :Start! ctags -R . "`rvm gemdir`/gems/*
