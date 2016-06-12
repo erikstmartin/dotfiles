@@ -20,8 +20,9 @@ set showmatch 			" Briefly jump to matching brace
 set matchtime=2 		" Speed things up
 set lazyredraw 			" Don't redraw while executing macros (good performance)
 "set notimeout
-set ttimeout
-set ttimeoutlen=1
+set esckeys
+"set ttimeout
+"set ttimeoutlen=1
 set timeoutlen=750              " Don't wait so long for next keypress
 set magic			" Regular expressions
 set showcmd 			" Display incomplete commands
@@ -38,7 +39,7 @@ set winminheight=0
 set laststatus=2                " Show status line all the time
 set ambiwidth=single
 set helpheight=30 		" Set window height when opening vim help windows
-set showbreak=↪\ \ 		" string to put before wrapped screen lines
+"set showbreak=↪\ \ 		" string to put before wrapped screen lines
 set display+=lastline 		" show last line even if it doesnt fit in the window
 set number 			" show line numbers
 set viewoptions=folds,options,cursor,unix,slash     "unix/windows compatibility

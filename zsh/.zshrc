@@ -1,5 +1,5 @@
 bindkey -v
-export KEYTIMEOUT=1
+#export KEYTIMEOUT=1
 
 # Source Prezto.
 if [[ -s $HOME/.zprezto/init.zsh ]]; then
@@ -18,29 +18,32 @@ brew-unload() {
   launchctl unload ~/Library/LaunchAgents/homebrew.mxcl.$1.plist
 }
 
-conflicts='grep -rI "<<<" *'
+alias conflicts='grep -rI "<<<" *'
+
+alias xor='cd ~/src/src.xor.exchange/xor/xor'
 
 # Git aliases
 alias g='git'
+unalias gb
 
-alias gl='g l'
-alias grl='g rl'
-alias gls='g ls'
-alias gs='g s'
-alias ga='g a'
-alias gc='g c'
-alias gau='g au'
-alias grm='g rm'
-alias gb='g b'
-alias gco='g co'
-alias gm='g m'
-alias gmff='g mff'
-alias gp='g p'
-alias gpu='g pu'
-alias gf='g f'
-alias gst='g st'
-alias gstp='g stp'
-alias gd='g d'
+#alias gl='g l'
+#alias grl='g rl'
+#alias gls='g ls'
+#alias gs='g s'
+#alias ga='g a'
+#alias gc='g c'
+#alias gau='g au'
+#alias grm='g rm'
+#alias gb='g b'
+#alias gco='g co'
+#alias gm='g m'
+#alias gmff='g mff'
+#alias gp='g p'
+#alias gpu='g pu'
+#alias gf='g f'
+#alias gst='g st'
+#alias gstp='g stp'
+#alias gd='g d'
 
 # Kill all running containers.
 alias dockerkillall='docker kill $(docker ps -q)'
@@ -120,3 +123,9 @@ fi
 
 BASE16_SHELL="$HOME/dotfiles/_vendor/base16-shell/base16-default.dark.sh"
 [[ -s $BASE16_SHELL ]] && source $BASE16_SHELL
+
+PATH="/home/erik/perl5/bin${PATH+:}${PATH}"; export PATH;
+PERL5LIB="/home/erik/perl5/lib/perl5${PERL5LIB+:}${PERL5LIB}"; export PERL5LIB;
+PERL_LOCAL_LIB_ROOT="/home/erik/perl5${PERL_LOCAL_LIB_ROOT+:}${PERL_LOCAL_LIB_ROOT}"; export PERL_LOCAL_LIB_ROOT;
+PERL_MB_OPT="--install_base \"/home/erik/perl5\""; export PERL_MB_OPT;
+PERL_MM_OPT="INSTALL_BASE=/home/erik/perl5"; export PERL_MM_OPT;

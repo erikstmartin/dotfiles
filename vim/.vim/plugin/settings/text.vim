@@ -17,7 +17,7 @@ set shiftround                  " When at 3 spaces and I hit >>, go to 4, not 5.
 set textwidth=500
 set whichwrap+=<,>,h,l          " Wrap to next/previous line when navigating at beginning /ending chars
 "set nowrap
-set encoding=utf8
+"set encoding=utf8
 set backspace=indent,eol,start
 
 if exists('$TMUX')
