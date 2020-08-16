@@ -150,7 +150,4 @@ BASE16_SHELL="$HOME/dotfiles/_vendor/base16-shell/base16-default.dark.sh"
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 eval "$(op completion zsh)"; compdef _op op
 
-source ~/.zshprompt
-GIT_PROMPT_EXECUTABLE='haskell'
-#PROMPT='%B%m%~%b$(git_super_status) %# '
-PROMPT='${ret_status} %{$fg[cyan]%}%c%{$reset_color%} $(git_super_status)'
+eval "$(starship init zsh)"
