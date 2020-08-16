@@ -148,3 +148,4 @@ BASE16_SHELL="$HOME/dotfiles/_vendor/base16-shell/base16-default.dark.sh"
 [[ -s $BASE16_SHELL ]] && source $BASE16_SHELL
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+eval "$(op completion zsh)"; compdef _op op
