@@ -7,6 +7,6 @@ vendor/bundle/
 .DS_Store
 TAGS
 tags
-.vim/.netrwhist
+.netrwhist
 .vim/local_bundle
 *.local.etcd/

@@ -16,7 +16,9 @@ set $mod Mod1
 # This font is widely installed, provides lots of unicode glyphs, right-to-left
 # text rendering and scalability on retina/hidpi displays (thanks to pango).
 #font pango:DejaVu Sans Mono 8
-font pango:Source Code Pro for Powerline 10
+#font pango:Druid Sans Mono Slashed for Powerline 18
+font pango:Source Code Pro for Powerline 18
+
 # Before i3 v4.8, we used to recommend this one as the default:
 # font -misc-fixed-medium-r-normal--13-120-75-75-C-70-iso10646-1
 # The font above is very space-efficient, that is, it looks good, sharp and
@@ -35,7 +37,7 @@ bindsym $mod+Shift+q kill
 
 # start dmenu (a program launcher)
 # install dmenu2 or dmenu-xft for font to work correctly
-#bindsym $mod+d exec dmenu_run -fn 'Source Code Pro-13'
+#bindsym $mod+d exec rofi -show run -font "Druid Sans Mono Slashed for Powerline 14" -fg "#505050 " -bg "#000000 " -hlfg "#ffb964 " -hlbg "#000000 " -o 50
 bindsym $mod+d exec rofi -show run -font "Source Code Pro for Powerline 14" -fg "#505050 " -bg "#000000 " -hlfg "#ffb964 " -hlbg "#000000 " -o 50
 # There also is the (new) i3-dmenu-desktop which only displays applications
 # shipping a .desktop file. It is a wrapper around dmenu, so you need that
@@ -160,11 +162,6 @@ bindsym XF86AudioPause exec --no-startup-id playerctl pause
 bindsym XF86AudioNext exec --no-startup-id playerctl next
 bindsym XF86AudioPrev exec --no-startup-id playerctl previous
 
-# Empathy                                                                                                            
-for_window [title="^Contact List"] floating enable
-for_window [class="^Empathy$"] floating enable
-for_window [title="^Empathy$"] floating enable
-
 # Colors
 set $color0 #181818
 set $color1 #ab4642
@@ -182,25 +179,6 @@ client.unfocused            $color0    $color0     $color7
 client.focused_inactive     $color0    $color0     $color4
 client.urgent               $color1    $color1     $color0
 
-# Start i3bar to display a workspace bar (plus the system information i3status
-# finds out, if available)
-bar {
-	i3bar_command i3bar
-	position top
-	font pango:Source Code Pro for Powerline 10 
-  colors {
-    background          $color0
-    statusline          $color7
-    separator           $color7
-    focused_workspace   $color4    $color0    $color4
-    active_workspace    $color4    $color4    $color0
-    inactive_workspace  $color0    $color0    $color7
-    urgent_workspace    $color1    $color0    $color4
-                                                                  }
-#status_command i3status -c ~/.i3/i3status.conf
-    status_command i3blocks
-}
-
 workspace 1 output DP-2
 workspace 2 output DP-4
 workspace 3 output HDMI-0
@@ -213,5 +191,7 @@ exec --no-startup-id xset -b &
 
 # Set LCD brightness
 exec --no-startup-id ~/bin/backlight 1 &
+
+exec_always --no-startup-id $HOME/.config/polybar/launch.sh
 
 exec --no-startup-id ~/bin/i3-startup

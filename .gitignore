@@ -6,3 +6,6 @@ vendor/bundle/ruby
 *.swp
 *.swo
 NeoBundle.lock
+nvim/.config/nvim/plugged
+polybar/.config/polybar/fonts
+tags

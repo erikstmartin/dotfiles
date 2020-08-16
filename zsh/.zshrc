@@ -1,26 +1,49 @@
-bindkey -v
-#export KEYTIMEOUT=1
+source $HOME/.zshenv
 
-# Source Prezto.
-if [[ -s $HOME/.zprezto/init.zsh ]]; then
-  source $HOME/.zprezto/init.zsh
-fi
+# Path to your oh-my-zsh installation.
+export ZSH="/home/erik/.oh-my-zsh"
+ZSH_THEME="robbyrussell"
+
+plugins=(
+	archlinux
+	bundler
+	cargo
+	direnv
+	docker
+	git
+	golang
+	helm
+	kubectl
+	microk8s
+	nmap
+	node
+	npm
+	npx
+	pip
+	postgres
+	rails
+	rake
+	rbenv
+	rsync
+	ruby
+	rust
+	rustup
+	systemd
+	taskwarrior
+	tmux
+	vscode
+)
+source $ZSH/oh-my-zsh.sh
+
+bindkey -e
+#export KEYTIMEOUT=1
 
 if [[ -s $HOME/.ztheme ]]; then
   source $HOME/.ztheme
 fi
 
-brew-load() {
-  launchctl load ~/Library/LaunchAgents/homebrew.mxcl.$1.plist
-}
-
-brew-unload() {
-  launchctl unload ~/Library/LaunchAgents/homebrew.mxcl.$1.plist
-}
-
-alias conflicts='grep -rI "<<<" *'
-
-alias xor='cd ~/src/src.xor.exchange/xor/xor'
+alias vim=nvim
+alias vi=nvim
 
 # Git aliases
 alias g='git'
@@ -124,8 +147,4 @@ fi
 BASE16_SHELL="$HOME/dotfiles/_vendor/base16-shell/base16-default.dark.sh"
 [[ -s $BASE16_SHELL ]] && source $BASE16_SHELL
 
-PATH="/home/erik/perl5/bin${PATH+:}${PATH}"; export PATH;
-PERL5LIB="/home/erik/perl5/lib/perl5${PERL5LIB+:}${PERL5LIB}"; export PERL5LIB;
-PERL_LOCAL_LIB_ROOT="/home/erik/perl5${PERL_LOCAL_LIB_ROOT+:}${PERL_LOCAL_LIB_ROOT}"; export PERL_LOCAL_LIB_ROOT;
-PERL_MB_OPT="--install_base \"/home/erik/perl5\""; export PERL_MB_OPT;
-PERL_MM_OPT="INSTALL_BASE=/home/erik/perl5"; export PERL_MM_OPT;
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh

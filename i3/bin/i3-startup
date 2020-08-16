@@ -1,9 +1,9 @@
 #!/bin/sh
 
 # Handle being run inside VMWare VM
-if command -v vmware-user > /dev/null 2>&1; then
-    vmware-user &
-fi
+#if command -v vmware-user > /dev/null 2>&1; then
+#    vmware-user &
+#fi
 
 # feh - background
 if command -v feh > /dev/null 2>&1; then
@@ -21,17 +21,16 @@ if command -v gnome-settings-daemon > /dev/null 2>&1; then
 fi
 
 # nm-applet (used for vpn etc)
-if command -v nm-applet > /dev/null 2>&1; then
-  nm-applet &
-fi
+#if command -v nm-applet > /dev/null 2>&1; then
+#  nm-applet &
+#fi
 
 # Conky
 if command -v conky > /dev/null 2>&1; then
     conky -c ~/.conkyrc &
 fi
 
-# Compton (MUST BE LAST)
-if command -v compton > /dev/null 2>&1; then
-    #--glx-no-stencil, --paint-on-overlay, --glx-no-rebind-pixmap, and --glx-swap-method 3 --vsync opengl --glx-use-copysubbuffermesa
-    compton -CGb --backend glx --glx-swap-method undefined --paint-on-overlay --glx-no-stencil --vsync opengl &
+# Picom (MUST BE LAST)
+if command -v picom > /dev/null 2>&1; then
+    picom -CGb --backend glx
 fi

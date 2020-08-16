@@ -10,8 +10,8 @@ fi
 # Editors
 #
 
-export EDITOR='vim'
-export VISUAL='vim'
+export EDITOR='nvim'
+export VISUAL='nvim'
 export PAGER='less'
 
 #
@@ -71,14 +71,14 @@ fi
 # Environment Variables
 #
 
-export GOPATH=~/
-export PATH=$GOPATH/bin:/usr/local/go/bin:$HOME/node_modules/.bin:/opt/local/bin:/usr/local/sbin:/usr/local/bin:$PATH
+export GOPATH=~/go
+export PATH=~/bin:$GOPATH/bin:/usr/local/go/bin:$HOME/node_modules/.bin:/opt/local/bin:/usr/local/sbin:/usr/local/bin:$PATH
 export XDG_CONFIG_HOME=~/.config
 export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
 export C_PLUS_INCLUDE_PATH=/usr/local/include:$C_PLUS_INCLUDE_PATH
 export C_INCLUDE_PATH=/usr/local/include:$C_INCLUDE_PATH
-#export DOCKER_HOST=tcp://192.168.1.200:2375
-DOCKER_GRAPHDRIVER=vfs
+
+#DOCKER_GRAPHDRIVER=vfs
 
 # Git blows up because of CA for SSL, ignore it
 #export GIT_SSL_NO_VERIFY=true
