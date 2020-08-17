@@ -1,7 +1,7 @@
 filetype plugin indent on
 
 call plug#begin()
-"Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
+Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
 Plug 'rust-lang/rust.vim'
 Plug 'vim-syntastic/syntastic'
 
@@ -38,11 +38,14 @@ else
   Plug 'roxma/vim-hug-neovim-rpc'
 endif
 
-Plug 'neoclide/coc.nvim', {'branch': 'release'}
-let g:coc_global_extensions = ['coc-emmet', 'coc-css', 'coc-html', 'coc-json', 'coc-prettier', 'coc-tsserver', 'coc-rls', 'coc-sh', 'coc-snippets', 'coc-svelte', 'coc-yaml']
+Plug 'neovim/nvim-lsp'
+Plug 'nvim-lua/diagnostic-nvim'
+Plug 'nvim-lua/completion-nvim'
+Plug 'steelsojka/completion-buffers'
+
+
 Plug 'junegunn/fzf', {'dir': '~/.fzf','do': '/home/erik/.config/nvim/plugged/fzf/install --all'}
 Plug 'junegunn/fzf.vim' " needed for previews
-Plug 'antoinemadec/coc-fzf'
 
 Plug 'mattn/emmet-vim', {'autoload':{'filetypes':['html','css','sass','scss','less']}} " HTML completion
 Plug 'leafgarland/typescript-vim'
@@ -76,6 +79,11 @@ augroup MyAutoCmd
    autocmd!
 augroup END
 
+" fzf file fuzzy search that respects .gitignore
+" If in git directory, show only files that are committed, staged, or unstaged
+" else use regular :Files
+nnoremap <expr> <C-p> (len(system('git rev-parse')) ? ':Files' : ':GFiles --exclude-standard --others --cached')."\<cr>"
+
 " Load individual config files
 let g:nvim_config_root = stdpath('config')
 let g:config_file_list = ['settings/completion.vim',
@@ -87,7 +95,6 @@ let g:config_file_list = ['settings/completion.vim',
 			\ 'settings/text.vim',
 			\ 'settings/ui.vim',
 			\ 'plugin/airline.vim',
-			\ 'plugin/coc.vim',
 			\ 'plugin/denite.vim',
 			\ 'plugin/dispatch.vim',
 			\ 'plugin/emmet.vim',
@@ -97,7 +104,6 @@ let g:config_file_list = ['settings/completion.vim',
 			\ 'plugin/syntastic.vim',
 			\ 'plugin/tagbar.vim',
 			\ 'plugin/ultisnips.vim',
-			"\ 'plugin/vim-go.vim',
 			\ ]
 
 for f in g:config_file_list
