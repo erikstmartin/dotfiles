@@ -1,7 +1,7 @@
 # Font configuration (changes require restart)
 font:
   # The size to use.
-  size: 14
+  size: 12
   # The normal (roman) font face to use.
   normal:
     family: Droid Sans Mono Slashed for Powerline

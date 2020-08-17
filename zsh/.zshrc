@@ -149,5 +149,7 @@ BASE16_SHELL="$HOME/dotfiles/_vendor/base16-shell/base16-default.dark.sh"
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 eval "$(op completion zsh)"; compdef _op op
-
 eval "$(starship init zsh)"
+
+#export QT_FONT_DPI=120
+export QT_QPA_PLATFORMTHEME="gtk3"
