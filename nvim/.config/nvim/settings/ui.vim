@@ -57,11 +57,6 @@ set pastetoggle=
 "set switchbuf=usetab,newtab "switch to the existing tab if the buffer is open, or creating a new one if not
 set nocompatible
 
-if has('conceal')
-  set conceallevel=1
-  set listchars+=conceal:Δ
-endif
-
 set wildmode=list:longest,full
 set wildignore=*.o,*.obj,*~ 
 set wildignore+=*DS_Store*
