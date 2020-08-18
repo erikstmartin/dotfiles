@@ -1,0 +1,2 @@
+#export QT_FONT_DPI=120
+export QT_QPA_PLATFORMTHEME="gtk3"

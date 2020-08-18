@@ -4,6 +4,8 @@ call plug#begin()
 Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
 Plug 'rust-lang/rust.vim'
 Plug 'vim-syntastic/syntastic'
+Plug 'prettier/vim-prettier'
+Plug 'nvim-treesitter/nvim-treesitter'
 
 Plug 'tpope/vim-surround'
 
@@ -103,6 +105,7 @@ let g:config_file_list = ['settings/completion.vim',
 			\ 'plugin/syntastic.vim',
 			\ 'plugin/tagbar.vim',
 			\ 'plugin/ultisnips.vim',
+			\ 'plugin/vim-go.vim',
 			\ ]
 
 for f in g:config_file_list

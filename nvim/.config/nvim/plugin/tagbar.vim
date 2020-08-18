@@ -8,12 +8,14 @@ let g:tagbar_autoshowtag = 1
 let g:tagbar_type_go = {
     \ 'ctagstype': 'go',
     \ 'kinds' : [
-        \'p:package',
-        \'f:function',
+        \'p:packages',
+        \'f:functions',
         \'v:variables',
-        \'t:type',
-        \'i:interface',
-        \'c:const'
+        \'t:types',
+        \'i:imports',
+        \'w:fields',
+        \'m:methods',
+        \'c:constants'
     \]
 \}
 
