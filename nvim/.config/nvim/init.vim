@@ -45,6 +45,8 @@ Plug 'nvim-lua/diagnostic-nvim'
 Plug 'nvim-lua/completion-nvim'
 Plug 'steelsojka/completion-buffers'
 
+Plug 'openresty/lua-cjson'
+Plug 'nvim-lua/plenary.nvim'
 
 Plug 'junegunn/fzf', {'dir': '~/.fzf','do': '/home/erik/.config/nvim/plugged/fzf/install --all'}
 Plug 'junegunn/fzf.vim' " needed for previews
@@ -112,3 +114,4 @@ for f in g:config_file_list
     execute 'source ' . g:nvim_config_root . '/' . f
 endfor
 
+set statusline=

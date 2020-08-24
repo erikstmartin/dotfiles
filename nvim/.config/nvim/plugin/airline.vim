@@ -6,6 +6,7 @@ let g:airline#extensions#hunks#non_zero_only = 1
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#show_buffers = 0
 let g:airline#extensions#tabline#fnamemod = ':t'
+let g:airline#extensions#tabline#enabled = 1
 
 "call airline#parts#define_function('goinfo', 'go#complete#GetInfo')
 "call airline#parts#define_condition('goinfo', '&ft =~ "go"')

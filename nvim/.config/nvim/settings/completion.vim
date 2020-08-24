@@ -4,9 +4,10 @@ let g:UltiSnipsJumpForwardTrigger="<c-j>"
 let g:UltiSnipsJumpBackwardTrigger="<c-k>"
 
 " configure lsp
+"require'nvim_lsp'.rust_analyzer.setup{on_attach=require'diagnostic'.on_attach}
 lua << EOF
   require'nvim_lsp'.gopls.setup{}
-  require'nvim_lsp'.rust_analyzer.setup{on_attach=require'diagnostic'.on_attach}
+  require'nvim_lsp'.rust_analyzer.setup{}
   require'nvim_lsp'.tsserver.setup{}
   require'nvim_lsp'.pyls.setup{}
   require'nvim_lsp'.cssls.setup{}
