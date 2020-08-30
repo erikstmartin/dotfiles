@@ -4,10 +4,9 @@ let g:UltiSnipsJumpForwardTrigger="<c-j>"
 let g:UltiSnipsJumpBackwardTrigger="<c-k>"
 
 " configure lsp
-"require'nvim_lsp'.rust_analyzer.setup{on_attach=require'diagnostic'.on_attach}
 lua << EOF
   require'nvim_lsp'.gopls.setup{}
-  require'nvim_lsp'.rust_analyzer.setup{}
+  require'nvim_lsp'.rust_analyzer.setup{on_attach=require'diagnostic'.on_attach}
   require'nvim_lsp'.tsserver.setup{}
   require'nvim_lsp'.pyls.setup{}
   require'nvim_lsp'.cssls.setup{}
@@ -48,3 +47,20 @@ nnoremap <silent> K     <cmd>lua vim.lsp.buf.hover()<CR>
 nnoremap <silent> gr    <cmd>lua vim.lsp.buf.references()<CR>
 nnoremap <silent> g0    <cmd>lua vim.lsp.buf.document_symbol()<CR>
 nnoremap <silent> gW    <cmd>lua vim.lsp.buf.workspace_symbol()<CR>
+
+lua << EOF
+require'lsp_extensions'.inlay_hints{
+  highlight = "Comment",
+  prefix = " > ",
+  aligned = false,
+  only_current_line = false
+}
+EOF
+
+" inlay hints whole file
+nnoremap <Leader>T :lua require'lsp_extensions'.inlay_hints()
+" inlay hints line
+nnoremap <Leader>t :lua require'lsp_extensions'.inlay_hints{ only_current_line = true }
+
+"autocmd BufEnter,BufWinEnter,TabEnter *.rs :lua require'lsp_extensions'.inlay_hints{}
+autocmd CursorHold,CursorHoldI *.rs :lua require'lsp_extensions'.inlay_hints{ only_current_line = true }

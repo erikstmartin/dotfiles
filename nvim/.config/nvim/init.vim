@@ -13,10 +13,10 @@ Plug 'neomake/neomake'
 Plug 'tpope/vim-dispatch'
 
 Plug 'majutsushi/tagbar'
-Plug 'airblade/vim-rooter'         " sets current working directory based on project files (vcs, rakefile, etc)
 
 Plug 'SirVer/ultisnips'
 Plug 'honza/vim-snippets'
+"Plug 'norcalli/snippets.nvim' " Still needs a bigger snippet library or support for ultisnip snippets
 
 Plug 'scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }
 Plug 'ryanoasis/vim-devicons'
@@ -29,6 +29,7 @@ Plug 'rking/ag.vim'
 
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-git', {'autoload':{'filetypes':['gitcommit','gitconfig', 'gitrebase', 'gitsendmail']}}
+Plug 'kdheepak/lazygit.nvim'
 
 Plug 'godlygeek/tabular', {'autoload':{'commands':'Tabularize'}}
 
@@ -40,13 +41,17 @@ else
   Plug 'roxma/vim-hug-neovim-rpc'
 endif
 
+Plug 'kyazdani42/nvim-web-devicons'
 Plug 'neovim/nvim-lsp'
+Plug 'tjdevries/lsp_extensions.nvim'
 Plug 'nvim-lua/diagnostic-nvim'
 Plug 'nvim-lua/completion-nvim'
 Plug 'steelsojka/completion-buffers'
 
-Plug 'openresty/lua-cjson'
 Plug 'nvim-lua/plenary.nvim'
+Plug 'nvim-lua/popup.nvim'
+Plug 'nvim-lua/telescope.nvim'
+Plug 'openresty/lua-cjson'
 
 Plug 'junegunn/fzf', {'dir': '~/.fzf','do': '/home/erik/.config/nvim/plugged/fzf/install --all'}
 Plug 'junegunn/fzf.vim' " needed for previews
@@ -82,36 +87,5 @@ ca h tab help
 augroup MyAutoCmd
    autocmd!
 augroup END
-
-" fzf file fuzzy search that respects .gitignore
-" If in git directory, show only files that are committed, staged, or unstaged
-" else use regular :Files
-nnoremap <expr> <C-p> (len(system('git rev-parse')) ? ':Files' : ':GFiles --exclude-standard --others --cached')."\<cr>"
-
-" Load individual config files
-let g:nvim_config_root = stdpath('config')
-let g:config_file_list = ['settings/completion.vim',
-			\ 'settings/files.vim',
-			\ 'settings/filetypes.vim',
-			\ 'settings/movement.vim',
-			\ 'settings/search.vim',
-			\ 'settings/tagbar.vim',
-			\ 'settings/text.vim',
-			\ 'settings/ui.vim',
-			\ 'plugin/airline.vim',
-			\ 'plugin/denite.vim',
-			\ 'plugin/dispatch.vim',
-			\ 'plugin/emmet.vim',
-			\ 'plugin/fugitive.vim',
-			\ 'plugin/nerdtree.vim',
-			\ 'plugin/syntastic.vim',
-			\ 'plugin/tagbar.vim',
-			\ 'plugin/ultisnips.vim',
-			\ 'plugin/vim-go.vim',
-			\ ]
-
-for f in g:config_file_list
-    execute 'source ' . g:nvim_config_root . '/' . f
-endfor
 
 set statusline=
