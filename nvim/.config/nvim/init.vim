@@ -1,4 +1,3 @@
-filetype plugin indent on
 
 call plug#begin()
 Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
@@ -12,12 +11,11 @@ Plug 'tpope/vim-surround'
 Plug 'neomake/neomake'
 Plug 'tpope/vim-dispatch'
 
-Plug 'majutsushi/tagbar'
-
 Plug 'SirVer/ultisnips'
 Plug 'honza/vim-snippets'
 "Plug 'norcalli/snippets.nvim' " Still needs a bigger snippet library or support for ultisnip snippets
 
+Plug 'majutsushi/tagbar'
 Plug 'scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }
 Plug 'ryanoasis/vim-devicons'
 
@@ -33,14 +31,6 @@ Plug 'kdheepak/lazygit.nvim'
 
 Plug 'godlygeek/tabular', {'autoload':{'commands':'Tabularize'}}
 
-if has('nvim')
-  Plug 'Shougo/denite.nvim', { 'do': ':UpdateRemotePlugins' }
-else
-  Plug 'Shougo/denite.nvim'
-  Plug 'roxma/nvim-yarp'
-  Plug 'roxma/vim-hug-neovim-rpc'
-endif
-
 Plug 'kyazdani42/nvim-web-devicons'
 Plug 'neovim/nvim-lsp'
 Plug 'tjdevries/lsp_extensions.nvim'
@@ -52,9 +42,6 @@ Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-lua/popup.nvim'
 Plug 'nvim-lua/telescope.nvim'
 Plug 'openresty/lua-cjson'
-
-Plug 'junegunn/fzf', {'dir': '~/.fzf','do': '/home/erik/.config/nvim/plugged/fzf/install --all'}
-Plug 'junegunn/fzf.vim' " needed for previews
 
 Plug 'mattn/emmet-vim', {'autoload':{'filetypes':['html','css','sass','scss','less']}} " HTML completion
 Plug 'leafgarland/typescript-vim'

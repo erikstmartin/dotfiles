@@ -23,3 +23,5 @@ set backspace=indent,eol,start
 if exists('$TMUX')
   set clipboard=
 endif
+
+au TextYankPost * silent! lua vim.highlight.on_yank {higroup="IncSearch", timeout=250}
