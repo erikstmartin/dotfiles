@@ -23,3 +23,7 @@ set backspace=indent,eol,start
 if exists('$TMUX')
   set clipboard=
 endif
+
+augroup highlight_yank
+  autocmd! autocmd TextYankPost \* silent! lua require'vim.highlight'.on_yank(timeuout = 200)
+augroup END

@@ -77,8 +77,10 @@ export XDG_CONFIG_HOME=~/.config
 export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
 export C_PLUS_INCLUDE_PATH=/usr/local/include:$C_PLUS_INCLUDE_PATH
 export C_INCLUDE_PATH=/usr/local/include:$C_INCLUDE_PATH
+export PATH=/usr/local/share/ProCapture/bin:$PATH
 
 #DOCKER_GRAPHDRIVER=vfs
 
 # Git blows up because of CA for SSL, ignore it
 #export GIT_SSL_NO_VERIFY=true
+export PKG_CONFIG_PATH=/home/erik/build/gst-rtsp-server/build/pkgconfig
