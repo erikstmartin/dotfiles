@@ -11,13 +11,13 @@ lua << EOF
     require'diagnostic'.on_attach(client)
   end
 
-  require'nvim_lsp'.gopls.setup{on_attach=on_attach_vim}
-  require'nvim_lsp'.rust_analyzer.setup{on_attach=on_attach_vim}
-  require'nvim_lsp'.tsserver.setup{on_attach=on_attach_vim}
-  require'nvim_lsp'.pyls.setup{on_attach=on_attach_vim}
-  require'nvim_lsp'.cssls.setup{on_attach=on_attach_vim}
-  require'nvim_lsp'.bashls.setup{on_attach=on_attach_vim}
-  require'nvim_lsp'.sumneko_lua.setup{on_attach=on_attach_vim}
+  require'lspconfig'.gopls.setup{on_attach=on_attach_vim}
+  require'lspconfig'.rust_analyzer.setup{on_attach=on_attach_vim}
+  require'lspconfig'.tsserver.setup{on_attach=on_attach_vim}
+  require'lspconfig'.pyls.setup{on_attach=on_attach_vim}
+  require'lspconfig'.cssls.setup{on_attach=on_attach_vim}
+  require'lspconfig'.bashls.setup{on_attach=on_attach_vim}
+  require'lspconfig'.sumneko_lua.setup{on_attach=on_attach_vim}
 EOF
 
 " Use completion-nvim in every buffer
