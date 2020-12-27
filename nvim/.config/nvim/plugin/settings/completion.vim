@@ -5,26 +5,59 @@ let g:UltiSnipsJumpBackwardTrigger="<c-k>"
 ":lua vim.lsp.buf.code_action()
 
 " configure lsp
+"let g:diagnostic_enable_virtual_text = 1
 lua << EOF
   local on_attach_vim = function(client)
     require'completion'.on_attach(client)
-    require'diagnostic'.on_attach(client)
   end
 
-  require'nvim_lsp'.gopls.setup{on_attach=on_attach_vim}
-  require'nvim_lsp'.rust_analyzer.setup{on_attach=on_attach_vim}
-  require'nvim_lsp'.tsserver.setup{on_attach=on_attach_vim}
-  require'nvim_lsp'.pyls.setup{on_attach=on_attach_vim}
-  require'nvim_lsp'.cssls.setup{on_attach=on_attach_vim}
-  require'nvim_lsp'.bashls.setup{on_attach=on_attach_vim}
-  require'nvim_lsp'.sumneko_lua.setup{on_attach=on_attach_vim}
+  require'lspconfig'.gopls.setup{on_attach=on_attach_vim}
+  require'lspconfig'.rust_analyzer.setup{on_attach=on_attach_vim}
+  require'lspconfig'.tsserver.setup{on_attach=on_attach_vim}
+  require'lspconfig'.pyls.setup{on_attach=on_attach_vim}
+  require'lspconfig'.cssls.setup{on_attach=on_attach_vim}
+  require'lspconfig'.bashls.setup{on_attach=on_attach_vim}
+  require'lspconfig'.sumneko_lua.setup{on_attach=on_attach_vim}
+
+  vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
+    vim.lsp.diagnostic.on_publish_diagnostics, {
+      -- Enable underline, use default values
+      underline = true,
+      -- Enable virtual text, override spacing to 4
+      virtual_text = {
+        spacing = 4,
+        prefix = '~',
+      },
+      -- Use a function to dynamically turn signs off
+      -- and on, using buffer local variables
+      signs = function(bufnr, client_id)
+        local ok, result = pcall(vim.api.nvim_buf_get_var, bufnr, 'show_signs')
+        -- No buffer local variable set, so just enable by default
+        if not ok then
+          return true
+        end
+
+        return result
+      end,
+      -- Disable a feature
+      update_in_insert = false,
+    }
+  )
+
+  require'nvim-treesitter.configs'.setup {
+    ensure_installed = "maintained", -- one of "all", "maintained" (parsers with maintainers), or a list of languages
+    highlight = {
+      enable = true,              -- false will disable the whole extension
+      disable = { "java" },  -- list of language that will be disabled
+    },
+  }
 EOF
 
 " Use completion-nvim in every buffer
 "autocmd BufEnter * lua require'completion'.on_attach()
 autocmd Filetype go,python,ts,typescript,rust,javascript,python,lua,bash,css setlocal omnifunc=v:lua.vim.lsp.omnifunc
 
-autocmd InsertLeave,BufEnter,BufWinEnter,TabEnter * :lua require'lsp_extensions'.inlay_hints{ prefix = ' » ', highlight = "NonText" }
+autocmd InsertLeave,BufEnter,BufWinEnter,TabEnter *.rs :lua require'lsp_extensions'.inlay_hints{highlight = "NonText", prefix = ' » ', aligned = false, only_current_line = false}
 
 let g:completion_enable_auto_popup = 1
 function! s:check_back_space() abort

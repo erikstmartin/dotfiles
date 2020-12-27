@@ -1,9 +1,11 @@
 
 call plug#begin()
+Plug 'flazz/vim-colorschemes'
 Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
 Plug 'rust-lang/rust.vim'
-Plug 'vim-syntastic/syntastic'
-Plug 'prettier/vim-prettier'
+Plug 'prettier/vim-prettier', {
+  \ 'do': 'yarn install',
+  \ 'for': ['javascript', 'typescript', 'css', 'less', 'scss', 'json', 'graphql', 'markdown', 'vue', 'yaml', 'html'] }
 Plug 'nvim-treesitter/nvim-treesitter'
 
 Plug 'tpope/vim-surround'
@@ -17,11 +19,13 @@ Plug 'honza/vim-snippets'
 
 Plug 'majutsushi/tagbar'
 Plug 'scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }
+"Plug 'justink/vim-dirvish'
 Plug 'ryanoasis/vim-devicons'
+Plug 'tpope/vim-commentary'
 
 Plug 'chriskempson/base16-vim'
-Plug 'vim-airline/vim-airline' 			    " statusline
-Plug 'vim-airline/vim-airline-themes'
+"Plug 'vim-airline/vim-airline' 			    " statusline
+"Plug 'vim-airline/vim-airline-themes'
 
 Plug 'rking/ag.vim'
 
@@ -34,11 +38,10 @@ Plug 'godlygeek/tabular', {'autoload':{'commands':'Tabularize'}}
 Plug 'kyazdani42/nvim-web-devicons'
 Plug 'neovim/nvim-lsp'
 Plug 'tjdevries/lsp_extensions.nvim'
-Plug 'nvim-lua/diagnostic-nvim'
 Plug 'nvim-lua/completion-nvim'
 Plug 'steelsojka/completion-buffers'
 
-Plug 'psliwka/vim-smoothie'
+"Plug 'psliwka/vim-smoothie'
 
 Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-lua/popup.nvim'
