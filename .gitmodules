@@ -1,12 +1,6 @@
-[submodule "_vendor/base16-iterm2"]
-	path = _vendor/base16-iterm2
-	url = git@github.com:chriskempson/base16-iterm2.git
 [submodule "_vendor/base16-shell"]
 	path = _vendor/base16-shell
 	url = git@github.com:chriskempson/base16-shell.git
 [submodule "_vendor/powerline-fonts"]
 	path = _vendor/powerline-fonts
 	url = git@github.com:Lokaltog/powerline-fonts.git
-[submodule "_vendor/base16-gnome-terminal"]
-	path = _vendor/base16-gnome-terminal
-	url = https://github.com/chriskempson/base16-gnome-terminal.git
