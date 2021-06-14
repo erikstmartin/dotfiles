@@ -17,8 +17,6 @@ plugins=(
 	microk8s
 	nmap
 	node
-	npm
-	npx
 	pip
 	postgres
 	rails
@@ -29,9 +27,7 @@ plugins=(
 	rust
 	rustup
 	systemd
-	taskwarrior
 	tmux
-	vscode
 )
 source $ZSH/oh-my-zsh.sh
 
@@ -67,18 +63,6 @@ unalias gb
 #alias gst='g st'
 #alias gstp='g stp'
 #alias gd='g d'
-
-# Kill all running containers.
-alias dockerkillall='docker kill $(docker ps -q)'
-
-# Delete all stopped containers.
-alias dockercleanc='printf "\n>>> Deleting stopped containers\n\n" && docker rm $(docker ps -a -q)'
-
-# Delete all untagged images.
-alias dockercleani='printf "\n>>> Deleting untagged images\n\n" && docker rmi $(docker images -q -f dangling=true)'
-
-# Delete all stopped containers and untagged images.
-alias dockerclean='dockercleanc || true && dockercleani'
 
 # Direnv only if it's installed
 if command -v direnv >/dev/null 2>&1; then
@@ -144,8 +128,11 @@ elif type compctl &>/dev/null; then
 fi
 ###-end-npm-completion-###
 
-BASE16_SHELL="$HOME/dotfiles/_vendor/base16-shell/base16-default.dark.sh"
-[[ -s $BASE16_SHELL ]] && source $BASE16_SHELL
+# Base16 Shell
+BASE16_SHELL="$HOME/dotfiles/_vendor/base16-shell/"
+[ -n "$PS1" ] && \
+    [ -s "$BASE16_SHELL/profile_helper.sh" ] && \
+        eval "$("$BASE16_SHELL/profile_helper.sh")"
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 eval "$(op completion zsh)"; compdef _op op
@@ -153,3 +140,5 @@ eval "$(starship init zsh)"
 
 #export QT_FONT_DPI=120
 export QT_QPA_PLATFORMTHEME="gtk3"
+
+source /home/erik/.config/broot/launcher/bash/br
