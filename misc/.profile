@@ -6,4 +6,3 @@ export GTK_THEME=Adwaita:dark
 # Fix issues with Alacritty not properly calculating width of text
 export LANG=en_US.UTF-8
 export LC_ALL=en_US.UTF-8
-export LD_PRELOAD=/usr/local/lib/camlink.so
