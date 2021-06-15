@@ -1,68 +1,13 @@
 source $HOME/.zshenv
 
-# Path to your oh-my-zsh installation.
-export ZSH="/home/erik/.oh-my-zsh"
-ZSH_THEME="robbyrussell"
-
-plugins=(
-	archlinux
-	bundler
-	cargo
-	direnv
-	docker
-	git
-	golang
-	helm
-	kubectl
-	microk8s
-	nmap
-	node
-	pip
-	postgres
-	rails
-	rake
-	rbenv
-	rsync
-	ruby
-	rust
-	rustup
-	systemd
-	tmux
-)
-source $ZSH/oh-my-zsh.sh
+source "/usr/share/zsh/share/antigen.zsh"
+antigen init ~/.antigenrc
 
 bindkey -e
-#export KEYTIMEOUT=1
 
 if [[ -s $HOME/.ztheme ]]; then
   source $HOME/.ztheme
 fi
-
-alias vim=nvim
-alias vi=nvim
-
-# Git aliases
-alias g='git'
-unalias gb
-
-#alias gl='g l'
-#alias grl='g rl'
-#alias gls='g ls'
-#alias gs='g s'
-#alias ga='g a'
-#alias gc='g c'
-#alias gau='g au'
-#alias grm='g rm'
-#alias gb='g b'
-#alias gco='g co'
-#alias gm='g m'
-#alias gmff='g mff'
-#alias gp='g p'
-#alias gpu='g pu'
-#alias gf='g f'
-#alias gst='g st'
-#alias gstp='g stp'
-#alias gd='g d'
 
 # Direnv only if it's installed
 if command -v direnv >/dev/null 2>&1; then
@@ -128,17 +73,11 @@ elif type compctl &>/dev/null; then
 fi
 ###-end-npm-completion-###
 
-# Base16 Shell
-BASE16_SHELL="$HOME/dotfiles/_vendor/base16-shell/"
-[ -n "$PS1" ] && \
-    [ -s "$BASE16_SHELL/profile_helper.sh" ] && \
-        eval "$("$BASE16_SHELL/profile_helper.sh")"
-
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 eval "$(op completion zsh)"; compdef _op op
 eval "$(starship init zsh)"
 
-#export QT_FONT_DPI=120
-export QT_QPA_PLATFORMTHEME="gtk3"
-
 source /home/erik/.config/broot/launcher/bash/br
+
+# Enable bash completions
+autoload -U +X bashcompinit && bashcompinit 

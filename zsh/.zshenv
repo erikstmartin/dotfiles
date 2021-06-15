@@ -67,10 +67,18 @@ if [[ ! -d "$TMPPREFIX" ]]; then
   mkdir -p "$TMPPREFIX"
 fi
 
+# Aliases
+alias vim=nvim
+alias vi=nvim
+alias g='git'
+alias k=kubectl
+
+
 #
 # Environment Variables
 #
 
+export QT_QPA_PLATFORMTHEME="gtk3"
 export GOPATH=~/go
 export PATH=~/bin:$GOPATH/bin:/usr/local/go/bin:$HOME/node_modules/.bin:/opt/local/bin:/usr/local/sbin:/usr/local/bin:$PATH
 export XDG_CONFIG_HOME=~/.config
@@ -78,9 +86,6 @@ export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
 export C_PLUS_INCLUDE_PATH=/usr/local/include:$C_PLUS_INCLUDE_PATH
 export C_INCLUDE_PATH=/usr/local/include:$C_INCLUDE_PATH
 export PATH=/usr/local/share/ProCapture/bin:$PATH
-
-#DOCKER_GRAPHDRIVER=vfs
-
-# Git blows up because of CA for SSL, ignore it
-#export GIT_SSL_NO_VERIFY=true
-export PKG_CONFIG_PATH=/home/erik/build/gst-rtsp-server/build/pkgconfig
+export ZSH_AUTOSUGGEST_HISTORY_IGNORE="git commit *"
+#export DOCKER_GRAPHDRIVER=vfs
+#export QT_FONT_DPI=120
