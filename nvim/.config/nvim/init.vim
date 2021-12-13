@@ -6,7 +6,6 @@ Plug 'rust-lang/rust.vim'
 Plug 'prettier/vim-prettier', {
   \ 'do': 'yarn install',
   \ 'for': ['javascript', 'typescript', 'css', 'less', 'scss', 'json', 'graphql', 'markdown', 'vue', 'yaml', 'html'] }
-Plug 'nvim-treesitter/nvim-treesitter'
 
 Plug 'tpope/vim-surround'
 
@@ -17,19 +16,17 @@ Plug 'SirVer/ultisnips'
 Plug 'honza/vim-snippets'
 "Plug 'norcalli/snippets.nvim' " Still needs a bigger snippet library or support for ultisnip snippets
 
+Plug 'ElPiloto/sidekick.nvim'
 Plug 'majutsushi/tagbar'
 Plug 'scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }
-"Plug 'justink/vim-dirvish'
 Plug 'ryanoasis/vim-devicons'
 Plug 'tpope/vim-commentary'
 
 Plug 'chriskempson/base16-vim'
-"Plug 'vim-airline/vim-airline' 			    " statusline
-"Plug 'vim-airline/vim-airline-themes'
 
 Plug 'rking/ag.vim'
 
-Plug 'tpope/vim-fugitive'
+"Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-git', {'autoload':{'filetypes':['gitcommit','gitconfig', 'gitrebase', 'gitsendmail']}}
 Plug 'kdheepak/lazygit.nvim'
 
@@ -41,12 +38,17 @@ Plug 'tjdevries/lsp_extensions.nvim'
 Plug 'nvim-lua/completion-nvim'
 Plug 'steelsojka/completion-buffers'
 
-"Plug 'psliwka/vim-smoothie'
-
 Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-lua/popup.nvim'
 Plug 'nvim-lua/telescope.nvim'
 Plug 'openresty/lua-cjson'
+Plug 'nvim-treesitter/nvim-treesitter'
+Plug 'sindrets/diffview.nvim'
+
+Plug 'codota/tabnine-vim'
+
+Plug 'rmagatti/auto-session'
+Plug 'rmagatti/session-lens'
 
 Plug 'mattn/emmet-vim', {'autoload':{'filetypes':['html','css','sass','scss','less']}} " HTML completion
 Plug 'leafgarland/typescript-vim'

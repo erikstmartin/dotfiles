@@ -13,3 +13,4 @@ nnoremap <Leader>gr :lua require'telescope.builtin'.lsp_references()<CR>
 nnoremap <Leader>ts :lua require'telescope.builtin'.treesitter()<CR>
 
 nnoremap <Leader>tp :lua require'telescope.builtin'.planets()<CR>
+nnoremap <Leader>ss :lua require('session-lens').search_session()
