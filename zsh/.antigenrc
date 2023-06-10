@@ -4,7 +4,6 @@ antigen use oh-my-zsh
 # Load bundles from the default repo (oh-my-zsh)
 antigen bundle archlinux
 antigen bundle bundler
-antigen bundle cargo
 antigen bundle command-not-found
 antigen bundle direnv
 antigen bundle docker
@@ -23,7 +22,6 @@ antigen bundle rbenv
 antigen bundle rsync
 antigen bundle ruby
 antigen bundle rust
-antigen bundle rustup
 antigen bundle systemd
 antigen bundle tmux
 

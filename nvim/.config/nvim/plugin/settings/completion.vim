@@ -7,17 +7,34 @@ let g:UltiSnipsJumpBackwardTrigger="<c-k>"
 " configure lsp
 "let g:diagnostic_enable_virtual_text = 1
 lua << EOF
+  require("mason").setup({
+      PATH = "prepend", -- "skip" seems to cause the spawning error
+      pip = {
+        upgrade_pip = true,
+      }
+  })
+
+  require("mason").setup()
+  require("mason-lspconfig").setup {
+    ensure_installed = { "clangd", "cmake", "cssls", "dockerls", "eslint", "gopls", "html",
+    "jsonls", "tsserver", "marksman", "spectral", "powershell_es", "pylsp", "ruby_ls", "sqls", "taplo", "tailwindcss", "terraformls", "vuels", "lua_ls", "rust_analyzer" },
+  }
+
   local on_attach_vim = function(client)
     require'completion'.on_attach(client)
   end
 
   require'lspconfig'.gopls.setup{on_attach=on_attach_vim}
   require'lspconfig'.rust_analyzer.setup{on_attach=on_attach_vim}
-  require'lspconfig'.tsserver.setup{on_attach=on_attach_vim}
-  require'lspconfig'.pyls.setup{on_attach=on_attach_vim}
+  require'lspconfig'.tsserver.setup{
+    filetypes = { "javascript", "typescript", "typescriptreact", "typescript.tsx" },
+    on_attach=on_attach_vim,
+    root_dir = function() return vim.loop.cwd() end
+  }
+  require'lspconfig'.pylsp.setup{on_attach=on_attach_vim}
   require'lspconfig'.cssls.setup{on_attach=on_attach_vim}
   require'lspconfig'.bashls.setup{on_attach=on_attach_vim}
-  require'lspconfig'.sumneko_lua.setup{on_attach=on_attach_vim}
+  require'lspconfig'.lua_ls.setup{on_attach=on_attach_vim}
 
   vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
     vim.lsp.diagnostic.on_publish_diagnostics, {
@@ -44,13 +61,6 @@ lua << EOF
     }
   )
 
-  require'nvim-treesitter.configs'.setup {
-    ensure_installed = "maintained", -- one of "all", "maintained" (parsers with maintainers), or a list of languages
-    highlight = {
-      enable = true,              -- false will disable the whole extension
-      disable = { "java" },  -- list of language that will be disabled
-    },
-  }
 EOF
 
 " Use completion-nvim in every buffer

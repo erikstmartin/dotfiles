@@ -89,3 +89,4 @@ export PATH=/usr/local/share/ProCapture/bin:$PATH
 export ZSH_AUTOSUGGEST_HISTORY_IGNORE="git commit *"
 #export DOCKER_GRAPHDRIVER=vfs
 #export QT_FONT_DPI=120
+export GO111MODULE=on

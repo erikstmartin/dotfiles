@@ -33,6 +33,10 @@ Plug 'kdheepak/lazygit.nvim'
 Plug 'godlygeek/tabular', {'autoload':{'commands':'Tabularize'}}
 
 Plug 'kyazdani42/nvim-web-devicons'
+
+Plug 'williamboman/mason.nvim', { 'do': ':MasonUpdate' }
+Plug 'williamboman/mason-lspconfig.nvim'
+Plug 'neovim/nvim-lspconfig'
 Plug 'neovim/nvim-lsp'
 Plug 'tjdevries/lsp_extensions.nvim'
 Plug 'nvim-lua/completion-nvim'
@@ -42,10 +46,8 @@ Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-lua/popup.nvim'
 Plug 'nvim-lua/telescope.nvim'
 Plug 'openresty/lua-cjson'
-Plug 'nvim-treesitter/nvim-treesitter'
+Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 Plug 'sindrets/diffview.nvim'
-
-Plug 'codota/tabnine-vim'
 
 Plug 'rmagatti/auto-session'
 Plug 'rmagatti/session-lens'
