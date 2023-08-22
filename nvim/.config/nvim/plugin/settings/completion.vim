@@ -24,7 +24,13 @@ lua << EOF
     require'completion'.on_attach(client)
   end
 
-  require'lspconfig'.gopls.setup{on_attach=on_attach_vim}
+  local capabilities = vim.lsp.protocol.make_client_capabilities()
+  capabilities.textDocument.completion.completionItem.snippetSupport = true
+
+  require'lspconfig'.gopls.setup{
+    capabilities = capabilities,
+    on_attach=on_attach_vim
+  }
   require'lspconfig'.rust_analyzer.setup{on_attach=on_attach_vim}
   require'lspconfig'.tsserver.setup{
     filetypes = { "javascript", "typescript", "typescriptreact", "typescript.tsx" },
@@ -64,7 +70,7 @@ lua << EOF
 EOF
 
 " Use completion-nvim in every buffer
-"autocmd BufEnter * lua require'completion'.on_attach()
+autocmd BufEnter * lua require'completion'.on_attach()
 autocmd Filetype go,python,ts,typescript,rust,javascript,python,lua,bash,css setlocal omnifunc=v:lua.vim.lsp.omnifunc
 
 autocmd InsertLeave,BufEnter,BufWinEnter,TabEnter *.rs :lua require'lsp_extensions'.inlay_hints{highlight = "NonText", prefix = ' » ', aligned = false, only_current_line = false}

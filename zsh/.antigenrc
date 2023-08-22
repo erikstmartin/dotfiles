@@ -2,7 +2,7 @@
 antigen use oh-my-zsh
 
 # Load bundles from the default repo (oh-my-zsh)
-antigen bundle archlinux
+#antigen bundle archlinux
 antigen bundle bundler
 antigen bundle command-not-found
 antigen bundle direnv

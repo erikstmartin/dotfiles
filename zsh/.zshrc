@@ -1,6 +1,6 @@
 source $HOME/.zshenv
 
-source "/usr/share/zsh/share/antigen.zsh"
+source "/usr/share/zsh-antigen/antigen.zsh"
 antigen init ~/.antigenrc
 
 bindkey -e
@@ -98,3 +98,11 @@ unset __conda_setup
 
 export PATH=$PATH:/mnt/c/bin
 source $HOME/.agent-bridge.sh
+
+# pnpm
+export PNPM_HOME="/home/erik/.local/share/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME:"*) ;;
+  *) export PATH="$PNPM_HOME:$PATH" ;;
+esac
+# pnpm end

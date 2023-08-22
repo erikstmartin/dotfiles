@@ -26,7 +26,7 @@ Plug 'chriskempson/base16-vim'
 
 Plug 'rking/ag.vim'
 
-"Plug 'tpope/vim-fugitive'
+Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-git', {'autoload':{'filetypes':['gitcommit','gitconfig', 'gitrebase', 'gitsendmail']}}
 Plug 'kdheepak/lazygit.nvim'
 
@@ -41,6 +41,7 @@ Plug 'neovim/nvim-lsp'
 Plug 'tjdevries/lsp_extensions.nvim'
 Plug 'nvim-lua/completion-nvim'
 Plug 'steelsojka/completion-buffers'
+Plug 'github/copilot.vim'
 
 Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-lua/popup.nvim'
@@ -55,6 +56,11 @@ Plug 'rmagatti/session-lens'
 Plug 'mattn/emmet-vim', {'autoload':{'filetypes':['html','css','sass','scss','less']}} " HTML completion
 Plug 'leafgarland/typescript-vim'
 Plug 'peitalin/vim-jsx-typescript'
+
+Plug 'mfussenegger/nvim-dap'
+Plug 'rcarriga/nvim-dap-ui'
+
+Plug 'mbbill/undotree'
 call plug#end()
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
