@@ -168,7 +168,6 @@ lua << EOF
   require'lspconfig'.marksman.setup{on_attach=on_attach_vim}
   require'lspconfig'.pyright.setup{on_attach=on_attach_vim}
 
-  require'lspconfig'.ruby_ls.setup{on_attach=on_attach_vim}
   require'lspconfig'.rust_analyzer.setup{on_attach=on_attach_vim}
   require'lspconfig'.sorbet.setup{on_attach=on_attach_vim}
   require'lspconfig'.spectral.setup{on_attach=on_attach_vim}

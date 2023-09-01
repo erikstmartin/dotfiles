@@ -97,7 +97,7 @@ unset __conda_setup
 # <<< conda initialize <<<
 
 export PATH=$PATH:/mnt/c/bin
-source $HOME/.agent-bridge.sh
+source $HOME/.1password/agent-bridge.sh
 
 # pnpm
 export PNPM_HOME="/home/erik/.local/share/pnpm"

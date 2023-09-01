@@ -7,5 +7,7 @@ vendor/bundle/ruby
 *.swo
 NeoBundle.lock
 nvim/.config/nvim/plugged
+nvim/.local
 polybar/.config/polybar/fonts
 tags
+broot/.config/broot/launcher/
