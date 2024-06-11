@@ -1,3 +1,5 @@
+#zmodload zsh/zprof
+
 source $HOME/.zshenv
 
 source "/usr/share/zsh-antigen/antigen.zsh"
@@ -96,7 +98,7 @@ fi
 unset __conda_setup
 # <<< conda initialize <<<
 
-export PATH=$PATH:/mnt/c/bin
+export PATH=$PATH:/mnt/c/bin:~/.local/bin
 source $HOME/.1password/agent-bridge.sh
 
 # pnpm
@@ -106,3 +108,14 @@ case ":$PATH:" in
   *) export PATH="$PNPM_HOME:$PATH" ;;
 esac
 # pnpm end
+
+autoload -U +X bashcompinit && bashcompinit
+complete -o nospace -C /usr/bin/terraform terraform
+
+# export NVM_DIR="$HOME/.config/nvm"
+# [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+# [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+export TINTED_TMUX_OPTION_STATUSBAR=1
+
+#zprof
