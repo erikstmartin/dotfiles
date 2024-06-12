@@ -33,9 +33,24 @@
   stp = stash pop
   d = diff
   co = checkout
-  l = log --graph --pretty=format':%C(yellow)%h%C(green)%d%Creset %s %C(white) %an, %ar%Creset'
+  l = log --graph --topo-order --pretty='%w(100,0,6)%C(yellow)%h%C(bold)%C(black)%d %C(cyan)%ar %C(green)%an%n%C(bold)%C(white)%s %N' --abbrev-commit
   unstage = reset HEAD
   staged = diff --cached
   unstaged = diff
 [core]
-	excludesfile = ~/.gitignore
+  excludesfile = ~/.gitignore
+  editor = nvim
+  pager = delta
+
+[interactive]
+  diffFilter = delta --color-only
+
+[delta]
+  navigate = true
+  side-by-side = true
+
+[merge]
+  conflictstyle = diff3
+
+[diff]
+  colorMoved = default
