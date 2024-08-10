@@ -166,7 +166,9 @@ fi
 
 
 # Use the 1Password agent bridge for keys
-source "${HOME}/.1password/agent-bridge.sh"
+if [ -f "${HOME}/.1password/agent-bridge.sh" ]; then
+  source "${HOME}/.1password/agent-bridge.sh"
+fi
 
 # Aliases
 if command -v eza >/dev/null 2>&1; then

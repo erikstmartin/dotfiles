@@ -232,6 +232,7 @@ return {
         "golangci-lint",
         "golangci-lint-langserver",
         "goimports",
+        "hadolint",
         "htmlbeautifier",
         "jq",
         "prettier",

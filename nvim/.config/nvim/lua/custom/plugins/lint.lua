@@ -7,11 +7,13 @@ return {
       local lint = require "lint"
       lint.linters_by_ft = {
         bash = { "shellcheck" },
+        dockerfile = { "hadolint" },
         zsh = { "shellcheck" },
         go = { "golangcilint" },
         markdown = { "markdownlint" },
         javascript = { "eslint_d" },
         javascriptreact = { "eslint_d" },
+        json = { "jsonlint" },
         python = { "pylint" },
         ruby = { "rubocop" },
         protobuf = { "buf" },

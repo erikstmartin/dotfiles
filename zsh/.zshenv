@@ -78,7 +78,7 @@ alias k=kubectl
 
 export QT_QPA_PLATFORMTHEME="gtk3"
 export GOPATH=~/go
-export PATH=~/bin:~/.fzf/bin:$GOPATH/bin:/usr/local/go/bin:$HOME/node_modules/.bin:/opt/local/bin:/usr/local/sbin:/usr/local/bin:$PATH
+export PATH=~/bin:~/.fzf/bin:$GOPATH/bin:/usr/local/go/bin:$HOME/node_modules/.bin:/opt/local/bin:/usr/local/sbin:/usr/local/bin:/snap/bin:$PATH
 export XDG_CONFIG_HOME=~/.config
 export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
 export C_PLUS_INCLUDE_PATH=/usr/local/include:$C_PLUS_INCLUDE_PATH
