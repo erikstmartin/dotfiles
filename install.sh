@@ -5,14 +5,14 @@
 # Versions
 NVIM_VERSION=v0.10.1
 #NVIM_VERSION=nightly
-GO_VERSION=1.22.6
+GO_VERSION=1.23.0
 
 # Install tools
 sudo apt install git wget curl zsh \
 	build-essential make \
-	ruby ruby-dev ruby-bundler python3 rustup \
+	ruby ruby-dev ruby-bundler python3 python3-venv rustup nodejs npm \
 	python3-pynvim lua-curl luarocks libcurl4-openssl-dev xclip \
-	postgresql-client \
+	postgresql-client socat \
 	jq jqp yq entr mc bat zoxide delta eza git-delta tshark \
 	tmux python3-tmuxp stow direnv htop neofetch ripgrep silversearcher-ag fd-find  
 
@@ -54,7 +54,7 @@ rm /tmp/go${GO_VERSION}.linux-amd64.tar.gz
 
 # Install Taskfile & completions
 echo "Installing task"
-go install github.com/go-task/task/v3/cmd/task@latest
+/usr/local/go/bin/go install github.com/go-task/task/v3/cmd/task@latest
 sudo curl -L https://raw.githubusercontent.com/go-task/task/main/completion/zsh/_task -o /usr/local/share/zsh/site-functions/_task
 
 # Install fzf
@@ -77,4 +77,7 @@ mkdir -p ~/bin
 mv /tmp/npiperelay/npiperelay.exe ~/bin/npiperelay.exe
 
 # Install termshark
-go install github.com/gcla/termshark/v2/cmd/termshark@v2.4.0
+/usr/local/go/bin/go install github.com/gcla/termshark/v2/cmd/termshark@v2.4.0
+
+# Change shell
+chsh -s /usr/bin/zsh
