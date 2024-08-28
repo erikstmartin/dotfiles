@@ -16,6 +16,8 @@ sudo apt install git wget curl zsh \
 	jq jqp yq entr mc bat zoxide delta eza git-delta tshark \
 	tmux python3-tmuxp stow direnv htop neofetch ripgrep silversearcher-ag fd-find  
 
+mkdir ~/.cache/zinit/completions
+
 # Install atac
 # https://github.com/public-apis/public-apis
 rustup default 1.79
