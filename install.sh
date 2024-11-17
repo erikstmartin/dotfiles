@@ -34,7 +34,7 @@ if [ ! -d "${HOME}/.tmux/plugins/tpm" ]; then
 fi
 
 # Install starship
-curl -sS https://starship.rs/install.sh | sh
+curl -sS https://starship.rs/install.sh | sudo sh
 
 # Install neovim
 echo "Installing neovim ${NVIM_VERSION}"
@@ -64,6 +64,7 @@ echo "Installing fzf"
 git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
 ~/.fzf/install
 git clone --depth=1 https://github.com/junegunn/fzf-git.sh.git ~/.local/share/fzf-git
+mkdir -p "/tmp/$(whoami)/zsh-fzf-tab-$(whoami)"
 
 # Install kubectl
 echo "Installing kubectl"
