@@ -3,9 +3,9 @@
 # TODO: Update Neovim, Terraform, Go, Kubectl only if newer version available
 
 # Versions
-NVIM_VERSION=v0.10.1
+NVIM_VERSION=v0.10.2
 #NVIM_VERSION=nightly
-GO_VERSION=1.23.0
+GO_VERSION=1.23.3
 
 # Install tools
 sudo apt install git wget curl zsh \
