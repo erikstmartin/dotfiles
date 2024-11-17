@@ -51,6 +51,16 @@ return {
       --    That is to say, every time a new file is opened that is associated with
       --    an lsp (for example, opening `main.rs` is associated with `rust_analyzer`) this
       --    function will be executed to configure the current buffer
+      --
+      --
+      require("lspconfig").gdscript.setup {
+        force_setup = true, -- because the LSP is global. Read more on lsp-zero docs about this.
+        single_file_support = false,
+        cmd = { "ncat", "127.0.0.1", "6005" },
+        root_dir = require("lspconfig.util").root_pattern("project.godot", ".git"),
+        filetypes = { "gd", "gdscript", "gdscript3" },
+      }
+
       vim.api.nvim_create_autocmd("LspAttach", {
         group = vim.api.nvim_create_augroup("kickstart-lsp-attach", { clear = true }),
         callback = function(event)
@@ -170,6 +180,7 @@ return {
         docker_compose_language_service = {},
         dockerls = {},
         dotls = {},
+        gdtoolkit = {},
         gopls = {},
         helm_ls = {},
         html = {},
@@ -193,7 +204,7 @@ return {
         --    https://github.com/pmizio/typescript-tools.nvim
         --
         -- But for many setups, the LSP (`tsserver`) will work just fine
-        tsserver = {},
+        -- tsserver = {},
         --
 
         lua_ls = {
@@ -235,6 +246,7 @@ return {
         "hadolint",
         "htmlbeautifier",
         "jq",
+        "omnisharp",
         "prettier",
         --"rubocop",
         -- "rubyfmt",

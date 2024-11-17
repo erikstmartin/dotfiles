@@ -10,6 +10,7 @@ return { -- Highlight, edit, and navigate code
       "cuda",
       "dart",
       "diff",
+      "gdscript",
       "git_config",
       "git_rebase",
       "gitattributes",
