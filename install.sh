@@ -1,7 +1,7 @@
 # Versions
 #NVIM_VERSION=nightly
-NVIM_VERSION=v0.10.3
-GO_VERSION=1.23.3
+NVIM_VERSION=v0.10.4
+GO_VERSION=1.24.1
 TERMSHARK_VERSION=v2.4.0
 
 _install_starship() {
@@ -12,10 +12,10 @@ _install_starship() {
 _install_neovim() {
 	# Install neovim
 	echo "Installing neovim ${NVIM_VERSION}"
-	curl -L https://github.com/neovim/neovim/releases/download/${NVIM_VERSION}/nvim-linux64.tar.gz -o /tmp/nvim-linux64.tar.gz
+	curl -L https://github.com/neovim/neovim/releases/download/${NVIM_VERSION}/nvim-linux-x86_64.tar.gz -o /tmp/nvim-linux-x86_64.tar.gz
 
-	sudo tar -C /usr/local -xzf /tmp/nvim-linux64.tar.gz --strip-components=1
-	rm /tmp/nvim-linux64.tar.gz
+	sudo tar -C /usr/local -xzf /tmp/nvim-linux-x86_64.tar.gz --strip-components=1
+	rm /tmp/nvim-linux-x86_64.tar.gz
 }
 
 _install_go(){
