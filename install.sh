@@ -1,7 +1,7 @@
 # Versions
 #NVIM_VERSION=nightly
-NVIM_VERSION=v0.10.4
-GO_VERSION=1.24.1
+NVIM_VERSION=v0.11.0
+GO_VERSION=1.24.2
 TERMSHARK_VERSION=v2.4.0
 
 _install_starship() {
