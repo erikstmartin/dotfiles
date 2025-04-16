@@ -8,7 +8,7 @@ return {
       --  - va)  - [V]isually select [A]round [)]paren
       --  - yinq - [Y]ank [I]nside [N]ext [']quote
       --  - ci'  - [C]hange [I]nside [']quote
-      require("mini.ai").setup { n_lines = 500 }
+      -- require("mini.ai").setup { n_lines = 500 }
 
       -- Add/delete/replace surroundings (brackets, quotes, etc.)
       --
@@ -31,6 +31,9 @@ return {
       statusline.section_location = function()
         return "%2l:%-2v"
       end
+
+      require("mini.pairs").setup()
+      require("mini.sessions").setup()
 
       -- ... and there is more!
       --  Check out: https://github.com/echasnovski/mini.nvim

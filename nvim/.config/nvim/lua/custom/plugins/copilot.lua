@@ -3,7 +3,7 @@ return {
     "zbirenbaum/copilot.lua",
     cmd = "Copilot",
     build = ":Copilot auth",
-    event = "VimEnter",
+    event = "InsertEnter",
     opts = {
       panel = {
         enabled = false,
@@ -12,6 +12,7 @@ return {
           jump_prev = "[[",
           jump_next = "]]",
           accept = "<C-y>",
+          -- accept = false, -- handled by blink.cmp
           refresh = "gr",
           open = "<C-CR>",
         },
@@ -21,13 +22,13 @@ return {
         },
       },
       suggestion = {
-        enabled = false,
-        auto_trigger = false,
+        enabled = true,
+        auto_trigger = true,
         debounce = 75,
         keymap = {
-          accept = "<M-l>",
-          accept_word = false,
-          accept_line = false,
+          accept = "<M-y>",
+          -- accept_word = "<M-w>",
+          -- accept_line = "<M-l>",
           next = "<M-]>",
           prev = "<M-[>",
           dismiss = "<C-]>",
@@ -36,6 +37,11 @@ return {
       filetypes = {
         lua = true,
         golang = true,
+        python = true,
+        ruby = true,
+        rust = true,
+        javascript = true,
+        typescript = true,
         yaml = false,
         markdown = false,
         help = false,
@@ -49,21 +55,35 @@ return {
   },
   {
     "CopilotC-Nvim/CopilotChat.nvim",
+    cmd = {
+      "CopilotChat",
+      "CopilotChatAgents",
+      "CopilotChatClose",
+      "CopilotChatCommit",
+      "CopilotChatToggle",
+      "CopilotChatDocs",
+      "CopilotChatExplain",
+      "CopilotChatFix",
+      "CopilotChatLoad",
+      "CopilotChatModels",
+      "CopilotChatOptimize",
+      "CopilotChatPrompts",
+      "CopilotChatReset",
+      "CopilotChatReview",
+      "CopilotChatSave",
+      "CopilotChatStop",
+      "CopilotChatTests",
+      "CopilotChatToggle",
+    },
     branch = "main",
     dependencies = {
       { "zbirenbaum/copilot.lua" }, -- or github/copilot.vim
       { "nvim-lua/plenary.nvim" }, -- for curl, log wrapper
     },
     opts = {
-      debug = true, -- Enable debugging
+      debug = false, -- Enable debugging
       -- See Configuration section for rest
     },
     -- See Commands section for default commands if you want to lazy load on them
-  },
-  {
-    "zbirenbaum/copilot-cmp",
-    config = function()
-      require("copilot_cmp").setup()
-    end,
   },
 }

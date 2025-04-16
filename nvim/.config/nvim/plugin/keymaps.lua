@@ -6,10 +6,25 @@ vim.opt.hlsearch = true
 vim.keymap.set("n", "<Esc>", "<cmd>nohlsearch<CR>")
 
 -- Diagnostic keymaps
-vim.keymap.set("n", "[d", vim.diagnostic.goto_prev, { desc = "Go to previous [D]iagnostic message" })
-vim.keymap.set("n", "]d", vim.diagnostic.goto_next, { desc = "Go to next [D]iagnostic message" })
-vim.keymap.set("n", "<leader>e", vim.diagnostic.open_float, { desc = "Show diagnostic [E]rror messages" })
-vim.keymap.set("n", "<leader>q", vim.diagnostic.setloclist, { desc = "Open diagnostic [Q]uickfix list" })
+vim.keymap.set("n", "[d", function()
+  vim.diagnostic.jump { count = 1, float = true }
+end, { desc = "Go to previous [D]iagnostic message" })
+vim.keymap.set("n", "]d", function()
+  vim.diagnostic.jump { count = -1, float = true }
+end, { desc = "Go to next [D]iagnostic message" })
+vim.keymap.set("n", "<leader>de", vim.diagnostic.open_float, { desc = "[D]iagnostic: [E]rror messages" })
+vim.keymap.set("n", "<leader>dq", vim.diagnostic.setqflist, { desc = "[D]iagnostic: [Q]uickfix list" })
+vim.keymap.set("n", "<leader>dl", vim.diagnostic.setloclist, { desc = "[D]iagnostic: [L]oclist list" })
+
+vim.keymap.set("n", "<leader>dL", function()
+  local new_config = not vim.diagnostic.config().virtual_lines
+  vim.diagnostic.config { virtual_lines = new_config }
+end, { desc = "[D]iagnostic: Toggle Virtual [L]ines" })
+
+vim.keymap.set("n", "<leader>dT", function()
+  local new_config = not vim.diagnostic.config().virtual_text
+  vim.diagnostic.config { virtual_text = new_config }
+end, { desc = "[D]iagnostic: Toggle Virtual [T]ext" })
 
 -- Exit terminal mode in the builtin terminal with a shortcut that is a bit easier
 -- for people to discover. Otherwise, you normally need to press <C-\><C-n>, which
@@ -41,3 +56,7 @@ vim.keymap.set("n", "<M-h>", "<c-w>5<")
 vim.keymap.set("n", "<M-l>", "<c-w>5>")
 vim.keymap.set("n", "<M-k>", "<C-W>+")
 vim.keymap.set("n", "<M-j>", "<C-W>-")
+
+vim.keymap.set("n", "q", "<cmd>q<CR>", { desc = "Quit" })
+vim.keymap.set("n", "Q", "<cmd>q<CR>", { desc = "Quit All" })
+vim.keymap.set("n", "<C-s>", "<cmd>w<CR>", { desc = "Save" })

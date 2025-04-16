@@ -173,11 +173,13 @@ fi
 # Aliases
 if command -v eza >/dev/null 2>&1; then
   alias eza="eza --color=always --git --icons=always"
-  alias ls="eza --long --no-filesize --no-time --no-user --no-permissions"
+  alias l="eza --long --no-filesize --no-time --no-user --no-permissions"
+  alias ls="eza"
   alias tree="eza --tree"
 else
   alias ls='ls --color=auto'
 fi
+
 alias vim=nvim
 alias vi=nvim
 
@@ -261,4 +263,3 @@ esac
 # pnpm end
 
 #zprof
-

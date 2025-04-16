@@ -60,3 +60,10 @@ opt.shada = { "'10", "<0", "s10", "h" }
 
 -- Don't have `o` add a comment
 opt.formatoptions:remove "o"
+
+-- Configure diagnostics
+vim.diagnostic.config {
+  -- virtual_text = true
+  -- virtual_lines = true,
+  severity_sort = true,
+}

@@ -75,17 +75,14 @@ _install() {
 		jq jqp yq entr mc bat zoxide delta eza git-delta tshark \
 		tmux python3-tmuxp stow direnv htop neofetch ripgrep silversearcher-ag fd-find  
 
+	sudo npm install -g shx@latest
+
 	# Only install xclip if not running in WSL
 	if [ -z "$WSL_DISTRO_NAME" ]; then
 		sudo apt install xclip
 	fi
 
 	mkdir ~/.cache/zinit/completions
-
-	# Install atac
-	# https://github.com/public-apis/public-apis
-	rustup default 1.79
-	cargo install atac
 
 	# Install tpm
 	if [ ! -d "${HOME}/.tmux/plugins/tpm" ]; then

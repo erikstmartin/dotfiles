@@ -4,7 +4,6 @@ return {
     require("smart-splits").setup {
       -- This is the default configuration
       enable = true,
-      lazy = false,
       ignored_buftypes = {
         "nofile",
         "quickfix",

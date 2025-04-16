@@ -1,4 +1,8 @@
 return {
+  {
+    "MeanderingProgrammer/render-markdown.nvim",
+    ft = { "markdown", "codecompanion" },
+  },
   -- NOTE: Plugins can be added with a link (or for a github repo: 'owner/repo' link).
   "tpope/vim-sleuth", -- Detect tabstop and shiftwidth automatically
 
@@ -10,9 +14,6 @@ return {
   --
   --  This is equivalent to:
   --    require('Comment').setup({})
-
-  -- "gc" to comment visual regions/lines
-  { "numToStr/Comment.nvim", opts = {} },
 
   -- Here is a more advanced example where we pass configuration
   -- options to `gitsigns.nvim`. This is equivalent to the following Lua:
@@ -31,13 +32,55 @@ return {
       },
     },
   },
-  "sindrets/diffview.nvim",
+  {
+    "sindrets/diffview.nvim",
+    keys = {
+      {
+        "<leader>gdb",
+        "<cmd>DiffviewOpen<cr>",
+        desc = "[G]it: [D]iff [B]ranch",
+      },
+      {
+        "<leader>gD",
+        "<cmd>DiffviewClose<cr>",
+        desc = "[G]it: [D]iff Close",
+      },
+      {
+        "<leader>gdf",
+        "<cmd>DiffviewFileHistory<cr>",
+        desc = "[G]it: [D]iff [F]ile",
+      },
+      {
+        "<leader>gdp",
+        function()
+          Snacks.input({ prompt = "Prompt: " }, function(input)
+            if input then
+              vim.cmd("DiffviewOpen " .. input)
+            end
+          end)
+        end,
+        desc = "[G]it: [D]iff [P]rompt (branch)",
+      },
+      {
+        "<leader>gdP",
+        function()
+          Snacks.input({ prompt = "Prompt: " }, function(input)
+            if input then
+              vim.cmd("DiffviewFileHistory " .. input)
+            end
+          end)
+        end,
+        desc = "[G]it: [D]iff [P]rompt (file)",
+      },
+    },
+  },
   { -- Useful plugin to show you pending keybinds.
     "folke/which-key.nvim",
     event = "VimEnter", -- Sets the loading event to 'VimEnter'
     enabled = true,
     config = function() -- This is the function that runs, AFTER loading
       require("which-key").setup {
+        preset = "helix",
         plugins = {
           marks = true, -- shows a list of your marks on ' and `
           registers = true, -- shows your registers on " in NORMAL or <C-r> in INSERT mode
@@ -65,28 +108,20 @@ return {
           buftypes = {},
           filetypes = {},
         },
+        sort = { "local", "order", "alphanum", "mod", "group" },
       }
 
       -- Document existing key chains
       require("which-key").add {
-        { "<leader>c", group = "[C]ode" },
-        { "<leader>c_", hidden = true },
-        { "<leader>d", group = "[D]ocument" },
-        { "<leader>d_", hidden = true },
-        { "<leader>h", group = "Git [H]unk" },
-        { "<leader>h_", hidden = true },
-        { "<leader>r", group = "[R]ename" },
-        { "<leader>r_", hidden = true },
-        { "<leader>s", group = "[S]earch" },
-        { "<leader>s_", hidden = true },
-        { "<leader>t", group = "[T]oggle" },
-        { "<leader>t_", hidden = true },
-        { "<leader>w", group = "[W]orkspace" },
-        { "<leader>w_", hidden = true },
-      }
-      -- visual mode
-      require("which-key").add {
-        { "<leader>h", desc = "Git [H]unk", mode = "v" },
+        { "<leader>a", group = "[A]I", mode = { "v", "n" } },
+        { "<leader>d", group = "[D]iagnostics" },
+        { "<leader>f", group = "[F]ind" },
+        { "<leader>g", group = "[G]it" },
+        { "<leader>gd", group = "[G]it [D]iff" },
+        { "<leader>G", group = "[G]odot" },
+        { "<leader>l", group = "[L]SP" },
+        { "<leader>r", group = "[R]EPL", mode = { "v", "n" } },
+        { "<leader>t", group = "[T]erminal", mode = { "v", "n" } },
       }
     end,
   },
@@ -97,94 +132,397 @@ return {
     opts = { signs = false },
   },
   {
-    "folke/trouble.nvim",
-    opts = {}, -- for default options, refer to the configuration section for custom setup.
-    cmd = "Trouble",
+    "folke/snacks.nvim",
+    priority = 1000,
+    lazy = false,
     keys = {
+      -- Terminal
       {
-        "<leader>xx",
-        "<cmd>Trouble diagnostics toggle<cr>",
-        desc = "Diagnostics (Trouble)",
+        "<leader>tt",
+        function()
+          require("snacks").terminal.toggle()
+        end,
+        desc = "[T]erminal [T]oggle",
       },
       {
-        "<leader>xX",
-        "<cmd>Trouble diagnostics toggle filter.buf=0<cr>",
-        desc = "Buffer Diagnostics (Trouble)",
+        "<leader>tt",
+        function()
+          require("snacks").terminal.toggle()
+        end,
+        desc = "[T]erminal [T]oggle",
       },
       {
-        "<leader>cs",
-        "<cmd>Trouble symbols toggle focus=false<cr>",
-        desc = "Symbols (Trouble)",
+        "<leader>tl",
+        function()
+          require("snacks").terminal.toggle(vim.fn.getline ".", { auto_close = false })
+        end,
+        desc = "[T]erminal Execute [L]ine",
       },
       {
-        "<leader>cl",
-        "<cmd>Trouble lsp toggle focus=false win.position=right<cr>",
-        desc = "LSP Definitions / references / ... (Trouble)",
+        "<leader>ts",
+        function()
+          local _, ls, cs = unpack(vim.fn.getpos "v")
+          local _, le, ce = unpack(vim.fn.getpos ".")
+          local selected_text = vim.api.nvim_buf_get_text(0, ls - 1, cs - 1, le - 1, ce, {})
+
+          require("snacks").terminal.toggle(selected_text)
+        end,
+        desc = "[T]erminal Execute [S]election",
+        mode = "v",
+      },
+      -- Explorer
+      {
+        "\\",
+        function()
+          require("snacks").explorer()
+        end,
+        desc = "Explorer Toggle",
+      },
+      -- Gitbrowse
+      {
+        "<leader>go",
+        function()
+          require("snacks").gitbrowse()
+        end,
+        desc = "[G]it: [O]pen",
+      },
+      -- Pickers
+      {
+        "<leader>fb",
+        function()
+          require("snacks").picker.buffers()
+        end,
+        desc = "[F]ind: [B]uffer",
       },
       {
-        "<leader>xL",
-        "<cmd>Trouble loclist toggle<cr>",
-        desc = "Location List (Trouble)",
+        "<leader>fT",
+        function()
+          require("snacks").picker.colorschemes()
+        end,
+        desc = "[F]ind: [T]heme",
       },
       {
-        "<leader>xQ",
-        "<cmd>Trouble qflist toggle<cr>",
-        desc = "Quickfix List (Trouble)",
+        "<leader>fc",
+        function()
+          require("snacks").picker.command_history()
+        end,
+        desc = "[F]ind: [C]ommand History",
+      },
+      {
+        "<leader>fC",
+        function()
+          require("snacks").picker.commands()
+        end,
+        desc = "[F]ind: [C]ommand",
+      },
+      {
+        "<leader>fd",
+        function()
+          require("snacks").picker.diagnostics()
+        end,
+        desc = "[F]ind: [D]iagnostic (all)",
+      },
+      {
+        "<leader>df",
+        function()
+          require("snacks").picker.diagnostics()
+        end,
+        desc = "[D]iagnostics: [F]ind (all)",
+      },
+      {
+        "<leader>fD",
+        function()
+          require("snacks").picker.diagnostics_buffer()
+        end,
+        desc = "[F]ind: [D]iagnostic (buffer)",
+      },
+      {
+        "<leader>dF",
+        function()
+          require("snacks").picker.diagnostics_buffer()
+        end,
+        desc = "[D]iagnostics: [F]ind (buffer)",
+      },
+      {
+        "<leader>ff",
+        function()
+          require("snacks").picker.smart()
+        end,
+        desc = "[F]ind: [F]iles",
+      },
+      {
+        "<leader><leader>",
+        function()
+          require("snacks").picker.smart()
+        end,
+        desc = "[F]ind: [F]iles",
+      },
+      {
+        "<leader>fF",
+        function()
+          require("snacks").picker.git_files()
+        end,
+        desc = "[F]ind: [F]iles (git)",
+      },
+      {
+        "<leader>fh",
+        function()
+          require("snacks").picker.help()
+        end,
+        desc = "[F]ind: [H]elp",
+      },
+      {
+        "<leader>fj",
+        function()
+          require("snacks").picker.jumps()
+        end,
+        desc = "[F]ind: [J]umps",
+      },
+      {
+        "<leader>fk",
+        function()
+          require("snacks").picker.keymaps()
+        end,
+        desc = "[F]ind: [K]eymaps",
+      },
+      {
+        "<leader>fl",
+        function()
+          require("snacks").picker.loclist()
+        end,
+        desc = "[F]ind: [L]oclist",
+      },
+      {
+        "<leader>fL",
+        function()
+          require("snacks").picker.lines()
+        end,
+        desc = "[F]ind: [L]ines",
+      },
+      {
+        "<leader>fM",
+        function()
+          require("snacks").picker.man()
+        end,
+        desc = "[F]ind: [M]an",
+      },
+      {
+        "<leader>fp",
+        function()
+          require("snacks").picker.projects()
+        end,
+        desc = "[F]ind: [P]rojects",
+      },
+      {
+        "<leader>fP",
+        function()
+          require("snacks").picker.pickers()
+        end,
+        desc = "[F]ind: [P]ickers",
+      },
+      {
+        "<leader>fm",
+        function()
+          require("snacks").picker.marks()
+        end,
+        desc = "[F]ind: [M]arks",
+      },
+      {
+        "<leader>fq",
+        function()
+          require("snacks").picker.qflist()
+        end,
+        desc = "[F]ind: [Q]uickfix",
+      },
+      {
+        "<leader>fr",
+        function()
+          require("snacks").picker.recent()
+        end,
+        desc = "[F]ind: [R]ecent",
+      },
+      {
+        "<leader>fR",
+        function()
+          require("snacks").picker.registers()
+        end,
+        desc = "[F]ind: [R]egisters",
+      },
+      {
+        "<leader>fs",
+        function()
+          require("snacks").picker.search_history()
+        end,
+        desc = "[F]ind: [S]earch History",
+      },
+      {
+        "<leader>ft",
+        function()
+          require("snacks").picker.treesitter()
+        end,
+        desc = "[F]ind: [T]reesitter",
+      },
+      {
+        "<leader>fu",
+        function()
+          require("snacks").picker.undo()
+        end,
+        desc = "[F]ind: [U]ndo",
+      },
+      {
+        "<leader>fz",
+        function()
+          require("snacks").picker.zoxide()
+        end,
+        desc = "[F]ind: [Z]oxide",
+      },
+      {
+        "<leader>lr",
+        function()
+          require("snacks").picker.lsp_references()
+        end,
+        desc = "[L]sp: [R]eferences",
+      },
+      {
+        "<leader>ls",
+        function()
+          require("snacks").picker.lsp_workspace_symbols()
+        end,
+        desc = "[L]sp: [S]ymbols",
+      },
+      {
+        "<leader>lS",
+        function()
+          require("snacks").picker.lsp_symbols()
+        end,
+        desc = "[L]sp: [S]ymbols",
+      },
+      {
+        "<leader>g/",
+        function()
+          require("snacks").picker.git_grep()
+        end,
+        desc = "[G]it: Grep",
+      },
+      {
+        "<leader>/",
+        function()
+          require("snacks").picker.grep()
+        end,
+        desc = "Grep",
+      },
+      {
+        "<leader>gl",
+        function()
+          require("snacks").picker.git_log()
+        end,
+        desc = "[G]it: [L]og (branch)",
+      },
+      {
+        "<leader>gL",
+        function()
+          require("snacks").picker.git_log_file()
+        end,
+        desc = "[G]it: [L]og (file)",
+      },
+      {
+        "<leader>g<C-l>",
+        function()
+          require("snacks").picker.git_log_line()
+        end,
+        desc = "[G]it: [L]og (line)",
+      },
+      {
+        "<leader>gs",
+        function()
+          require("snacks").picker.git_status()
+        end,
+        desc = "[G]it: [S]tatus",
+      },
+      {
+        "<leader>gS",
+        function()
+          require("snacks").picker.git_stash()
+        end,
+        desc = "[G]it: [S]tash",
       },
     },
-  },
-  {
-    "windwp/nvim-autopairs",
-    event = "InsertEnter",
-    -- Optional dependency
-    dependencies = { "hrsh7th/nvim-cmp" },
-    config = function()
-      require("nvim-autopairs").setup {}
-      -- If you want to automatically add `(` after selecting a function or method
-      local cmp_autopairs = require "nvim-autopairs.completion.cmp"
-      local cmp = require "cmp"
-      cmp.event:on("confirm_done", cmp_autopairs.on_confirm_done())
-    end,
-  },
-  {
-    "nvim-neo-tree/neo-tree.nvim",
-    version = "*",
-    dependencies = {
-      "nvim-lua/plenary.nvim",
-      "nvim-tree/nvim-web-devicons", -- not strictly required, but recommended
-      "MunifTanjim/nui.nvim",
-    },
-    cmd = "Neotree",
-    keys = {
-      { "\\", ":Neotree reveal<CR>", { desc = "NeoTree reveal" } },
-    },
+    ---@type snacks.Config
     opts = {
-      filesystem = {
-        window = {
-          mappings = {
-            ["\\"] = "close_window",
+      bigfile = { enabled = true },
+      dashboard = {
+        enabled = true,
+        preset = {
+          keys = {
+            { icon = " ", key = "f", desc = "Find File", action = ":lua Snacks.dashboard.pick('files')" },
+            { icon = " ", key = "n", desc = "New File", action = ":ene | startinsert" },
+            { icon = " ", key = "g", desc = "Find Text", action = ":lua Snacks.dashboard.pick('live_grep')" },
+            { icon = " ", key = "r", desc = "Recent Files", action = ":lua Snacks.dashboard.pick('oldfiles')" },
+            {
+              icon = " ",
+              key = "c",
+              desc = "Config",
+              action = ":lua Snacks.dashboard.pick('files', {cwd = vim.fn.stdpath('config')})",
+            },
+            { icon = " ", key = "s", desc = "Restore Session", section = "session" },
+            { icon = "󰒲 ", key = "L", desc = "Lazy", action = ":Lazy", enabled = package.loaded.lazy ~= nil },
+            { icon = " ", key = "M", desc = "Mason", action = ":Mason", enabled = package.loaded.lazy ~= nil },
+            { icon = " ", key = "q", desc = "Quit", action = ":qa" },
           },
         },
+        sections = {
+          { section = "header" },
+          { section = "keys", gap = 1, padding = 1 },
+          { pane = 2, icon = " ", title = "Recent Files", section = "recent_files", indent = 2, padding = 1 },
+          { pane = 2, icon = " ", title = "Projects", section = "projects", indent = 2, padding = 1 },
+          {
+            pane = 2,
+            icon = " ",
+            title = "Git Status",
+            section = "terminal",
+            enabled = function()
+              return Snacks.git.get_root() ~= nil
+            end,
+            cmd = "git status --short --branch --renames",
+            height = 15,
+            padding = 1,
+            ttl = 5 * 60,
+            indent = 3,
+          },
+          { section = "startup" },
+          false,
+        },
       },
+      debug = { enabled = true },
+      explorer = {
+        enabled = true,
+        replace_netrw = true,
+      },
+      git = { enabled = true },
+      gitbrowse = { enabled = true },
+      image = { enabled = true },
+      indent = { enabled = false },
+      input = { enabled = true },
+      layout = { enabled = true },
+      notifier = {
+        enabled = true,
+        timeout = 3000,
+      },
+      picker = { enabled = true },
+      quickfile = { enabled = true },
+      scope = { enabled = true },
+      scroll = { enabled = false },
+      statuscolumn = { enabled = false },
+      terminal = { enabled = true },
+      toggle = { enabled = false },
+      win = { enabled = false },
+      words = { enabled = true },
+      -- styles = {
+      --   notification = {
+      --     wo = { wrap = true }, -- Wrap notifications
+      --   },
+      -- },
     },
   },
-  {
-    "akinsho/toggleterm.nvim",
-    version = "*",
-    config = function()
-      require("toggleterm").setup {
-        size = function(term)
-          if term.direction == "horizontal" then
-            return 15
-          elseif term.direction == "vertical" then
-            return vim.o.columns * 0.4
-          end
-        end,
-      }
-      require "custom.terminal"
-    end,
-  },
-  "stevearc/dressing.nvim",
   -- "ElPiloto/sidekick.nvim",
-  -- "pmizio/typescript-tools.nvim",
 }

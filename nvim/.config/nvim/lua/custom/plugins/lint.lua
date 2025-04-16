@@ -56,19 +56,6 @@ return {
       -- lint.linters_by_ft['terraform'] = nil
       -- lint.linters_by_ft['text'] = nil
 
-      local golangcilint = require "lint.linters.golangcilint"
-      golangcilint.append_fname = true
-      golangcilint.args = {
-        "run",
-        "--fast",
-        "--out-format",
-        "json",
-        "--config",
-        "~/.golangci.yml",
-        "--timeout",
-        "5m",
-      }
-
       -- Create autocommand which carries out the actual linting
       -- on the specified events.
       local lint_augroup = vim.api.nvim_create_augroup("lint", { clear = true })

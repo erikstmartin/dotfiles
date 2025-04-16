@@ -11,11 +11,14 @@ disabled = true
 style = 'bold blue'
 symbol = " "
 
+[conda]
+ignore_base = true
+
 [golang]
-symbol = ''
+symbol = ' '
 
 [kubernetes]
-symbol = '☸ '
+symbol = '☸  '
 disabled = false
 detect_files = ['Dockerfile']
 
