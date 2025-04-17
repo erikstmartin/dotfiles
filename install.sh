@@ -122,6 +122,9 @@ _install() {
 
 	# Install termshark
 	/usr/local/go/bin/go install github.com/gcla/termshark/v2/cmd/termshark@${TERMSHARK_VERSION}
+	
+	# Install yazi
+	snap install yazi --classic
 
 	# Change shell
 	chsh -s /usr/bin/zsh
@@ -141,10 +144,10 @@ _update() {
 		_install_neovim
 	fi
 
-
 	# Update Go
 	CURRENT_GO_VERSION=$(go version | awk 'BEGIN{FS=OFS=" ";} { print $3; }')
 	if [ "$CURRENT_GO_VERSION" != "go$GO_VERSION" ]; then
+		echo "Updating go"
 		_install_go
 	fi
 
@@ -156,8 +159,11 @@ _update() {
 	cd ~/.fzf && git pull && ./install
 	cd ~/.local/share/fzf-git && git pull
 	
-	#T Update kubectl
+	# Update kubectl
 	_install_kubectl
+
+	# Update yazi
+	snap refresh yazi --classic
 }
 
 if [ $# -gt  1 ]; then

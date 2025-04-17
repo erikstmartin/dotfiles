@@ -164,6 +164,10 @@ if command -v zoxide >/dev/null 2>&1; then
   eval "$(zoxide init --cmd cd zsh)"
 fi
 
+if command -v yazi >/dev/null 2>&1; then
+  alias y="yazi --color=always --git --icons=always"
+fi
+
 
 # Use the 1Password agent bridge for keys
 if [ -f "${HOME}/.1password/agent-bridge.sh" ]; then
