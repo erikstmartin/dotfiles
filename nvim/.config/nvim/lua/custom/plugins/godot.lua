@@ -1,42 +1,34 @@
+--- Walks up from cwd looking for project.godot to detect Godot projects.
+local function is_godot_project()
+  return vim.fn.findfile("project.godot", ".;") ~= ""
+end
+
+local godot_project = is_godot_project()
+
 return {
+  -- Godot integration: debugging, Neovim server pipe for Godot↔Neovim communication
   {
-    "upperhands/godot-neovim",
-    ft = { "gdscript", "gd", "gdscript3" },
-    keys = {
-      {
-        "<leader>Gm",
-        "<cmd>GdRunMainScene<cr>",
-        desc = "[G]odot [M]ain Scene",
-        ft = { "gdscript", "gd", "gdscript3" },
-      },
-      {
-        "<leader>Gl",
-        "<cmd>GdRunLastScene<cr>",
-        desc = "[G]odot [L]ast Scene",
-        ft = { "gdscript", "gd", "gdscript3" },
-      },
-      {
-        "<leader>Gs",
-        "<cmd>GdRunSelectScene<cr>",
-        desc = "[G]odot [S]elect Scene",
-        ft = { "gdscript", "gd", "gdscript3" },
-      },
-      {
-        "<leader>Gd",
-        "<cmd>GdShowDocumentation<cr>",
-        desc = "[G]odot [D]ocumentation",
-        ft = { "gdscript", "gd", "gdscript3" },
-      },
-    },
+    "lommix/godot.nvim",
+    -- In a Godot project, load eagerly so the server pipe starts immediately
+    -- (allows Godot's external editor to --remote-send before any .gd file is opened).
+    -- Outside a Godot project, stay lazy and only load on filetype or command.
+    lazy = not godot_project,
+    ft = { "gdscript", "gdshader", "gdresource" },
+    cmd = { "GodotDebug", "GodotBreakAtCursor", "GodotStep", "GodotQuit", "GodotContinue" },
+    dependencies = { "mfussenegger/nvim-dap" },
     opts = {
-      godot_executable = "'C:\\\\Program Files\\\\Godot\\\\Godot_v4.3-stable_mono_win64\\\\Godot_v4.3-stable_mono_win64.exe'",
-      use_default_keymaps = false, -- set to false to disable keymaps below
-      keymaps = {
-        GdRunMainScene = "<leader>Gm", -- run main scene
-        GdRunLastScene = "<leader>Gl", -- run the most recently executed scene
-        GdRunSelectScene = "<leader>Gs", -- show all scenes, and run selected
-        GdShowDocumentation = "<leader>Gd", -- open the documentation for the symbol under cursor in the editor
-      },
+      bin = "godot",
+      pipepath = vim.fn.stdpath("cache") .. "/godot.pipe",
+    },
+  },
+
+  -- GDScript extended LSP: in-editor Godot documentation, class browsing
+  {
+    "teatek/gdscript-extended-lsp.nvim",
+    ft = { "gdscript" },
+    opts = {
+      picker = "snacks",
+      view_type = "vsplit",
     },
   },
 }

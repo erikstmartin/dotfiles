@@ -10,3 +10,5 @@ tags
 .netrwhist
 .vim/local_bundle
 *.local.etcd/
+.sisyphus/
+**/.claude/settings.local.json

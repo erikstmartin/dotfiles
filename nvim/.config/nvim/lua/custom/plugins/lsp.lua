@@ -1,74 +1,34 @@
 return {
+  -- Useful status updates for LSP.
   {
-    "neovim/nvim-lspconfig",
-    dependencies = {
-      "folke/neodev.nvim",
-      { "williamboman/mason.nvim", config = true }, -- NOTE: Must be loaded before dependants
-      "williamboman/mason-lspconfig.nvim",
-      "WhoIsSethDaniel/mason-tool-installer.nvim",
+    "j-hui/fidget.nvim",
+    event = "LspAttach",
+    opts = {},
+  },
 
-      -- Useful status updates for LSP.
-      -- NOTE: `opts = {}` is the same as calling `require('fidget').setup({})`
-      { "j-hui/fidget.nvim", opts = {} },
+  -- `lazydev` configures Lua LSP for your Neovim config, runtime and plugins
+  -- used for completion, annotations and signatures of Neovim apis
+  {
+    "folke/lazydev.nvim",
+    ft = "lua",
+    opts = {},
+  },
 
-      -- `neodev` configures Lua LSP for your Neovim config, runtime and plugins
-      -- used for completion, annotations and signatures of Neovim apis
-      { "folke/neodev.nvim", opts = {} },
+  -- Schema information
+  { "b0o/SchemaStore.nvim", lazy = true },
 
-      -- Autoformatting
-      "stevearc/conform.nvim",
-
-      -- Schema information
-      "b0o/SchemaStore.nvim",
-    },
+  {
+    event = "VeryLazy",
+    name = "lsp-setup",
+    dir = vim.fn.stdpath("config"),
     config = function()
-      -- Brief aside: **What is LSP?**
-      --
-      -- LSP is an initialism you've probably heard, but might not understand what it is.
-      --
-      -- LSP stands for Language Server Protocol. It's a protocol that helps editors
-      -- and language tooling communicate in a standardized fashion.
-      --
-      -- In general, you have a "server" which is some tool built to understand a particular
-      -- language (such as `gopls`, `lua_ls`, `rust_analyzer`, etc.). These Language Servers
-      -- (sometimes called LSP servers, but that's kind of like ATM Machine) are standalone
-      -- processes that communicate with some "client" - in this case, Neovim!
-      --
-      -- LSP provides Neovim with features like:
-      --  - Go to definition
-      --  - Find references
-      --  - Autocompletion
-      --  - Symbol Search
-      --  - and more!
-      --
-      -- Thus, Language Servers are external tools that must be installed separately from
-      -- Neovim. This is where `mason` and related plugins come into play.
-      --
-      -- If you're wondering about lsp vs treesitter, you can check out the wonderfully
-      -- and elegantly composed help section, `:help lsp-vs-treesitter`
-
       --  This function gets run when an LSP attaches to a particular buffer.
       --    That is to say, every time a new file is opened that is associated with
       --    an lsp (for example, opening `main.rs` is associated with `rust_analyzer`) this
       --    function will be executed to configure the current buffer
-      --
-      --
-      require("lspconfig").gdscript.setup {
-        force_setup = true, -- because the LSP is global. Read more on lsp-zero docs about this.
-        single_file_support = false,
-        cmd = { "ncat", "127.0.0.1", "6005" },
-        root_dir = require("lspconfig.util").root_pattern("project.godot", ".git"),
-        filetypes = { "gd", "gdscript", "gdscript3" },
-      }
-
       vim.api.nvim_create_autocmd("LspAttach", {
         group = vim.api.nvim_create_augroup("lsp-attach", { clear = true }),
         callback = function(event)
-          -- NOTE: Remember that Lua is a real programming language, and as such it is possible
-          -- to define small helper and utility functions so you don't have to repeat yourself.
-          --
-          -- In this case, we create a function that lets us more easily define mappings specific
-          -- for LSP related items. It sets the mode, buffer and description for us each time.
           local map = function(keys, func, desc)
             vim.keymap.set("n", keys, func, { buffer = event.buf, desc = "[L]SP: " .. desc })
           end
@@ -83,6 +43,18 @@ return {
           -- Opens a popup that displays documentation about the word under your cursor
           --  See `:help K` for why this keymap.
           map("K", vim.lsp.buf.hover, "Hover Documentation")
+
+          -- Show signature help for the function under your cursor.
+          map("<leader>lk", vim.lsp.buf.signature_help, "Signature [H]elp")
+
+          -- Jump to the definition of the word under your cursor.
+          map("gd", vim.lsp.buf.definition, "[G]oto [D]efinition")
+
+          -- Jump to the implementation of the word under your cursor.
+          map("gI", vim.lsp.buf.implementation, "[G]oto [I]mplementation")
+
+          -- Jump to the type definition of the word under your cursor.
+          map("gy", vim.lsp.buf.type_definition, "[G]oto T[y]pe Definition")
 
           -- WARN: This is not Goto Definition, this is Goto Declaration.
           --  For example, in C this would take you to the header.
@@ -136,9 +108,7 @@ return {
       local capabilities = vim.lsp.protocol.make_client_capabilities()
       -- capabilities = vim.tbl_deep_extend("force", capabilities, require("cmp_nvim_lsp").default_capabilities())
 
-      -- Enable the following language servers
-      --  Feel free to add/remove any LSPs that you want here. They will automatically be installed.
-      --
+      -- Enable the following language servers.
       --  Add any additional override configuration in the following tables. Available keys are:
       --  - cmd (table): Override the default command used to start the server
       --  - filetypes (table): Override the default list of associated filetypes for the server
@@ -146,40 +116,129 @@ return {
       --  - settings (table): Override the default settings passed when initializing the server.
       --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
       local servers = {
-        bashls = {},
-        buf = {},
-        clangd = {},
-        cmake = {},
-        cssls = {},
-        docker_compose_language_service = {},
-        dockerls = {},
-        dotls = {},
-        gdtoolkit = {},
-        gopls = {},
-        helm_ls = {},
-        html = {},
-        jsonls = {},
-        marksman = {},
-        pyright = {},
+        bashls = {
+          cmd = { "bash-language-server", "start" },
+          filetypes = { "sh", "bash", "zsh" },
+        },
+        buf = {
+          cmd = { "buf", "lsp", "serve" },
+          filetypes = { "proto" },
+          root_markers = { "buf.yaml", "buf.work.yaml", ".git" },
+        },
+        clangd = {
+          filetypes = { "c", "cpp", "objc", "objcpp", "cuda" },
+        },
+        cssls = {
+          cmd = { "vscode-css-language-server", "--stdio" },
+          filetypes = { "css", "scss", "less" },
+        },
+        docker_compose_language_service = {
+          cmd = { "docker-compose-langserver", "--stdio" },
+          filetypes = { "yaml.docker-compose" },
+        },
+        dockerls = {
+          cmd = { "docker-langserver", "--stdio" },
+          filetypes = { "dockerfile" },
+        },
+        gopls = {
+          cmd = { "gopls" },
+          filetypes = { "go", "gomod", "gowork", "gotmpl", "gosum" },
+          settings = {
+            gopls = {
+              gofumpt = true,
+              codelenses = {
+                gc_details = false,
+                generate = true,
+                regenerate_cgo = true,
+                run_govulncheck = true,
+                test = true,
+                tidy = true,
+                upgrade_dependency = true,
+                vendor = true,
+              },
+              hints = {
+                assignVariableTypes = true,
+                compositeLiteralFields = true,
+                compositeLiteralTypes = true,
+                constantValues = true,
+                functionTypeParameters = true,
+                parameterNames = true,
+                rangeVariableTypes = true,
+              },
+              analyses = {
+                nilness = true,
+                unusedparams = true,
+                unusedwrite = true,
+                useany = true,
+              },
+              usePlaceholders = true,
+              completeUnimported = true,
+              staticcheck = true,
+              directoryFilters = { "-.git", "-.vscode", "-.idea", "-.vscode-test", "-node_modules" },
+              semanticTokens = true,
+            },
+          },
+        },
+        helm_ls = {
+          cmd = { "helm_ls", "serve" },
+          filetypes = { "helm" },
+        },
+        html = {
+          cmd = { "vscode-html-language-server", "--stdio" },
+          filetypes = { "html", "templ" },
+        },
+        jsonls = {
+          cmd = { "vscode-json-language-server", "--stdio" },
+          filetypes = { "json", "jsonc" },
+        },
+        marksman = {
+          cmd = { "marksman", "server" },
+          filetypes = { "markdown", "markdown.mdx" },
+        },
+        pyright = {
+          cmd = { "pyright-langserver", "--stdio" },
+          filetypes = { "python" },
+        },
         ruby_lsp = {
-          mason = false,
-          cmd = { vim.fn.expand "~/.rbenv/shims/ruby-lsp" },
+          cmd = { "ruby-lsp" },
+          filetypes = { "ruby", "eruby" },
         },
         rubocop = {
-          mason = false,
-          cmd = { vim.fn.expand "~/.rbenv/shims/rubocop" },
+          cmd = { "rubocop" },
+          filetypes = { "ruby" },
         },
-        rust_analyzer = {},
+        rust_analyzer = {
+          cmd = { "rust-analyzer" },
+          filetypes = { "rust" },
+        },
         -- sorbet = {},
-        spectral = {},
-        sqlls = {},
-        -- svelte = {},
-        tailwindcss = {},
-        taplo = {},
-        terraformls = {},
-        vimls = {},
-        -- yamlls = {},
-        -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
+        -- spectral = {},
+        svelte = {
+          cmd = { "svelteserver", "--stdio" },
+          filetypes = { "svelte" },
+        },
+        tailwindcss = {
+          cmd = { "tailwindcss-language-server", "--stdio" },
+          filetypes = { "html", "css", "scss", "javascript", "javascriptreact", "typescript", "typescriptreact", "svelte" },
+        },
+        taplo = {
+          cmd = { "taplo", "lsp", "stdio" },
+          filetypes = { "toml" },
+        },
+        terraformls = {
+          cmd = { "terraform-ls", "serve" },
+          filetypes = { "terraform", "terraform-vars", "hcl" },
+        },
+        yamlls = {
+          cmd = { "yaml-language-server", "--stdio" },
+          filetypes = { "yaml", "yaml.docker-compose" },
+          settings = {
+            yaml = {
+              schemas = require("schemastore").yaml.schemas(),
+              validate = true,
+            },
+          },
+        },
         --
         -- Some languages (like typescript) have entire language plugins that can be useful:
         --    https://github.com/pmizio/typescript-tools.nvim
@@ -187,11 +246,9 @@ return {
         -- But for many setups, the LSP (`tsserver`) will work just fine
         -- tsserver = {},
         --
-
         lua_ls = {
-          -- cmd = {...},
-          -- filetypes = { ...},
-          -- capabilities = {},
+          cmd = { "lua-language-server" },
+          filetypes = { "lua" },
           settings = {
             Lua = {
               completion = {
@@ -199,68 +256,41 @@ return {
               },
               -- You can toggle below to ignore Lua_LS's noisy `missing-fields` warnings
               -- diagnostics = { disable = { 'missing-fields' } },
+              diagnostics = {
+                globals = { "vim" },
+              },
             },
           },
         },
-      }
-
-      -- Ensure the servers and tools above are installed
-      --  To check the current status of installed tools and/or manually install
-      --  other tools, you can run
-      --    :Mason
-      --
-      --  You can press `g?` for help in this menu.
-      require("mason").setup()
-
-      -- You can add other tools here that you want Mason to install
-      -- for you, so that they are available from within Neovim.
-      local ensure_installed = vim.tbl_keys(servers or {})
-      vim.list_extend(ensure_installed, {
-        "delve",
-        "eslint_d",
-        -- "fixjson",
-        -- "gitleaks",
-        -- "gitlint",
-        "golangci-lint",
-        "golangci-lint-langserver",
-        "goimports",
-        "hadolint",
-        "htmlbeautifier",
-        "jq",
-        "omnisharp",
-        "prettier",
-        "rubocop",
-        "rubyfmt",
-        "shellcheck",
-        -- "shellharden",
-        -- "sqls",
-        -- "staticcheck",
-        "stylua", -- Used to format Lua code
-        -- "systemdlint",
-        "tflint",
-        "tfsec",
-        -- "yamllint",
-      })
-
-      require("mason-tool-installer").setup { ensure_installed = ensure_installed }
-
-      require("mason-lspconfig").setup {
-        ensure_installed = {},
-        automatic_installation = false,
-
-        handlers = {
-          function(server_name)
-            local server = servers[server_name] or {}
-            -- This handles overriding only values explicitly passed
-            -- by the server configuration above. Useful when disabling
-            -- certain features of an LSP (for example, turning off formatting for tsserver)
-            server.capabilities = vim.tbl_deep_extend("force", {}, capabilities, server.capabilities or {})
-            if type(server) == "table" and next(server) ~= nil then
-              require("lspconfig")[server_name].setup(server)
-            end
-          end,
+        -- GDScript LSP (Godot's built-in language server over TCP, not a subprocess)
+        gdscript = {
+          cmd = vim.lsp.rpc.connect("127.0.0.1", 6005),
+          filetypes = { "gd", "gdscript", "gdscript3" },
+          root_markers = { "project.godot", ".git" },
+        },
+        -- Dart LSP (ships with Dart SDK, started via `dart language-server`)
+        dartls = {
+          cmd = { "dart", "language-server", "--protocol=lsp" },
+          filetypes = { "dart" },
+        },
+        -- SQL LSP
+        sqls = {
+          cmd = { "sqls" },
+          filetypes = { "sql", "mysql", "plsql" },
+        },
+        -- XML LSP (lemminx)
+        lemminx = {
+          cmd = { "lemminx" },
+          filetypes = { "xml", "xsd", "xsl", "xslt", "svg" },
         },
       }
+
+      -- Configure and enable all servers via the native vim.lsp.config API (nvim 0.11+).
+      for name, config in pairs(servers) do
+        config.capabilities = vim.tbl_deep_extend("force", {}, capabilities, config.capabilities or {})
+        vim.lsp.config(name, config)
+        vim.lsp.enable(name)
+      end
     end,
   },
 
@@ -284,14 +314,14 @@ return {
         -- languages here or re-enable it for the disabled ones.
         local disable_filetypes = { c = true, cpp = true }
         return {
-          timeout_ms = 500,
+          timeout_ms = 1000,
           lsp_fallback = not disable_filetypes[vim.bo[bufnr].filetype],
         }
       end,
       formatters_by_ft = {
         lua = { "stylua" },
         -- Conform can also run multiple formatters sequentially
-        python = { "isort", "black" },
+        python = { "ruff_format" },
         go = { "goimports", "gofmt" },
         css = { "prettier" },
         html = { "prettier" },
@@ -301,8 +331,27 @@ return {
         --
         -- You can use a sub-list to tell conform to run *until* a formatter
         -- is found.
-        javascript = { { "prettierd", "prettier" } },
-        typescript = { { "prettierd", "prettier" } },
+        javascript = { "prettier" },
+        typescript = { "prettier" },
+        gdscript = { "gdformat" },
+        rust = { "rustfmt" },
+        cs = { "csharpier" },
+        dart = { "dart_format" },
+        scss = { "prettier" },
+        sql = { "sql_formatter" },
+        svelte = { "prettier" },
+      },
+      formatters = {
+        prettier = {
+          prepend_args = function(self, ctx)
+            if vim.bo[ctx.buf].filetype == "svelte" then
+              local plugin_path = vim.fn.trim(vim.fn.system("mise where npm:prettier-plugin-svelte"))
+                .. "/lib/node_modules/prettier-plugin-svelte/plugin.js"
+              return { "--plugin", plugin_path }
+            end
+            return {}
+          end,
+        },
       },
     },
   },

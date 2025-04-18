@@ -2,7 +2,7 @@
 # If you encounter any issues, please make an issue at https://github.com/yazi-rs/schemas.
 "$schema" = "https://yazi-rs.github.io/schemas/keymap.json"
 
-[manager]
+[mgr]
 
 keymap = [
   { on = "<Esc>", run = "escape", desc = "Exit visual mode, clear selection, or cancel search" },
@@ -229,6 +229,14 @@ keymap = [
     "g",
     "d",
   ], run = "cd ~/Downloads", desc = "Go ~/Downloads" },
+  { on = [
+    "g",
+    "C",
+  ], run = "cd ~/Code", desc = "Go ~/Code" },
+  { on = [
+    "g",
+    "O",
+  ], run = "cd $OBSIDIAN_VAULT", desc = "Go $OBSIDIAN_VAULT" },
   { on = [
     "g",
     "<Space>",

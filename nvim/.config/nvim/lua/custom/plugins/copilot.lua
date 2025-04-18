@@ -12,12 +12,11 @@ return {
           jump_prev = "[[",
           jump_next = "]]",
           accept = "<C-y>",
-          -- accept = false, -- handled by blink.cmp
           refresh = "gr",
           open = "<C-CR>",
         },
         layout = {
-          position = "bottom", -- | top | left | right
+          position = "bottom",
           ratio = 0.4,
         },
       },
@@ -35,14 +34,25 @@ return {
         },
       },
       filetypes = {
+        bash = true,
+        c = true,
+        cpp = true,
+        cs = true,
+        css = true,
+        go = true,
+        html = true,
+        javascript = true,
+        json = true,
         lua = true,
-        golang = true,
+        proto = true,
         python = true,
         ruby = true,
         rust = true,
-        javascript = true,
+        sh = true,
+        terraform = true,
+        toml = true,
         typescript = true,
-        yaml = false,
+        yaml = true,
         markdown = false,
         help = false,
         gitcommit = false,
@@ -55,9 +65,9 @@ return {
   },
   {
     "CopilotC-Nvim/CopilotChat.nvim",
+    enabled = false,
     cmd = {
       "CopilotChat",
-      "CopilotChatAgents",
       "CopilotChatClose",
       "CopilotChatCommit",
       "CopilotChatToggle",
@@ -66,6 +76,7 @@ return {
       "CopilotChatFix",
       "CopilotChatLoad",
       "CopilotChatModels",
+      "CopilotChatOpen",
       "CopilotChatOptimize",
       "CopilotChatPrompts",
       "CopilotChatReset",
@@ -79,6 +90,13 @@ return {
     dependencies = {
       { "zbirenbaum/copilot.lua" }, -- or github/copilot.vim
       { "nvim-lua/plenary.nvim" }, -- for curl, log wrapper
+      { "BurntSushi/ripgrep" },
+    },
+    keys = {
+      { "<leader>cc", "<cmd>CopilotChat<CR>", desc = "[C]opilot: [C]hat" },
+      { "<leader>cm", "<cmd>CopilotChatModel<CR>", desc = "[C]opilot: [M]odels" },
+      { "<leader>cr", "<cmd>CopilotChatReset<CR>", desc = "[C]opilot: [R]eset" },
+      { "<leader>cs", "<cmd>CopilotChatStop<CR>", desc = "[C]opilot: [S]top" },
     },
     opts = {
       debug = false, -- Enable debugging
@@ -86,4 +104,7 @@ return {
     },
     -- See Commands section for default commands if you want to lazy load on them
   },
+  config = function(_, opts)
+    require("CopilotChat").setup(opts)
+  end,
 }

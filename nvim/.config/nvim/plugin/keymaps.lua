@@ -7,10 +7,10 @@ vim.keymap.set("n", "<Esc>", "<cmd>nohlsearch<CR>")
 
 -- Diagnostic keymaps
 vim.keymap.set("n", "[d", function()
-  vim.diagnostic.jump { count = 1, float = true }
+  vim.diagnostic.jump { count = -1, float = true }
 end, { desc = "Go to previous [D]iagnostic message" })
 vim.keymap.set("n", "]d", function()
-  vim.diagnostic.jump { count = -1, float = true }
+  vim.diagnostic.jump { count = 1, float = true }
 end, { desc = "Go to next [D]iagnostic message" })
 vim.keymap.set("n", "<leader>de", vim.diagnostic.open_float, { desc = "[D]iagnostic: [E]rror messages" })
 vim.keymap.set("n", "<leader>dq", vim.diagnostic.setqflist, { desc = "[D]iagnostic: [Q]uickfix list" })
@@ -25,6 +25,12 @@ vim.keymap.set("n", "<leader>dT", function()
   local new_config = not vim.diagnostic.config().virtual_text
   vim.diagnostic.config { virtual_text = new_config }
 end, { desc = "[D]iagnostic: Toggle Virtual [T]ext" })
+
+-- Keymaps for navigating quickfix and location lists
+vim.keymap.set("n", "[q", "<cmd>cprev<CR>", { desc = "Go to previous [Q]uickfix message" })
+vim.keymap.set("n", "]q", "<cmd>cnext<CR>", { desc = "Go to next [Q]uickfix message" })
+vim.keymap.set("n", "[l", "<cmd>lprev<CR>", { desc = "Go to previous [L]ocation message" })
+vim.keymap.set("n", "]l", "<cmd>lnext<CR>", { desc = "Go to next [L]ocation message" })
 
 -- Exit terminal mode in the builtin terminal with a shortcut that is a bit easier
 -- for people to discover. Otherwise, you normally need to press <C-\><C-n>, which

@@ -1,0 +1,215 @@
+# Global shared justfile
+# This file contains common tasks that are available across all projects
+
+# List all available recipes
+default:
+    @just --global-justfile --list
+
+# Show system information
+info:
+    @echo "System: $(uname -s)"
+    @echo "Architecture: $(uname -m)"
+    @echo "Shell: $SHELL"
+    @echo "User: $USER"
+    @echo "Home: $HOME"
+
+# Detect OS for package manager commands
+os := os()
+
+# Update everything: system packages, mise, shell plugins, editor plugins, tpm
+[group('update')]
+update:
+    @echo "═══ System Package Manager ═══"
+    @{{ if os == "macos" { "brew update && brew upgrade" } else if os == "linux" { "if command -v pacman >/dev/null; then sudo pacman -Syu --noconfirm; elif command -v apt >/dev/null; then sudo apt update && sudo apt upgrade -y; elif command -v dnf >/dev/null; then sudo dnf upgrade -y; fi" } else { "echo 'Unknown OS, skipping system packages'" } }}
+    @echo ""
+    @echo "═══ Mise ═══"
+    mise upgrade
+    mise install
+    @echo ""
+    @echo "═══ Python (pynvim) ═══"
+    python3 -m pip install --upgrade --quiet pynvim 2>/dev/null || true
+    @echo ""
+    @echo "═══ TPM (Tmux Plugins) ═══"
+    @if [ -d "$HOME/.tmux/plugins/tpm" ]; then \
+        git -C "$HOME/.tmux/plugins/tpm" pull --ff-only; \
+        "$HOME/.tmux/plugins/tpm/scripts/install_plugins.sh"; \
+        "$HOME/.tmux/plugins/tpm/scripts/update_plugin.sh" all; \
+    else \
+        echo "TPM not installed, skipping"; \
+    fi
+    @echo ""
+    @echo "═══ Zinit (Zsh Plugins) ═══"
+    @if [ -d "$HOME/.local/share/zinit/zinit.git" ]; then \
+        TERM=xterm-256color zsh -i -c "zinit self-update && zinit update --all"; \
+    else \
+        echo "Zinit not installed, skipping"; \
+    fi
+    @echo ""
+    @echo "═══ Fisher (Fish Plugins) ═══"
+    @if command -v fish >/dev/null 2>&1 && fish -c 'type -q fisher' 2>/dev/null; then \
+        fish -c 'fisher update'; \
+    else \
+        echo "Fisher not installed, skipping"; \
+    fi
+    @echo ""
+    @echo "═══ fzf-git ═══"
+    @if [ -d "$HOME/.local/share/fzf-git" ]; then \
+        git -C "$HOME/.local/share/fzf-git" pull --ff-only; \
+    else \
+        echo "fzf-git not installed, skipping"; \
+    fi
+    @echo ""
+    @echo "═══ Neovim Plugins ═══"
+    @if command -v nvim >/dev/null 2>&1; then \
+        nvim --headless '+Lazy! sync' +qa; \
+    else \
+        echo "Neovim not installed, skipping"; \
+    fi
+    @echo ""
+    @echo "═══ Manual Tools ═══"
+    @if command -v go >/dev/null 2>&1; then \
+        echo "Updating regex-tui..."; \
+        go install github.com/vitor-mariano/regex-tui@latest 2>/dev/null || true; \
+    fi
+    @echo ""
+    @echo "═══ Cleanup ═══"
+    mise prune -y
+    {{ if os == "macos" { "brew cleanup" } else { "echo 'No system cleanup needed'" } }}
+    @echo ""
+    @echo "✓ All updates complete!"
+
+# Clean package manager caches
+[group('update')]
+clean:
+    @echo "Cleaning mise cache..."
+    mise cache clear
+    mise prune -y
+    {{ if os == "macos" { "echo 'Cleaning Homebrew...' && brew cleanup" } else { "" } }}
+
+# Docker shortcuts
+[group('docker')]
+docker-clean:
+    docker system prune -af --volumes
+
+# AI data cleanup
+[group('ai')]
+opencode-clean-logs:
+    @echo "Cleaning OpenCode logs..."
+    @if [ -d "$HOME/.local/share/opencode/log" ]; then \
+        find "$HOME/.local/share/opencode/log" -mindepth 1 -maxdepth 1 -exec rm -rf {} +; \
+    fi
+
+[group('ai')]
+opencode-clean-sessions:
+    @echo "Cleaning OpenCode sessions..."
+    @if [ -d "$HOME/.local/share/opencode/project" ]; then \
+        find "$HOME/.local/share/opencode/project" -type d -name storage -prune -exec rm -rf {} +; \
+    fi
+
+[group('ai')]
+opencode-clean:
+    @just --global-justfile opencode-clean-logs
+    @just --global-justfile opencode-clean-sessions
+
+[group('ai')]
+tokenscope-pricing-fix:
+    @if [ -x "$HOME/.local/bin/tokenscope-pricing-fix" ]; then \
+        /bin/bash "$HOME/.local/bin/tokenscope-pricing-fix"; \
+    else \
+        echo "tokenscope-pricing-fix not found in ~/.local/bin"; \
+        echo "Run: ./scripts/dotfiles.sh link bin"; \
+        exit 1; \
+    fi
+
+[group('ai')]
+omo-clean:
+    @just --global-justfile opencode-clean
+    @just --global-justfile omo-clean-workspace
+
+[group('ai')]
+omo-slim-clean:
+    @just --global-justfile opencode-clean
+    @just --global-justfile omo-clean-workspace
+
+[group('ai')]
+omo-clean-workspace:
+    @echo "Cleaning oh-my-opencode workspace in $(pwd)/.sisyphus..."
+    @if [ -d ".sisyphus" ]; then rm -rf ".sisyphus"; fi
+
+[group('ai')]
+crush-clean-logs:
+    @echo "Cleaning Crush logs in $(pwd)/.crush/logs..."
+    @if [ -d ".crush/logs" ]; then \
+        find ".crush/logs" -mindepth 1 -maxdepth 1 -exec rm -rf {} +; \
+    fi
+    @if [ -f ".crush/crush.log" ]; then rm -f ".crush/crush.log"; fi
+
+[group('ai')]
+crush-clean-sessions:
+    @echo "Cleaning Crush session DB in $(pwd)/.crush/crush.db..."
+    @if [ -f ".crush/crush.db" ]; then rm -f ".crush/crush.db"; fi
+
+[group('ai')]
+crush-clean:
+    @echo "Cleaning Crush data in $(pwd)/.crush..."
+    @if [ -d ".crush" ]; then rm -rf ".crush"; fi
+
+# Set up AI skills for the current project
+# Usage: just skills audio
+#        just skills godot audio
+# Domains: audio godot rust frontend infra cpp database
+[group('skills')]
+skills *domains:
+    project-skills {{domains}}
+
+# ---
+
+# Remove common junk files recursively from a directory
+# Usage: just clean-junk          (cleans current directory)
+#        just clean-junk ~/src    (cleans a specific path)
+[group('files')]
+clean-junk path=".":
+    @echo "Cleaning junk files from {{path}}..."
+    @# macOS metadata
+    @find "{{path}}" -name ".DS_Store" -delete
+    @find "{{path}}" -name "._.DS_Store" -delete
+    @find "{{path}}" -name ".Spotlight-V100" -type d -exec rm -rf {} + 2>/dev/null; true
+    @find "{{path}}" -name ".fseventsd" -type d -exec rm -rf {} + 2>/dev/null; true
+    @find "{{path}}" -name ".Trashes" -type d -exec rm -rf {} + 2>/dev/null; true
+    @# macOS archive artifacts
+    @find "{{path}}" -name "__MACOSX" -type d -exec rm -rf {} + 2>/dev/null; true
+    @find "{{path}}" -name ".AppleDouble" -type d -exec rm -rf {} + 2>/dev/null; true
+    @# Windows metadata
+    @find "{{path}}" -name "Thumbs.db" -delete
+    @find "{{path}}" -name "ehthumbs.db" -delete
+    @find "{{path}}" -name "Desktop.ini" -delete
+    @find "{{path}}" -name '$RECYCLE.BIN' -type d -exec rm -rf {} + 2>/dev/null; true
+    @# Python bytecode
+    @find "{{path}}" -name "__pycache__" -type d -exec rm -rf {} + 2>/dev/null; true
+    @find "{{path}}" -name "*.pyc" -delete
+    @find "{{path}}" -name "*.pyo" -delete
+    @# Editor temp/swap files
+    @find "{{path}}" -name "*.swp" -delete
+    @find "{{path}}" -name "*.swo" -delete
+    @find "{{path}}" -name "*~" -delete
+    @find "{{path}}" -name ".#*" -delete
+    @# Tool caches
+    @find "{{path}}" -name ".eslintcache" -delete
+    @find "{{path}}" -name ".stylelintcache" -delete
+    @find "{{path}}" -name ".sass-cache" -type d -exec rm -rf {} + 2>/dev/null; true
+    @echo "✓ Done"
+
+# ---
+
+# Dotfiles management
+[group('dotfiles')]
+dotfiles-link:
+    cd ~/dotfiles && ./scripts/dotfiles.sh link
+
+[group('dotfiles')]
+dotfiles-unlink:
+    cd ~/dotfiles && ./scripts/dotfiles.sh unlink
+
+[group('dotfiles')]
+dotfiles-update:
+    cd ~/dotfiles && git pull && ./scripts/dotfiles.sh update
