@@ -128,7 +128,6 @@ _install() {
 	
 	# Install yazi
 	cargo install --locked yazi-fm yazi-cli
-	yazi pack -a yazi-rs/flavors:catppuccin-mocha
 
 	# Change shell
 	chsh -s /usr/bin/zsh
