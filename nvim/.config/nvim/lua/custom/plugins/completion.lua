@@ -72,12 +72,17 @@ return {
     },
 
     -- (Default) Only show the documentation popup when manually triggered
-    completion = { documentation = { auto_show = false } },
+    completion = {
+      documentation = { auto_show = false },
+      trigger = {
+        prefetch_on_insert = true,
+      },
+    },
 
     -- Default list of enabled providers defined so that you can extend it
     -- elsewhere in your config, without redefining it, due to `opts_extend`
     sources = {
-      default = { "lsp", "path", "snippets", "buffer", "copilot" },
+      default = { "lsp", "snippets", "buffer", "copilot" }, -- path
       providers = {
         cmdline = {
           -- ignores cmdline completions when executing shell commands

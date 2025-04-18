@@ -228,6 +228,7 @@ return {
         "htmlbeautifier",
         "jq",
         "omnisharp",
+        "markdownlint",
         "prettier",
         "rubocop",
         "rubyfmt",
