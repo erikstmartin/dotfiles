@@ -26,6 +26,12 @@ vim.keymap.set("n", "<leader>dT", function()
   vim.diagnostic.config { virtual_text = new_config }
 end, { desc = "[D]iagnostic: Toggle Virtual [T]ext" })
 
+-- Keymaps for navigating quickfix and location lists
+vim.keymap.set("n", "[q", "<cmd>cprev<CR>", { desc = "Go to previous [Q]uickfix message" })
+vim.keymap.set("n", "]q", "<cmd>cnext<CR>", { desc = "Go to next [Q]uickfix message" })
+vim.keymap.set("n", "[l", "<cmd>lprev<CR>", { desc = "Go to previous [L]ocation message" })
+vim.keymap.set("n", "]l", "<cmd>lnext<CR>", { desc = "Go to next [L]ocation message" })
+
 -- Exit terminal mode in the builtin terminal with a shortcut that is a bit easier
 -- for people to discover. Otherwise, you normally need to press <C-\><C-n>, which
 -- is not what someone will guess without a bit more experience.
