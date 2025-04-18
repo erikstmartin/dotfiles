@@ -1,60 +1,114 @@
 return {
   {
     "mfussenegger/nvim-dap",
-    ft = { "go" },
-    enabled = false,
+    ft = { "go", "c", "cpp", "rust" },
     dependencies = {
-      -- Creates a beautiful debugger UI
       "rcarriga/nvim-dap-ui",
-
-      -- Required dependency for nvim-dap-ui
       "nvim-neotest/nvim-nio",
-
-      -- Installs the debug adapters for you
-      "williamboman/mason.nvim",
-      "jay-babu/mason-nvim-dap.nvim",
-
-      -- Add your own debuggers here
       "leoluz/nvim-dap-go",
       "theHamsta/nvim-dap-virtual-text",
     },
+    keys = {
+      { "<F5>", function() require("dap").continue() end, desc = "Debug: Start/Continue" },
+      { "<F1>", function() require("dap").step_into() end, desc = "Debug: Step Into" },
+      { "<F2>", function() require("dap").step_over() end, desc = "Debug: Step Over" },
+      { "<F3>", function() require("dap").step_out() end, desc = "Debug: Step Out" },
+      { "<F9>", function() require("dap").toggle_breakpoint() end, desc = "Debug: Toggle Breakpoint" },
+      {
+        "<S-F9>",
+        function() require("dap").set_breakpoint(vim.fn.input("Breakpoint condition: ")) end,
+        desc = "Debug: Conditional Breakpoint",
+      },
+      { "<F7>", function() require("dapui").toggle() end, desc = "Debug: Toggle UI" },
+    },
     config = function()
-      local dap = require "dap"
-      local dapui = require "dapui"
+      local dap = require("dap")
+      local dapui = require("dapui")
 
-      require("mason-nvim-dap").setup {
-        -- Makes a best effort to setup the various debuggers with
-        -- reasonable debug configurations
-        automatic_installation = true,
+      -- Virtual text (inline variable values)
+      require("nvim-dap-virtual-text").setup()
 
-        -- You can provide additional configuration to the handlers,
-        -- see mason-nvim-dap README for more information
-        handlers = {},
-
-        -- You'll need to check that you have the required things installed
-        -- online, please don't ask me how to install them :)
-        ensure_installed = {
-          -- Update this to ensure that you have the debuggers for the langs you want
-          "delve",
+      -- codelldb adapter (C/C++/Rust) — installed via mise
+      dap.adapters.codelldb = {
+        type = "server",
+        port = "${port}",
+        executable = {
+          command = "codelldb",
+          args = { "--port", "${port}" },
         },
       }
 
-      -- Basic debugging keymaps, feel free to change to your liking!
-      vim.keymap.set("n", "<F5>", dap.continue, { desc = "Debug: Start/Continue" })
-      vim.keymap.set("n", "<F1>", dap.step_into, { desc = "Debug: Step Into" })
-      vim.keymap.set("n", "<F2>", dap.step_over, { desc = "Debug: Step Over" })
-      vim.keymap.set("n", "<F3>", dap.step_out, { desc = "Debug: Step Out" })
-      vim.keymap.set("n", "<F9>", dap.toggle_breakpoint, { desc = "Debug: Toggle Breakpoint" })
-      vim.keymap.set("n", "<S-F9>", function()
-        dap.set_breakpoint(vim.fn.input "Breakpoint condition: ")
-      end, { desc = "Debug: Set Breakpoint" })
+      -- C/C++ debug configurations
+      local codelldb_config = {
+        {
+          name = "Launch file",
+          type = "codelldb",
+          request = "launch",
+          program = function()
+            return vim.fn.input("Path to executable: ", vim.fn.getcwd() .. "/", "file")
+          end,
+          cwd = "${workspaceFolder}",
+          stopOnEntry = false,
+        },
+        {
+          name = "Attach to process",
+          type = "codelldb",
+          request = "attach",
+          pid = require("dap.utils").pick_process,
+          cwd = "${workspaceFolder}",
+        },
+      }
 
-      -- Dap UI setup
-      -- For more information, see |:help nvim-dap-ui|
-      dapui.setup {
-        -- Set icons to characters that are more likely to work in every terminal.
-        --    Feel free to remove or use ones that you like more! :)
-        --    Don't feel like these are good choices.
+      dap.configurations.c = codelldb_config
+      dap.configurations.cpp = codelldb_config
+
+      -- Rust debug configurations (cargo build output)
+      dap.configurations.rust = {
+        {
+          name = "Launch (cargo build)",
+          type = "codelldb",
+          request = "launch",
+          program = function()
+            -- Try to find the binary from cargo metadata
+            local handle = io.popen("cargo metadata --format-version 1 --no-deps 2>/dev/null")
+            if handle then
+              local result = handle:read("*a")
+              handle:close()
+              local ok, metadata = pcall(vim.json.decode, result)
+              if ok and metadata.target_directory then
+                local name = metadata.packages and metadata.packages[1] and metadata.packages[1].name
+                if name then
+                  local bin = metadata.target_directory .. "/debug/" .. name
+                  if vim.fn.filereadable(bin) == 1 then
+                    return bin
+                  end
+                end
+              end
+            end
+            return vim.fn.input("Path to executable: ", vim.fn.getcwd() .. "/target/debug/", "file")
+          end,
+          cwd = "${workspaceFolder}",
+          stopOnEntry = false,
+        },
+        {
+          name = "Attach to process",
+          type = "codelldb",
+          request = "attach",
+          pid = require("dap.utils").pick_process,
+          cwd = "${workspaceFolder}",
+        },
+      }
+
+      -- Go (via nvim-dap-go — auto-configures delve)
+      require("dap-go").setup({
+        delve = {
+          -- On Windows delve must be run attached or it crashes.
+          detached = vim.fn.has("win32") == 0,
+        },
+      })
+
+      -- DAP UI setup
+      dapui.setup({
         icons = { expanded = "▾", collapsed = "▸", current_frame = "*" },
         controls = {
           icons = {
@@ -69,23 +123,12 @@ return {
             disconnect = "⏏",
           },
         },
-      }
+      })
 
-      -- Toggle to see last session result. Without this, you can't see session output in case of unhandled exception.
-      vim.keymap.set("n", "<F7>", dapui.toggle, { desc = "Debug: See last session result." })
-
+      -- Auto-open/close DAP UI on debug session start/end
       dap.listeners.after.event_initialized["dapui_config"] = dapui.open
       dap.listeners.before.event_terminated["dapui_config"] = dapui.close
       dap.listeners.before.event_exited["dapui_config"] = dapui.close
-
-      -- Install golang specific config
-      require("dap-go").setup {
-        delve = {
-          -- On Windows delve must be run attached or it crashes.
-          -- See https://github.com/leoluz/nvim-dap-go/blob/main/README.md#configuring
-          detached = vim.fn.has "win32" == 0,
-        },
-      }
     end,
   },
 }

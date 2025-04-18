@@ -1,0 +1,91 @@
+{
+  "$schema": "https://raw.githubusercontent.com/code-yeongyu/oh-my-opencode/master/assets/oh-my-opencode.schema.json",
+  "agents": {
+    "sisyphus": {
+      "model": "github-copilot/claude-sonnet-4.6"
+    },
+    "sisyphus-junior": {
+      "model": "github-copilot/claude-sonnet-4.6"
+    },
+    "oracle": {
+      "model": "github-copilot/claude-opus-4.6",
+      "variant": "high"
+    },
+    "librarian": {
+      "model": "github-copilot/claude-haiku-4.5"
+    },
+    "explore": {
+      "model": "github-copilot/claude-haiku-4.5"
+    },
+    "multimodal-looker": {
+      "model": "github-copilot/gemini-2.5-pro"
+    },
+    "prometheus": {
+      "model": "github-copilot/claude-opus-4.6",
+      "variant": "max"
+    },
+    "metis": {
+      "model": "github-copilot/claude-opus-4.6",
+      "variant": "max"
+    },
+    "momus": {
+      "model": "github-copilot/claude-sonnet-4.6",
+      "variant": "medium"
+    },
+    "hephaestus": {
+      "model": "github-copilot/gpt-5.2-codex"
+    },
+    "atlas": {
+      "model": "github-copilot/claude-sonnet-4.6"
+    }
+  },
+  "categories": {
+    "visual-engineering": {
+      "model": "github-copilot/gemini-2.5-pro"
+    },
+    "ultrabrain": {
+      "model": "github-copilot/claude-opus-4.6",
+      "variant": "xhigh"
+    },
+    "artistry": {
+      "model": "github-copilot/gemini-2.5-pro",
+      "variant": "max"
+    },
+    "quick": {
+      "model": "github-copilot/claude-haiku-4.5"
+    },
+    "unspecified-low": {
+      "model": "github-copilot/claude-sonnet-4.6"
+    },
+    "unspecified-high": {
+      "model": "github-copilot/claude-sonnet-4.6"
+    },
+    "writing": {
+      "model": "github-copilot/claude-sonnet-4.6"
+    }
+  },
+  "lsp": {
+    "godot": {
+      "command": ["/bin/sh", "-lc", "nc 127.0.0.1 6005"],
+      "extensions": [".gd"]
+    }
+  },
+  "experimental": {
+    "disable_omo_env": true,
+    "dynamic_context_pruning": {
+      "enabled": true,
+      "notification": "minimal",
+      "turn_protection": { "enabled": true, "turns": 3 },
+      "strategies": {
+        "deduplication": { "enabled": true },
+        "supersede_writes": { "enabled": true, "aggressive": false },
+        "purge_errors": { "enabled": true, "turns": 5 }
+      }
+    }
+  },
+  "disabled_hooks": [
+    "agent-usage-reminder",
+    "startup-toast",
+    "think-mode"
+  ]
+}

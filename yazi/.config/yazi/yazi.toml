@@ -2,7 +2,7 @@
 # If you encounter any issues, please make an issue at https://github.com/yazi-rs/schemas.
 "$schema" = "https://yazi-rs.github.io/schemas/yazi.json"
 
-[manager]
+[mgr]
 ratio = [1, 4, 3]
 sort_by = "alphabetical"
 sort_sensitive = false
@@ -61,7 +61,7 @@ play = [
 [open]
 rules = [
   # Folder
-  { name = "*/", use = [
+  { url = "*/", use = [
     "edit",
     "open",
     "reveal",
@@ -101,27 +101,39 @@ rules = [
     "reveal",
   ] },
   # Fallback
-  { name = "*", use = [
+  { url = "*", use = [
     "open",
     "reveal",
   ] },
 ]
 
 [tasks]
-micro_workers = 10
-macro_workers = 10
-bizarre_retry = 3
-image_alloc = 536870912  # 512MB
-image_bound = [0, 0]
+micro_workers    = 10
+macro_workers    = 10
+file_workers     = 3
+plugin_workers   = 5
+fetch_workers    = 5
+preload_workers  = 2
+process_workers  = 5
+bizarre_retry    = 3
+image_alloc      = 536870912  # 512MB
+image_bound      = [0, 0]
 suppress_preload = false
 
 [plugin]
 fetchers = [
   # Mimetype
-  { id = "mime", name = "*", run = "mime", prio = "high" },
+  { id = "mime", url = "*/",         run = "mime.dir",    prio = "high" },
+  { id = "mime", url = "local://*",  run = "mime.local",  prio = "high" },
+  { id = "mime", url = "remote://*", run = "mime.remote", prio = "high" },
 ]
 spotters = [
-  { name = "*/", run = "folder" },
+  { url = "*/", run = "folder" },
+  # CSV / TSV
+  { mime = "text/csv", run = "csv" },
+  { mime = "text/tab-separated-values", run = "csv" },
+  { url = "*.csv", run = "csv" },
+  { url = "*.tsv", run = "csv" },
   # Code
   { mime = "text/*", run = "code" },
   { mime = "application/{mbox,javascript,wine-extension-ini}", run = "code" },
@@ -132,7 +144,7 @@ spotters = [
   # Video
   { mime = "video/*", run = "video" },
   # Fallback
-  { name = "*", run = "file" },
+  { url = "*", run = "file" },
 ]
 preloaders = [
   # Image
@@ -148,7 +160,14 @@ preloaders = [
   { mime = "application/ms-opentype", run = "font" },
 ]
 previewers = [
-  { name = "*/", run = "folder" },
+  { url = "*/", run = "folder" },
+  # CSV / TSV
+  { mime = "text/csv", run = "csv" },
+  { mime = "text/tab-separated-values", run = "csv" },
+  { url = "*.csv", run = "csv" },
+  { url = "*.tsv", run = "csv" },
+  { mime = "text/markdown", run = "markdown" },
+  { url = "*.{md,markdown,mdown,mkdn}", run = "markdown" },
   # Code
   { mime = "text/*", run = "code" },
   { mime = "application/{mbox,javascript,wine-extension-ini}", run = "code" },
@@ -165,18 +184,18 @@ previewers = [
   # Archive
   { mime = "application/{zip,rar,7z*,tar,gzip,xz,zstd,bzip*,lzma,compress,archive,cpio,arj,xar,ms-cab*}", run = "archive" },
   { mime = "application/{debian*-package,redhat-package-manager,rpm,android.package-archive}", run = "archive" },
-  { name = "*.{AppImage,appimage}", run = "archive" },
+  { url = "*.{AppImage,appimage}", run = "archive" },
   # Virtual Disk / Disk Image
   { mime = "application/{iso9660-image,qemu-disk,ms-wim,apple-diskimage}", run = "archive" },
   { mime = "application/virtualbox-{vhd,vhdx}", run = "archive" },
-  { name = "*.{img,fat,ext,ext2,ext3,ext4,squashfs,ntfs,hfs,hfsx}", run = "archive" },
+  { url = "*.{img,fat,ext,ext2,ext3,ext4,squashfs,ntfs,hfs,hfsx}", run = "archive" },
   # Font
   { mime = "font/*", run = "font" },
   { mime = "application/ms-opentype", run = "font" },
   # Empty file
   { mime = "inode/empty", run = "empty" },
   # Fallback
-  { name = "*", run = "file" },
+  { url = "*", run = "file" },
 ]
 
 [input]

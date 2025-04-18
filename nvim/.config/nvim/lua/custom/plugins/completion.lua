@@ -9,8 +9,8 @@ return {
 
   -- use a release tag to download pre-built binaries
   version = "1.*",
-  -- AND/OR build from source, requires nightly: https://rust-lang.github.io/rustup/concepts/channels.html#working-with-nightly-rust
-  build = "cargo build --release",
+  -- If pre-built binaries aren't available for your platform, build from source:
+  -- build = "cargo build --release",
   -- If you use nix, you can build from source using latest nightly rust with:
   -- build = 'nix run .#build-plugin',
 
@@ -72,12 +72,17 @@ return {
     },
 
     -- (Default) Only show the documentation popup when manually triggered
-    completion = { documentation = { auto_show = false } },
+    completion = {
+      documentation = { auto_show = false },
+      trigger = {
+        prefetch_on_insert = true,
+      },
+    },
 
     -- Default list of enabled providers defined so that you can extend it
     -- elsewhere in your config, without redefining it, due to `opts_extend`
     sources = {
-      default = { "lsp", "path", "snippets", "buffer", "copilot" },
+      default = { "lsp", "snippets", "buffer", "copilot" }, -- path
       providers = {
         cmdline = {
           -- ignores cmdline completions when executing shell commands

@@ -1,0 +1,108 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if ! command -v mise >/dev/null 2>&1; then
+  echo "tokenscope: mise not installed"
+  exit 0
+fi
+
+if ! mise exec -- npm root -g >/dev/null 2>&1; then
+  echo "tokenscope: npm not available"
+  exit 0
+fi
+
+npm_root="$(mise exec -- npm root -g 2>/dev/null || true)"
+if [ -z "$npm_root" ]; then
+  echo "tokenscope: npm root not found"
+  exit 0
+fi
+
+models_file="$npm_root/@ramtinj95/opencode-tokenscope/models.json"
+if [ ! -f "$models_file" ]; then
+  echo "tokenscope: models.json not found"
+else
+  mise exec -- node - "$models_file" <<'EOF'
+const fs = require("fs");
+const path = process.argv[2];
+const data = JSON.parse(fs.readFileSync(path, "utf8"));
+if (!data["claude-haiku-4.5"] && data["claude-haiku-4-5"]) {
+  data["claude-haiku-4.5"] = data["claude-haiku-4-5"];
+  fs.writeFileSync(path, JSON.stringify(data, null, 2));
+  console.log("tokenscope: added pricing alias claude-haiku-4.5");
+} else {
+  console.log("tokenscope: alias already present");
+}
+EOF
+fi
+
+shopt -s nullglob
+quota_files=(
+  "$HOME/.bun/install/cache/@slkiser/opencode-quota"@*/dist/data/modelsdev-pricing.min.json
+  "$HOME/.bun/install/cache/@slkiser/opencode-quota"/*/dist/data/modelsdev-pricing.min.json
+  "$HOME/.cache/opencode/node_modules/@slkiser/opencode-quota/dist/data/modelsdev-pricing.min.json"
+)
+if [ ${#quota_files[@]} -eq 0 ]; then
+  echo "quota: modelsdev-pricing.min.json not found"
+  exit 0
+fi
+
+for quota_file in "${quota_files[@]}"; do
+  mise exec -- node - "$quota_file" <<'EOF'
+const fs = require("fs");
+const path = process.argv[2];
+const data = JSON.parse(fs.readFileSync(path, "utf8"));
+const providers = data.providers || {};
+const anthropic = providers.anthropic || {};
+const pricing = {
+  input: 1,
+  output: 5,
+  cache_read: 0.10,
+  cache_write: 1.25,
+};
+let changed = false;
+if (!anthropic["claude-haiku-4-5"]) {
+  anthropic["claude-haiku-4-5"] = pricing;
+  changed = true;
+}
+if (!anthropic["claude-haiku-4-5-20251001"]) {
+  anthropic["claude-haiku-4-5-20251001"] = pricing;
+  changed = true;
+}
+if (changed) {
+  providers.anthropic = anthropic;
+  data.providers = providers;
+  fs.writeFileSync(path, JSON.stringify(data));
+  console.log(`quota: added pricing entries to ${path}`);
+} else {
+  console.log(`quota: pricing already present in ${path}`);
+}
+EOF
+done
+
+quota_stats_file="$HOME/.cache/opencode/node_modules/@slkiser/opencode-quota/dist/lib/quota-stats.js"
+if [ -f "$quota_stats_file" ]; then
+  mise exec -- node - "$quota_stats_file" <<'EOF'
+const fs = require("fs");
+const path = process.argv[2];
+let t = fs.readFileSync(path, "utf8");
+// Remove older resolveModelForProvider patch if present.
+t = t.replace(
+  "function resolveModelForProvider(providerID, normalizedModel) {\n    if (providerID === \"openai\" && normalizedModel.startsWith(\"claude-\")) {\n        providerID = \"anthropic\";\n    }\n",
+  "function resolveModelForProvider(providerID, normalizedModel) {\n"
+);
+
+const sourceProviderLine = "const sourceProviderHint = normalizeSourceProviderId(source.providerID);";
+if (t.includes(sourceProviderLine)) {
+  if (!t.includes("sourceProviderHint === \"openai\" && normalizedModel.startsWith(\"claude-\")")) {
+    t = t.replace(
+      sourceProviderLine,
+      "let sourceProviderHint = normalizeSourceProviderId(source.providerID);\n    if (sourceProviderHint === \"openai\" && normalizedModel.startsWith(\"claude-\")) {\n        sourceProviderHint = \"anthropic\";\n    }"
+    );
+    fs.writeFileSync(path, t);
+    console.log("quota: patched resolvePricingKey provider mapping in quota-stats.js");
+  } else {
+    console.log("quota: resolvePricingKey mapping already patched in quota-stats.js");
+  }
+}
+EOF
+fi

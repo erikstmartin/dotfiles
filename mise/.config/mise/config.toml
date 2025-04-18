@@ -1,0 +1,123 @@
+[tools]
+# Language runtimes
+dotnet = "latest"
+go = "latest"
+"go:golang.org/x/tools/gopls" = "latest"
+"go:golang.org/x/tools/cmd/goimports" = "latest"
+node = "latest"
+python = "latest"
+ruby = "latest"
+"gem:ruby-lsp" = "latest"
+"gem:rubocop" = "latest"
+"gem:rubyfmt" = "latest"
+rust = "latest"
+bun = "latest"
+
+# Language-specific tools
+"npm:opencode-ai" = "latest"
+"npm:vscode-langservers-extracted" = "latest"
+"npm:shx" = "latest"
+pipx = "latest"
+
+# Build tools
+ccache = "latest"
+"aqua:ninja-build/ninja" = "latest"
+
+# CLI tools via aqua (cross-platform)
+"aqua:carapace-sh/carapace-bin" = "latest"
+"aqua:ajeetdsouza/zoxide" = "latest"
+"aqua:BurntSushi/ripgrep" = "latest"
+"aqua:casey/just" = "latest"
+"aqua:charmbracelet/glow" = "latest"
+"aqua:cli/cli" = "latest"  # gh
+"aqua:dandavison/delta" = "latest"
+"aqua:Wilfred/difftastic" = "latest"
+"github:dlvhdr/diffnav" = "latest"
+"cargo:eza" = "latest"
+
+"aqua:tree-sitter/tree-sitter" = "latest"
+"aqua:neovim/neovim" = "latest"
+"aqua:jesseduffield/lazydocker" = "latest"
+"aqua:jesseduffield/lazygit" = "latest"
+"aqua:junegunn/fzf" = "latest"
+"aqua:kdash-rs/kdash" = "latest"
+"aqua:sharkdp/bat" = "latest"
+"aqua:sharkdp/fd" = "latest"
+"aqua:starship/starship" = "latest"
+"aqua:sxyazi/yazi" = "latest"
+"aqua:johnkerl/miller" = "latest"
+
+"cargo:llmfit" = "latest"
+"cargo:modelsdev" = "latest"
+
+# LSP servers (mise-managed — visible to nvim, opencode, and shell)
+"aqua:rust-lang/rust-analyzer" = "latest"
+"aqua:LuaLS/lua-language-server" = "latest"
+"aqua:mrjosh/helm-ls" = "latest"
+"aqua:artempyanykh/marksman" = "latest"
+"aqua:bufbuild/buf" = "latest"
+"aqua:hashicorp/terraform-ls" = "latest"
+"aqua:terraform-linters/tflint" = "latest"
+"aqua:aquasecurity/tfsec" = "latest"
+"aqua:tamasfe/taplo" = "latest"
+"aqua:hadolint/hadolint" = "latest"
+"aqua:golangci/golangci-lint" = "latest"
+"aqua:nametake/golangci-lint-langserver" = "latest"
+"aqua:jqlang/jq" = "latest"
+"go:github.com/go-delve/delve/cmd/dlv" = "latest"
+"go:github.com/sqls-server/sqls" = "latest"
+
+# Formatters and linters
+"aqua:astral-sh/ruff" = "latest"
+"aqua:JohnnyMorganz/StyLua" = "latest"
+"aqua:koalaman/shellcheck" = "latest"
+"npm:prettier" = "latest"
+"npm:prettier-plugin-svelte" = "latest"
+"npm:@biomejs/biome" = "latest"
+"npm:pyright" = "latest"
+"npm:bash-language-server" = "latest"
+"npm:@microsoft/compose-language-service" = "latest"
+"npm:dockerfile-language-server-nodejs" = "latest"
+"npm:@tailwindcss/language-server" = "latest"
+"npm:eslint_d" = "latest"
+"npm:markdownlint-cli" = "latest"
+"pipx:mypy" = "latest"
+"pipx:gdtoolkit" = "latest"
+"pipx:sqlfluff" = "latest"
+"pipx:yamllint" = "latest"
+"npm:yaml-language-server" = "latest"
+"npm:svelte-language-server" = "latest"
+"npm:sql-formatter" = "latest"
+"npm:jsonlint" = "latest"
+"dotnet:csharpier" = "latest"
+
+[tools."github:Crashdummyy/roslynLanguageServer"]
+version = "latest"
+filter_bins = "Microsoft.CodeAnalysis.LanguageServer"
+
+[tools."github:Crashdummyy/roslynLanguageServer".platforms]
+macos-arm64 = { asset_pattern = "microsoft.codeanalysis.languageserver.osx-arm64.zip" }
+macos-x64 = { asset_pattern = "microsoft.codeanalysis.languageserver.osx-x64.zip" }
+linux-x64 = { asset_pattern = "microsoft.codeanalysis.languageserver.linux-x64.zip" }
+linux-arm64 = { asset_pattern = "microsoft.codeanalysis.languageserver.linux-arm64.zip" }
+
+[tools."github:vadimcn/codelldb"]
+version = "latest"
+bin_path = "extension/adapter"
+
+[tools."github:vadimcn/codelldb".platforms]
+macos-arm64 = { asset_pattern = "codelldb-darwin-arm64.vsix" }
+macos-x64 = { asset_pattern = "codelldb-darwin-x64.vsix" }
+linux-x64 = { asset_pattern = "codelldb-linux-x64.vsix" }
+linux-arm64 = { asset_pattern = "codelldb-linux-arm64.vsix" }
+
+[tools."github:redhat-developer/vscode-xml"]
+version = "latest"
+rename_exe = "lemminx"
+[tools."github:redhat-developer/vscode-xml".platforms]
+macos-arm64 = { asset_pattern = "lemminx-osx-aarch_64.zip" }
+macos-x64 = { asset_pattern = "lemminx-osx-x86_64.zip" }
+linux-x64 = { asset_pattern = "lemminx-linux.zip" }
+
+[settings]
+experimental = true
