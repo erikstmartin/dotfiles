@@ -1,8 +1,4 @@
 return {
-  {
-    "MeanderingProgrammer/render-markdown.nvim",
-    ft = { "markdown", "codecompanion" },
-  },
   -- NOTE: Plugins can be added with a link (or for a github repo: 'owner/repo' link).
   "tpope/vim-sleuth", -- Detect tabstop and shiftwidth automatically
 
@@ -307,6 +303,13 @@ return {
         desc = "[F]ind: [M]an",
       },
       {
+        "<leader>fn",
+        function()
+          require("snacks").picker.notifications()
+        end,
+        desc = "[F]ind: [N]otifications",
+      },
+      {
         "<leader>fp",
         function()
           require("snacks").picker.projects()
@@ -508,7 +511,21 @@ return {
         enabled = true,
         timeout = 3000,
       },
-      picker = { enabled = true },
+      picker = {
+        enabled = true,
+        win = {
+          input = {
+            keys = {
+              ["<c-l>"] = { "loclist", mode = { "i", "n" } },
+            },
+          },
+          list = {
+            keys = {
+              ["<c-l>"] = { "loclist", mode = { "i", "n" } },
+            },
+          },
+        },
+      },
       quickfile = { enabled = true },
       scope = { enabled = true },
       scroll = { enabled = false },

@@ -116,8 +116,7 @@ if [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh; then
   --prompt="> " --marker="-" --pointer="◆"
   --separator="-" --scrollbar="|" --layout="reverse"'
 
-  # export FZF_DEFAULT_COMMAND="fd --hidden --strip-cwd-prefix --exclude .git"
-  export FZF_DEFAULT_COMMAND="rg --hidden --ignore .git -l -g ''"
+  export FZF_DEFAULT_COMMAND="fdfind --hidden --strip-cwd-prefix --exclude .git"
   export FZF_ALT_C_COMMAND="fdfind --type d --hidden --strip-cwd-prefix --exclude .git"
   export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 
@@ -165,9 +164,8 @@ if command -v zoxide >/dev/null 2>&1; then
 fi
 
 if command -v yazi >/dev/null 2>&1; then
-  alias y="yazi --color=always --git --icons=always"
+  alias y="yazi"
 fi
-
 
 # Use the 1Password agent bridge for keys
 if [ -f "${HOME}/.1password/agent-bridge.sh" ]; then
@@ -265,5 +263,9 @@ case ":$PATH:" in
   *) export PATH="$PNPM_HOME:$PATH" ;;
 esac
 # pnpm end
+
+
+# rbenv
+eval "$(rbenv init -)"
 
 #zprof

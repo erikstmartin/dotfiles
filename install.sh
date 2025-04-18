@@ -69,11 +69,14 @@ _install() {
 	# Install tools
 	sudo apt install git wget curl zsh \
 		build-essential make \
-		ruby ruby-dev ruby-bundler python3 python3-venv rustup nodejs npm \
+		ruby rbenv ruby-dev ruby-bundler python3 python3-venv rustup nodejs npm \
 		python3-pynvim lua-curl luarocks libcurl4-openssl-dev \
 		postgresql-client socat \
 		jq jqp yq entr mc bat zoxide delta eza git-delta tshark \
 		tmux python3-tmuxp stow direnv htop neofetch ripgrep silversearcher-ag fd-find  
+
+	rustup install stable
+	rustup default stable
 
 	sudo npm install -g shx@latest
 
@@ -124,7 +127,8 @@ _install() {
 	/usr/local/go/bin/go install github.com/gcla/termshark/v2/cmd/termshark@${TERMSHARK_VERSION}
 	
 	# Install yazi
-	snap install yazi --classic
+	cargo install --locked yazi-fm yazi-cli
+	yazi pack -a yazi-rs/flavors:catppuccin-mocha
 
 	# Change shell
 	chsh -s /usr/bin/zsh
@@ -163,14 +167,19 @@ _update() {
 	_install_kubectl
 
 	# Update yazi
-	snap refresh yazi --classic
+	echo "Updating yazi"
+	cargo install --locked yazi-fm yazi-cli
+	ya pack -u
 }
 
 if [ $# -gt  1 ]; then
-	echo "Usage: $0 <install|update>";
+	echo "Usage: $0 <install|update|system-update>";
 	exit 1
 elif [ "$1" = "update" ]; then
 	_update
+elif [ "$1" = "system-update" ]; then
+	sudo apt update && sudo apt upgrade -y
+	rustup update
 else
 	_install
 fi

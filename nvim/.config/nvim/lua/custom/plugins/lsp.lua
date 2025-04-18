@@ -161,7 +161,14 @@ return {
         jsonls = {},
         marksman = {},
         pyright = {},
-        ruby_lsp = {},
+        ruby_lsp = {
+          mason = false,
+          cmd = { vim.fn.expand "~/.rbenv/shims/ruby-lsp" },
+        },
+        rubocop = {
+          mason = false,
+          cmd = { vim.fn.expand "~/.rbenv/shims/rubocop" },
+        },
         rust_analyzer = {},
         -- sorbet = {},
         spectral = {},
@@ -209,22 +216,22 @@ return {
       -- for you, so that they are available from within Neovim.
       local ensure_installed = vim.tbl_keys(servers or {})
       vim.list_extend(ensure_installed, {
-        -- "delve",
+        "delve",
         "eslint_d",
         -- "fixjson",
         -- "gitleaks",
         -- "gitlint",
-        -- "golangci-lint",
-        -- "golangci-lint-langserver",
+        "golangci-lint",
+        "golangci-lint-langserver",
         "goimports",
         "hadolint",
         "htmlbeautifier",
         "jq",
         "omnisharp",
         "prettier",
-        --"rubocop",
-        -- "rubyfmt",
-        -- "shellcheck",
+        "rubocop",
+        "rubyfmt",
+        "shellcheck",
         -- "shellharden",
         -- "sqls",
         -- "staticcheck",
@@ -290,6 +297,7 @@ return {
         html = { "prettier" },
         json = { "prettier" },
         yaml = { "prettier" },
+        ruby = { "rubyfmt" },
         --
         -- You can use a sub-list to tell conform to run *until* a formatter
         -- is found.

@@ -169,6 +169,10 @@ return {
   dependencies = {
     "nvim-lua/plenary.nvim",
     "nvim-treesitter/nvim-treesitter",
+    {
+      "MeanderingProgrammer/render-markdown.nvim",
+      ft = { "markdown", "codecompanion" },
+    },
   },
   keys = {
     { "<leader>ac", "<cmd>CodeCompanionChat<CR>", desc = "[A]I: [C]hat" },
@@ -567,7 +571,7 @@ Generate unit tests for the selected code. Ensure that the tests cover all edge 
           short_name = "commit",
           auto_submit = true,
           stop_context_insertion = true,
-          user_prompt = true,
+          user_prompt = false,
         },
         prompts = {
           {
@@ -591,4 +595,5 @@ Generate unit tests for the selected code. Ensure that the tests cover all edge 
       },
     },
   },
+  code,
 }

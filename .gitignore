@@ -12,3 +12,4 @@ polybar/.config/polybar/fonts
 tags
 broot/.config/broot/launcher/
 nvim/.config/mcphub
+ruby/.rbenv

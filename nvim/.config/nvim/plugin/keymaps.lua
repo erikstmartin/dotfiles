@@ -57,6 +57,6 @@ vim.keymap.set("n", "<M-l>", "<c-w>5>")
 vim.keymap.set("n", "<M-k>", "<C-W>+")
 vim.keymap.set("n", "<M-j>", "<C-W>-")
 
-vim.keymap.set("n", "q", "<cmd>q<CR>", { desc = "Quit" })
-vim.keymap.set("n", "Q", "<cmd>q<CR>", { desc = "Quit All" })
+vim.keymap.set("n", "<leader>q", "<cmd>q<CR>", { desc = "Quit" })
+vim.keymap.set("n", "<leader>Q", "<cmd>qall<CR>", { desc = "Quit All" })
 vim.keymap.set("n", "<C-s>", "<cmd>w<CR>", { desc = "Save" })
