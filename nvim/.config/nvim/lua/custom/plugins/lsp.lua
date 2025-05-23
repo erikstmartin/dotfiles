@@ -2,7 +2,6 @@ return {
   {
     "neovim/nvim-lspconfig",
     dependencies = {
-      "folke/neodev.nvim",
       { "williamboman/mason.nvim", config = true }, -- NOTE: Must be loaded before dependants
       "williamboman/mason-lspconfig.nvim",
       "WhoIsSethDaniel/mason-tool-installer.nvim",
@@ -11,9 +10,9 @@ return {
       -- NOTE: `opts = {}` is the same as calling `require('fidget').setup({})`
       { "j-hui/fidget.nvim", opts = {} },
 
-      -- `neodev` configures Lua LSP for your Neovim config, runtime and plugins
+      -- `lazydev` configures Lua LSP for your Neovim config, runtime and plugins
       -- used for completion, annotations and signatures of Neovim apis
-      { "folke/neodev.nvim", opts = {} },
+      { "folke/lazydev.nvim", opts = {} },
 
       -- Autoformatting
       "stevearc/conform.nvim",
@@ -199,6 +198,9 @@ return {
               },
               -- You can toggle below to ignore Lua_LS's noisy `missing-fields` warnings
               -- diagnostics = { disable = { 'missing-fields' } },
+              diagnostics = {
+                globals = { "vim" },
+              },
             },
           },
         },
@@ -216,6 +218,7 @@ return {
       -- for you, so that they are available from within Neovim.
       local ensure_installed = vim.tbl_keys(servers or {})
       vim.list_extend(ensure_installed, {
+        "black",
         "delve",
         "eslint_d",
         -- "fixjson",
@@ -229,9 +232,12 @@ return {
         "jq",
         "omnisharp",
         "markdownlint",
+        "mypy",
         "prettier",
+        "pylint",
         "rubocop",
         "rubyfmt",
+        "ruff",
         "shellcheck",
         -- "shellharden",
         -- "sqls",
@@ -285,7 +291,7 @@ return {
         -- languages here or re-enable it for the disabled ones.
         local disable_filetypes = { c = true, cpp = true }
         return {
-          timeout_ms = 500,
+          timeout_ms = 1000,
           lsp_fallback = not disable_filetypes[vim.bo[bufnr].filetype],
         }
       end,

@@ -269,3 +269,5 @@ esac
 eval "$(rbenv init -)"
 
 #zprof
+
+. "$HOME/.local/bin/env"
