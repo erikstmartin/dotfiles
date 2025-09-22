@@ -69,7 +69,7 @@ _install() {
 	# Install tools
 	sudo apt install git wget curl zsh \
 		build-essential make \
-		ruby rbenv ruby-dev ruby-bundler python3 python3-venv rustup nodejs npm \
+		ruby rbenv ruby-dev ruby-bundler python3 python3-venv rustup nodejs npm dotnet-sdk-8.0 \
 		python3-pynvim lua-curl luarocks libcurl4-openssl-dev \
 		postgresql-client socat \
 		jq jqp yq entr mc bat zoxide delta eza git-delta tshark \
