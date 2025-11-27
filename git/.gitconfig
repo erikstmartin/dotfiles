@@ -1,3 +1,29 @@
+[delta]
+  navigate = true
+  side-by-side = true
+  features = catppuccin-mocha
+  syntax-theme = Nord
+  syntax-set = Comment=#8b92a7,Boolean=#f9e2af,Constant=#f9e2af,Keyword=#f5c2e7,Type=#f9e2af
+
+[delta "catppuccin-mocha"]
+  line-numbers = true
+  line-numbers-left-style = dim
+  line-numbers-right-style = dim
+  line-numbers-minus-style = red
+  line-numbers-plus-style = green
+  line-numbers-zero-style = gray
+  file-style = bold yellow
+  file-decoration-style = bright-yellow box
+  hunk-header-style = cyan bold
+  hunk-header-decoration-style = cyan box
+  plus-style = syntax "#1c2b1f"
+  minus-style = syntax "#2b1c1f"
+  zero-style = syntax
+
+[diff]
+  colorMoved = default
+[init]
+	defaultBranch = main
 [user]
 	name = Erik St. Martin
 	email = alakriti@gmail.com
@@ -41,17 +67,25 @@
   editor = nvim
   pager = delta
 
-[interactive]
-  diffFilter = delta --color-only
+[diff]
+  tool = nvimdiff
 
-[delta]
-  navigate = true
-  side-by-side = true
+[difftool]
+  prompt = false
+
+[difftool "nvimdiff"]
+  cmd = nvim -d "$LOCAL" "$REMOTE"
 
 [merge]
+  tool = nvimdiff
   conflictstyle = diff3
 
-[diff]
-  colorMoved = default
-[init]
-	defaultBranch = main
+[mergetool]
+  prompt = false
+  keepBackup = false
+
+[mergetool "nvimdiff"]
+  cmd = nvim -d "$LOCAL" "$REMOTE" "$BASE" "$MERGED"
+
+[interactive]
+  diffFilter = delta --color-only

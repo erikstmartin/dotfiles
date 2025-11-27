@@ -1,3 +1,4 @@
+.vscode
 vim/.vim/bundle/
 vim/.vim/.netrwhist
 vim/.vim/.cache
@@ -13,3 +14,6 @@ tags
 broot/.config/broot/launcher/
 nvim/.config/mcphub
 ruby/.rbenv
+ruby/.bundle
+tmux/.tmux/resurrect/
+tmux/.tmux/plugins/

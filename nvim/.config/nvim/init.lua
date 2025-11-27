@@ -1,5 +1,37 @@
 --[[ Setup initial configuration ]]
 --
+
+local original_notify = vim.notify
+vim.notify = function(msg, level, opts)
+  local is_watch_error = type(msg) == "string" and (msg:match("watch%.watch") or msg:match("ENOENT"))
+  if not is_watch_error then
+    original_notify(msg, level, opts)
+  end
+end
+
+local original_err_writeln = vim.api.nvim_err_writeln
+vim.api.nvim_err_writeln = function(msg)
+  local is_watch_error = type(msg) == "string" and (msg:match("watch%.watch") or msg:match("ENOENT"))
+  if not is_watch_error then
+    original_err_writeln(msg)
+  end
+end
+
+local original_echo = vim.api.nvim_echo
+vim.api.nvim_echo = function(chunks, history, opts)
+  for _, chunk in ipairs(chunks) do
+    local msg = chunk[1]
+    if type(msg) == "string" and (msg:match("watch%.watch") or msg:match("ENOENT")) then
+      return
+    end
+  end
+  original_echo(chunks, history, opts)
+end
+
+-- Prepend mise shims to PATH
+local mise_shim_path = vim.fn.expand "~/.local/share/mise/shims"
+vim.env.PATH = mise_shim_path .. ":" .. vim.env.PATH
+
 -- Set <space> as the leader key
 -- See `:help mapleader`
 --  NOTE: Must happen before plugins are loaded (otherwise wrong leader will be used)

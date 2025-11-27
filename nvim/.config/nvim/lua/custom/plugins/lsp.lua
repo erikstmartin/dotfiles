@@ -7,8 +7,10 @@ return {
       "WhoIsSethDaniel/mason-tool-installer.nvim",
 
       -- Useful status updates for LSP.
-      -- NOTE: `opts = {}` is the same as calling `require('fidget').setup({})`
-      { "j-hui/fidget.nvim", opts = {} },
+      {
+        "j-hui/fidget.nvim",
+        opts = {},
+      },
 
       -- `lazydev` configures Lua LSP for your Neovim config, runtime and plugins
       -- used for completion, annotations and signatures of Neovim apis
@@ -52,13 +54,13 @@ return {
       --    function will be executed to configure the current buffer
       --
       --
-      require("lspconfig").gdscript.setup {
+      vim.lsp.config("gdscript", {
         force_setup = true, -- because the LSP is global. Read more on lsp-zero docs about this.
         single_file_support = false,
         cmd = { "ncat", "127.0.0.1", "6005" },
         root_dir = require("lspconfig.util").root_pattern("project.godot", ".git"),
         filetypes = { "gd", "gdscript", "gdscript3" },
-      }
+      })
 
       vim.api.nvim_create_autocmd("LspAttach", {
         group = vim.api.nvim_create_augroup("lsp-attach", { clear = true }),
@@ -154,7 +156,44 @@ return {
         dockerls = {},
         dotls = {},
         gdtoolkit = {},
-        gopls = {},
+        gopls = {
+          settings = {
+            gopls = {
+              gofumpt = true,
+              codelenses = {
+                gc_details = false,
+                generate = true,
+                regenerate_cgo = true,
+                run_govulncheck = true,
+                test = true,
+                tidy = true,
+                upgrade_dependency = true,
+                vendor = true,
+              },
+              hints = {
+                assignVariableTypes = true,
+                compositeLiteralFields = true,
+                compositeLiteralTypes = true,
+                constantValues = true,
+                functionTypeParameters = true,
+                parameterNames = true,
+                rangeVariableTypes = true,
+              },
+              analyses = {
+                fieldalignment = true,
+                nilness = true,
+                unusedparams = true,
+                unusedwrite = true,
+                useany = true,
+              },
+              usePlaceholders = true,
+              completeUnimported = true,
+              staticcheck = true,
+              directoryFilters = { "-.git", "-.vscode", "-.idea", "-.vscode-test", "-node_modules" },
+              semanticTokens = true,
+            },
+          },
+        },
         helm_ls = {},
         html = {},
         jsonls = {},
@@ -170,7 +209,7 @@ return {
         },
         rust_analyzer = {},
         -- sorbet = {},
-        spectral = {},
+        -- spectral = {},
         sqlls = {},
         -- svelte = {},
         tailwindcss = {},

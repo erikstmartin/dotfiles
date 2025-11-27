@@ -1,5 +1,18 @@
 # zmodload zsh/zprof
 
+# Ensure /usr/local/bin is in PATH (after our own tools)
+export PATH="$PATH:/usr/local/bin"
+
+# Add ~/.local/bin to PATH for user-installed binaries
+export PATH="$HOME/.local/bin:$PATH"
+
+# Handle Ghostty terminal - fallback if terminfo not available
+if [[ "$TERM" == "xterm-ghostty" ]]; then
+    if ! infocmp "$TERM" &>/dev/null 2>&1; then
+        export TERM=xterm-256color
+    fi
+fi
+
 # Use emacs keybindings
 bindkey -e
 bindkey '^p' history-search-backward
@@ -17,6 +30,7 @@ setopt hist_ignore_dups
 setopt hist_ignore_all_dups
 setopt hist_save_no_dups
 setopt hist_find_no_dups
+setopt hist_verify
 
 # Options
 # setopt correct
@@ -82,7 +96,7 @@ zinit snippet OMZP::colored-man-pages
 zinit snippet OMZP::common-aliases
 
 # Completion
-autoload -U compinit && compinit
+autoload -U compinit && compinit -C
 autoload -U +X bashcompinit && bashcompinit
 
 if command -v terraform >/dev/null 2>&1; then
@@ -97,8 +111,10 @@ zstyle ':completion:*' menu no
 zstyle ':fzf-tab:complete:cd:*' fzf-preview 'ls --color $realpath'
 zstyle ':fzf-tab:complete:__zoxide_z:*' fzf-preview 'ls --color $realpath'
 
-# Starship prompt
-eval "$(starship init zsh)"
+# Mise
+if command -v mise >/dev/null 2>&1; then
+  eval "$(mise activate zsh)"
+fi
 
 # Direnv only if it's installed
 if command -v direnv >/dev/null 2>&1; then
@@ -116,21 +132,24 @@ if [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh; then
   --prompt="> " --marker="-" --pointer="◆"
   --separator="-" --scrollbar="|" --layout="reverse"'
 
-  export FZF_DEFAULT_COMMAND="fdfind --hidden --strip-cwd-prefix --exclude .git"
-  export FZF_ALT_C_COMMAND="fdfind --type d --hidden --strip-cwd-prefix --exclude .git"
-  export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+  if command -v fd >/dev/null 2>&1; then
+    export FZF_DEFAULT_COMMAND="fd --hidden --strip-cwd-prefix --exclude .git"
+    export FZF_ALT_C_COMMAND="fd --type d --hidden --strip-cwd-prefix --exclude .git"
+    export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+  fi
 
-  show_file_or_dir_preview="if [ -d {} ]; then eza --tree --color=always {} | head -200; else batcat -n --color=always --line-range :500 {}; fi"
-  export FZF_ALT_C_OPTS="--preview 'eza --tree --color=always {} | head -200'"
-  export FZF_CTRL_T_OPTS="--preview '$show_file_or_dir_preview' \
-                          --height 60% \
-                          --border sharp \
-                          --layout reverse \
-                          --prompt '∷ ' \
-                          --pointer ▶ \
-                          --marker ⇒"
+  if command -v eza >/dev/null 2>&1 && command -v bat >/dev/null 2>&1; then
+    show_file_or_dir_preview="if [ -d {} ]; then eza --tree --color=always {} | head -200; else bat -n --color=always --line-range :500 {}; fi"
+    export FZF_ALT_C_OPTS="--preview 'eza --tree --color=always {} | head -200'"
+    export FZF_CTRL_T_OPTS="--preview '$show_file_or_dir_preview' \
+                            --height 60% \
+                            --border sharp \
+                            --layout reverse \
+                            --prompt '∷ ' \
+                            --pointer ▶ \
+                            --marker ⇒"
+  fi
 
-  # https://github.com/junegunn/fzf-git.sh
   source ~/.local/share/fzf-git/fzf-git.sh
 fi
 
@@ -147,24 +166,54 @@ _fzf_comprun() {
 }
 
 _fzf_compgen_path() {
-  fdfind --hidden --exclude .git  . "$1" 
+  fd --hidden --exclude .git  . "$1" 
 }
 
 _fzf_compgen_dir() {
-  fdfind --type d --hidden --exclude .git . "$1"
+  fd --type d --hidden --exclude .git . "$1"
 }
 
-if command -v batcat >/dev/null 2>&1; then
+if command -v bat >/dev/null 2>&1; then
   export BAT_THEME="ansi"
-  alias cat=batcat
 fi
 
 if command -v zoxide >/dev/null 2>&1; then
-  eval "$(zoxide init --cmd cd zsh)"
+  eval "$(zoxide init --cmd z zsh)"
+fi
+
+if command -v starship >/dev/null 2>&1; then
+  eval "$(starship init zsh)"
 fi
 
 if command -v yazi >/dev/null 2>&1; then
   alias y="yazi"
+fi
+
+if command -v just >/dev/null 2>&1; then
+  export JUST_GLOBAL_JUSTFILE="$HOME/.config/just/justfile"
+  
+  # Smart wrapper: use local justfile if exists, otherwise global
+  j() {
+    if just --justfile justfile --summary &>/dev/null; then
+      just "$@"
+    else
+      just --global-justfile "$@"
+    fi
+  }
+fi
+
+# Unalias 't' from common-aliases (tail -f) to use for task
+unalias t 2>/dev/null || true
+
+# Smart wrapper: use local Taskfile if exists, otherwise global
+if command -v task >/dev/null 2>&1; then
+  t() {
+    if ! command task --list >/dev/null 2>&1; then
+      command task --global "$@"
+    else
+      command task "$@"
+    fi
+  }
 fi
 
 # Use the 1Password agent bridge for keys
@@ -175,15 +224,19 @@ fi
 # Aliases
 if command -v eza >/dev/null 2>&1; then
   alias eza="eza --color=always --git --icons=always"
-  alias l="eza --long --no-filesize --no-time --no-user --no-permissions"
-  alias ls="eza"
+  alias l="eza"
+  alias ll="eza --long --no-filesize --no-time --no-user --no-permissions"
+  alias la="eza --long --all"
   alias tree="eza --tree"
-else
-  alias ls='ls --color=auto'
 fi
 
 alias vim=nvim
 alias vi=nvim
+
+# open buffer lines in editor
+autoload -Uz edit-command-line
+zle -N edit-command-line
+bindkey '^x^e' edit-command-line
 
 ###-begin-npm-completion-###
 #
@@ -240,36 +293,24 @@ fi
 ###-end-npm-completion-###
 
 
-# >>> conda initialize >>>
-# !! Contents within this block are managed by 'conda init' !!
-__conda_setup="$("${HOME}/anaconda3/bin/conda" 'shell.zsh' 'hook' 2> /dev/null)"
-if [ $? -eq 0 ]; then
-    eval "$__conda_setup"
-else
-    if [ -f "${HOME}/anaconda3/etc/profile.d/conda.sh" ]; then
-        . "${HOME}/anaconda3/etc/profile.d/conda.sh"
-    else
-        export PATH="${HOME}/anaconda3/bin:$PATH"
-    fi
-fi
-unset __conda_setup
-# <<< conda initialize <<<
-
-
-# pnpm
-export PNPM_HOME="${HOME}/.local/share/pnpm"
-case ":$PATH:" in
-  *":$PNPM_HOME:"*) ;;
-  *) export PATH="$PNPM_HOME:$PATH" ;;
-esac
-# pnpm end
-
-
-# rbenv
-eval "$(rbenv init -)"
-
-#zprof
 
 if [ -f "$HOME/.local/bin/env" ]; then
 . "$HOME/.local/bin/env"
 fi
+
+
+if command -v brew >/dev/null 2>&1; then
+  eval "$(/opt/homebrew/bin/brew shellenv)"
+fi
+
+# The following lines have been added by Docker Desktop to enable Docker CLI completions.
+fpath=("${HOME}/.docker/completions" $fpath)
+autoload -Uz compinit
+compinit
+# End of Docker CLI completions
+
+# Added by LM Studio CLI (lms)
+export PATH="$PATH:/Users/erikstmartin/.lmstudio/bin"
+# End of LM Studio CLI section
+
+#zprof

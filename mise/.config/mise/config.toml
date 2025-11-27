@@ -1,0 +1,37 @@
+[tools]
+# Language runtimes
+dart = "latest"
+dotnet = "latest"
+flutter = "latest"
+go = "latest"
+"go:golang.org/x/tools/gopls" = "latest"
+node = "latest"
+python = "latest"
+ruby = "latest"
+rust = "latest"
+
+# Language-specific tools
+"npm:opencode-ai" = "latest"
+"npm:shx" = "latest"
+pipx = "latest"
+"pipx:tmuxp" = "latest"
+
+# CLI tools via aqua (cross-platform)
+"aqua:ajeetdsouza/zoxide" = "latest"
+"aqua:BurntSushi/ripgrep" = "latest"
+"aqua:casey/just" = "latest"
+"aqua:charmbracelet/glow" = "latest"
+"aqua:cli/cli" = "latest"  # gh
+"aqua:dandavison/delta" = "latest"
+"cargo:eza" = "latest"
+"aqua:go-task/task" = "latest"
+"aqua:jesseduffield/lazydocker" = "latest"
+"aqua:jesseduffield/lazygit" = "latest"
+"aqua:junegunn/fzf" = "latest"
+"aqua:kdash-rs/kdash" = "latest"
+"aqua:sharkdp/bat" = "latest"
+"aqua:sharkdp/fd" = "latest"
+"aqua:starship/starship" = "latest"
+
+[settings]
+experimental = true

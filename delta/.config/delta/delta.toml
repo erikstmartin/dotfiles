@@ -1,0 +1,21 @@
+[delta]
+navigate = true
+side-by-side = true
+features = "catppuccin-mocha"
+
+[delta "catppuccin-mocha"]
+syntax-theme = "base16-256"
+line-numbers = true
+line-numbers-left-style = "dim"
+line-numbers-right-style = "dim"
+line-numbers-minus-style = "red"
+line-numbers-plus-style = "green"
+line-numbers-zero-style = "gray"
+file-style = "bold yellow"
+file-decoration-style = "bright-yellow box"
+hunk-header-style = "cyan bold"
+hunk-header-decoration-style = "cyan box"
+plus-style = "syntax #1c2b1f"
+minus-style = "syntax #2b1c1f"
+zero-style = "syntax"
+syntax-set = "Comment=#8b92a7 Boolean=#f9e2af Constant=#f9e2af Keyword=#f5c2e7 Type=#f9e2af"

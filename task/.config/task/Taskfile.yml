@@ -1,0 +1,63 @@
+version: "3"
+
+vars:
+  GREETING: Hello, World!
+
+tasks:
+  default:
+    desc: List all available tasks
+    cmds:
+      - task --global --list-all
+    silent: true
+
+  info:
+    desc: Show system information
+    cmds:
+      - echo "System{{":"}} {{OS}}"
+      - echo "Architecture{{":"}} {{ARCH}}"
+      - echo "Shell{{":"}} $SHELL"
+      - echo "User{{":"}} $USER"
+      - echo "Home{{":"}} $HOME"
+
+  update:
+    desc: Update all package managers
+    cmds:
+      - echo "Updating Homebrew..."
+      - brew update && brew upgrade
+      - echo "Updating mise..."
+      - mise upgrade
+      - echo "Updating zinit plugins..."
+      - zinit self-update
+      - zinit update --all
+
+  clean:
+    desc: Clean package manager caches
+    cmds:
+      - echo "Cleaning Homebrew..."
+      - brew cleanup
+      - echo "Cleaning mise cache..."
+      - mise cache clear
+
+  docker:clean:
+    desc: Clean Docker system
+    cmds:
+      - docker system prune -af --volumes
+
+  dotfiles:link:
+    desc: Link dotfiles
+    dir: ~/dotfiles
+    cmds:
+      - ./bin/dotfiles.sh link
+
+  dotfiles:unlink:
+    desc: Unlink dotfiles
+    dir: ~/dotfiles
+    cmds:
+      - ./bin/dotfiles.sh unlink
+
+  dotfiles:update:
+    desc: Update dotfiles
+    dir: ~/dotfiles
+    cmds:
+      - git pull
+      - ./bin/dotfiles.sh update

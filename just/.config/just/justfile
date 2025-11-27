@@ -1,0 +1,49 @@
+# Global shared justfile
+# This file contains common tasks that are available across all projects
+
+# List all available recipes
+default:
+    @just --global-justfile --list
+
+# Show system information
+info:
+    @echo "System: $(uname -s)"
+    @echo "Architecture: $(uname -m)"
+    @echo "Shell: $SHELL"
+    @echo "User: $USER"
+    @echo "Home: $HOME"
+
+# Update all package managers
+update:
+    @echo "Updating Homebrew..."
+    brew update && brew upgrade
+    @echo "Updating mise..."
+    mise upgrade
+    @echo "Updating zinit plugins..."
+    zinit self-update
+    zinit update --all
+
+# Clean package manager caches
+clean:
+    @echo "Cleaning Homebrew..."
+    brew cleanup
+    @echo "Cleaning mise cache..."
+    mise cache clear
+
+# Docker shortcuts
+[group('docker')]
+docker-clean:
+    docker system prune -af --volumes
+
+# Dotfiles management
+[group('dotfiles')]
+dotfiles-link:
+    cd ~/dotfiles && ./bin/dotfiles.sh link
+
+[group('dotfiles')]
+dotfiles-unlink:
+    cd ~/dotfiles && ./bin/dotfiles.sh unlink
+
+[group('dotfiles')]
+dotfiles-update:
+    cd ~/dotfiles && git pull && ./bin/dotfiles.sh update

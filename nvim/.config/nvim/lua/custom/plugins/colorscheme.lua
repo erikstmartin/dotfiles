@@ -75,6 +75,16 @@ return { -- You can easily change to a different colorscheme.
             surface0 = "#313244", -- current line background
           },
         },
+        custom_highlights = function(colors)
+          return {
+            DiffAdd = { bg = colors.surface0, fg = colors.green },
+            DiffDelete = { bg = colors.surface0, fg = colors.red },
+            DiffChange = { bg = colors.surface0, fg = colors.blue },
+            DiffText = { bg = colors.surface1, fg = colors.text, style = { "bold" } },
+            DiffAdded = { fg = colors.green },
+            DiffRemoved = { fg = colors.red },
+          }
+        end,
       }
     end,
     init = function()

@@ -110,6 +110,8 @@ return {
       -- Document existing key chains
       require("which-key").add {
         { "<leader>a", group = "[A]I", mode = { "v", "n" } },
+        { "<leader>c", group = "[C]oPilot", mode = { "v", "n" } },
+        { "<leader>o", group = "[O]penCode", mode = { "v", "n", "x" } },
         { "<leader>d", group = "[D]iagnostics" },
         { "<leader>f", group = "[F]ind" },
         { "<leader>g", group = "[G]it" },
@@ -242,14 +244,14 @@ return {
       {
         "<leader>ff",
         function()
-          require("snacks").picker.smart()
+          require("snacks").picker.files()
         end,
         desc = "[F]ind: [F]iles",
       },
       {
         "<leader><leader>",
         function()
-          require("snacks").picker.smart()
+          require("snacks").picker.files()
         end,
         desc = "[F]ind: [F]iles",
       },
@@ -459,7 +461,7 @@ return {
           keys = {
             { icon = " ", key = "f", desc = "Find File", action = ":lua Snacks.dashboard.pick('files')" },
             { icon = " ", key = "n", desc = "New File", action = ":ene | startinsert" },
-            { icon = " ", key = "g", desc = "Find Text", action = ":lua Snacks.dashboard.pick('live_grep')" },
+            { icon = " ", key = "g", desc = "Grep", action = ":lua Snacks.dashboard.pick('live_grep')" },
             { icon = " ", key = "r", desc = "Recent Files", action = ":lua Snacks.dashboard.pick('oldfiles')" },
             {
               icon = " ",
@@ -510,6 +512,10 @@ return {
       notifier = {
         enabled = true,
         timeout = 3000,
+        filter = function(notif)
+          local msg = notif.msg or ""
+          return not (msg:match("watch%.watch") or msg:match("ENOENT"))
+        end,
       },
       picker = {
         enabled = true,
@@ -540,6 +546,18 @@ return {
       --   },
       -- },
     },
+    config = function(_, opts)
+      require("snacks").setup(opts)
+      local snacks_notify = vim.notify
+      vim.notify = function(msg, level, notify_opts)
+        local is_watch_error = type(msg) == "string" and (msg:match("watch%.watch") or msg:match("ENOENT"))
+        if is_watch_error then
+          notify_opts = notify_opts or {}
+          notify_opts.history = false
+        end
+        return snacks_notify(msg, level, notify_opts)
+      end
+    end,
   },
   -- "ElPiloto/sidekick.nvim",
 }
