@@ -1,129 +1,102 @@
+local pick = require("custom.util").pick
+
+-- Run `cmd` in a fresh terminal every time (Snacks.terminal.toggle would hide
+-- an existing one for the same command instead of re-running it)
+local function run_in_terminal(cmd)
+  local prev = Snacks.terminal.get(cmd, { create = false })
+  if prev then
+    prev:close()
+  end
+  Snacks.terminal.open(cmd, { auto_close = false })
+end
+
 return {
-  -- NOTE: Plugins can be added with a link (or for a github repo: 'owner/repo' link).
-  "tpope/vim-sleuth", -- Detect tabstop and shiftwidth automatically
 
-  -- NOTE: Plugins can also be added by using a table,
-  -- with the first argument being the link and the following
-  -- keys can be used to configure plugin behavior/loading/etc.
-  --
-  -- Use `opts = {}` to force a plugin to be loaded.
-  --
-  --  This is equivalent to:
-  --    require('Comment').setup({})
+  { "tpope/vim-sleuth", event = { "BufReadPre", "BufNewFile" } }, -- Detect tabstop and shiftwidth automatically
 
-  -- Here is a more advanced example where we pass configuration
-  -- options to `gitsigns.nvim`. This is equivalent to the following Lua:
-  --    require('gitsigns').setup({ ... })
-  --
-  -- See `:help gitsigns` to understand what the configuration keys do
-  { -- Adds git related signs to the gutter, as well as utilities for managing changes
-    "lewis6991/gitsigns.nvim",
-    opts = {
-      signs = {
-        add = { text = "+" },
-        change = { text = "~" },
-        delete = { text = "_" },
-        topdelete = { text = "‾" },
-        changedelete = { text = "~" },
-      },
-    },
-  },
-  {
-    "sindrets/diffview.nvim",
-    keys = {
-      {
-        "<leader>gdb",
-        "<cmd>DiffviewOpen<cr>",
-        desc = "[G]it: [D]iff [B]ranch",
-      },
-      {
-        "<leader>gD",
-        "<cmd>DiffviewClose<cr>",
-        desc = "[G]it: [D]iff Close",
-      },
-      {
-        "<leader>gdf",
-        "<cmd>DiffviewFileHistory<cr>",
-        desc = "[G]it: [D]iff [F]ile",
-      },
-      {
-        "<leader>gdp",
-        function()
-          Snacks.input({ prompt = "Prompt: " }, function(input)
-            if input then
-              vim.cmd("DiffviewOpen " .. input)
-            end
-          end)
-        end,
-        desc = "[G]it: [D]iff [P]rompt (branch)",
-      },
-      {
-        "<leader>gdP",
-        function()
-          Snacks.input({ prompt = "Prompt: " }, function(input)
-            if input then
-              vim.cmd("DiffviewFileHistory " .. input)
-            end
-          end)
-        end,
-        desc = "[G]it: [D]iff [P]rompt (file)",
-      },
-    },
-  },
-  { -- Useful plugin to show you pending keybinds.
+  { -- Shows pending keybinds
     "folke/which-key.nvim",
-    event = "VimEnter", -- Sets the loading event to 'VimEnter'
-    enabled = true,
-    config = function() -- This is the function that runs, AFTER loading
+    event = "VeryLazy",
+    config = function()
       require("which-key").setup {
         preset = "helix",
-        plugins = {
-          marks = true, -- shows a list of your marks on ' and `
-          registers = true, -- shows your registers on " in NORMAL or <C-r> in INSERT mode
-          -- the presets plugin, adds help for a bunch of default keybindings in Neovim
-          -- No actual key bindings are created
-          spelling = {
-            enabled = true, -- enabling this will show WhichKey when pressing z= to select spelling suggestions
-            suggestions = 20, -- how many suggestions should be shown in the list?
-          },
-          presets = {
-            operators = true, -- adds help for operators like d, y, ...
-            motions = true, -- adds help for motions
-            text_objects = true, -- help for text objects triggered after entering an operator
-            windows = true, -- default bindings on <c-w>
-            nav = true, -- misc bindings to work with windows
-            z = true, -- bindings for folds, spelling and others prefixed with z
-            g = true, -- bindings for prefixed with g
-          },
-        },
-        show_keys = true, -- show the currently pressed key and its label as a message in the command line
-        -- triggers = {"<leader>"} -- or specify a list manually
-        -- disable the WhichKey popup for certain buf types and file types.
-        -- Disabled by default for Telescope
-        disable = {
-          buftypes = {},
-          filetypes = {},
-        },
         sort = { "local", "order", "alphanum", "mod", "group" },
       }
+
+      -- Merge keymaps, buffer-local while the buffer is shown in a diff window
+      local merge_maps = {
+        { "<leader>gml", "<cmd>diffget LOCAL<CR>", "[G]it [M]erge: get [L]ocal" },
+        { "<leader>gmr", "<cmd>diffget REMOTE<CR>", "[G]it [M]erge: get [R]emote" },
+        { "<leader>gmb", "<cmd>diffget BASE<CR>", "[G]it [M]erge: get [B]ase" },
+        { "<leader>gmL", "<cmd>diffput LOCAL<CR>", "[G]it [M]erge: put [L]ocal" },
+        { "<leader>gmR", "<cmd>diffput REMOTE<CR>", "[G]it [M]erge: put [R]emote" },
+        { "<leader>gmB", "<cmd>diffput BASE<CR>", "[G]it [M]erge: put [B]ase" },
+      }
+      local function update_diff_keymaps(buf)
+        local in_diff = vim.iter(vim.fn.win_findbuf(buf)):any(function(win)
+          return vim.wo[win].diff
+        end)
+        if (vim.b[buf].diff_keymaps or false) == in_diff then
+          return
+        end
+        vim.b[buf].diff_keymaps = in_diff
+        for _, m in ipairs(merge_maps) do
+          if in_diff then
+            vim.keymap.set("n", m[1], m[2], { buffer = buf, desc = m[3] })
+          else
+            pcall(vim.keymap.del, "n", m[1], { buffer = buf })
+          end
+        end
+        -- which-key hides the group again once its keys are gone
+        if in_diff then
+          require("which-key").add { { "<leader>gm", group = "[G]it: [M]erge", buffer = buf } }
+        end
+      end
+
+      local diff_keymaps_augroup = vim.api.nvim_create_augroup("diff-keymaps", { clear = true })
+      vim.api.nvim_create_autocmd("BufWinEnter", {
+        group = diff_keymaps_augroup,
+        callback = function(event)
+          update_diff_keymaps(event.buf)
+        end,
+      })
+      vim.api.nvim_create_autocmd("OptionSet", {
+        group = diff_keymaps_augroup,
+        pattern = "diff",
+        callback = function()
+          update_diff_keymaps(vim.api.nvim_get_current_buf())
+        end,
+      })
+      -- which-key loads on VeryLazy, after `nvim -d` / git mergetool already
+      -- opened their diff windows, so catch those up now
+      for _, win in ipairs(vim.api.nvim_list_wins()) do
+        if vim.wo[win].diff then
+          update_diff_keymaps(vim.api.nvim_win_get_buf(win))
+        end
+      end
 
       -- Document existing key chains
       require("which-key").add {
         { "<leader>a", group = "[A]I", mode = { "v", "n" } },
+        { "<leader>ac", group = "[A]I [C]hat", mode = { "v", "n" } },
+        { "<leader>ai", group = "[A]I [I]nline (edits buffer)", mode = { "v", "n" } },
+        { "<leader>b", group = "[B]uffer" },
         { "<leader>d", group = "[D]iagnostics" },
+        { "<leader>D", group = "[D]ebug", mode = { "n", "x" } },
         { "<leader>f", group = "[F]ind" },
         { "<leader>g", group = "[G]it" },
         { "<leader>gd", group = "[G]it [D]iff" },
-        { "<leader>G", group = "[G]odot" },
         { "<leader>l", group = "[L]SP" },
-        { "<leader>r", group = "[R]EPL", mode = { "v", "n" } },
-        { "<leader>t", group = "[T]erminal", mode = { "v", "n" } },
+        { "<leader>m", group = "[M]arks" },
+        { "<leader>r", group = "[R]un in terminal", mode = { "v", "n" } },
+        { "<leader>t", group = "[T]ests" },
+        { "<leader>x", group = "Trouble" },
       }
     end,
   },
   {
     "folke/todo-comments.nvim",
-    event = "VimEnter",
+    event = { "BufReadPost", "BufNewFile" },
     dependencies = { "nvim-lua/plenary.nvim" },
     opts = { signs = false },
   },
@@ -134,321 +107,76 @@ return {
     keys = {
       -- Terminal
       {
-        "<leader>tt",
+        "<leader>rr",
         function()
-          require("snacks").terminal.toggle()
+          Snacks.terminal.toggle()
         end,
-        desc = "[T]erminal [T]oggle",
+        desc = "[R]un: Toggle terminal ([r])",
       },
       {
-        "<leader>tt",
+        "<leader>rl",
         function()
-          require("snacks").terminal.toggle()
+          run_in_terminal(vim.fn.getline ".")
         end,
-        desc = "[T]erminal [T]oggle",
+        desc = "[R]un: Current [L]ine in terminal",
       },
       {
-        "<leader>tl",
+        "<leader>rs",
         function()
-          require("snacks").terminal.toggle(vim.fn.getline ".", { auto_close = false })
+          -- getregion handles backward, linewise and blockwise selections
+          local lines = vim.fn.getregion(vim.fn.getpos "v", vim.fn.getpos ".", { type = vim.fn.mode() })
+          vim.cmd("normal! " .. vim.keycode "<Esc>")
+          -- A string runs through the shell; a list would be taken as argv
+          run_in_terminal(table.concat(lines, "\n"))
         end,
-        desc = "[T]erminal Execute [L]ine",
-      },
-      {
-        "<leader>ts",
-        function()
-          local _, ls, cs = unpack(vim.fn.getpos "v")
-          local _, le, ce = unpack(vim.fn.getpos ".")
-          local selected_text = vim.api.nvim_buf_get_text(0, ls - 1, cs - 1, le - 1, ce, {})
-
-          require("snacks").terminal.toggle(selected_text)
-        end,
-        desc = "[T]erminal Execute [S]election",
+        desc = "[R]un: [S]election in terminal",
         mode = "v",
       },
       -- Explorer
       {
         "\\",
         function()
-          require("snacks").explorer()
+          if vim.fn.getcmdwintype() ~= "" then return end
+          Snacks.explorer()
         end,
         desc = "Explorer Toggle",
       },
       -- Gitbrowse
-      {
-        "<leader>go",
-        function()
-          require("snacks").gitbrowse()
-        end,
-        desc = "[G]it: [O]pen",
-      },
+      { "<leader>go", function() Snacks.gitbrowse() end, desc = "[G]it: [O]pen" },
       -- Pickers
-      {
-        "<leader>fb",
-        function()
-          require("snacks").picker.buffers()
-        end,
-        desc = "[F]ind: [B]uffer",
-      },
-      {
-        "<leader>fT",
-        function()
-          require("snacks").picker.colorschemes()
-        end,
-        desc = "[F]ind: [T]heme",
-      },
-      {
-        "<leader>fc",
-        function()
-          require("snacks").picker.command_history()
-        end,
-        desc = "[F]ind: [C]ommand History",
-      },
-      {
-        "<leader>fC",
-        function()
-          require("snacks").picker.commands()
-        end,
-        desc = "[F]ind: [C]ommand",
-      },
-      {
-        "<leader>fd",
-        function()
-          require("snacks").picker.diagnostics()
-        end,
-        desc = "[F]ind: [D]iagnostic (all)",
-      },
-      {
-        "<leader>df",
-        function()
-          require("snacks").picker.diagnostics()
-        end,
-        desc = "[D]iagnostics: [F]ind (all)",
-      },
-      {
-        "<leader>fD",
-        function()
-          require("snacks").picker.diagnostics_buffer()
-        end,
-        desc = "[F]ind: [D]iagnostic (buffer)",
-      },
-      {
-        "<leader>dF",
-        function()
-          require("snacks").picker.diagnostics_buffer()
-        end,
-        desc = "[D]iagnostics: [F]ind (buffer)",
-      },
-      {
-        "<leader>ff",
-        function()
-          require("snacks").picker.smart()
-        end,
-        desc = "[F]ind: [F]iles",
-      },
-      {
-        "<leader><leader>",
-        function()
-          require("snacks").picker.smart()
-        end,
-        desc = "[F]ind: [F]iles",
-      },
-      {
-        "<leader>fF",
-        function()
-          require("snacks").picker.git_files()
-        end,
-        desc = "[F]ind: [F]iles (git)",
-      },
-      {
-        "<leader>fh",
-        function()
-          require("snacks").picker.help()
-        end,
-        desc = "[F]ind: [H]elp",
-      },
-      {
-        "<leader>fj",
-        function()
-          require("snacks").picker.jumps()
-        end,
-        desc = "[F]ind: [J]umps",
-      },
-      {
-        "<leader>fk",
-        function()
-          require("snacks").picker.keymaps()
-        end,
-        desc = "[F]ind: [K]eymaps",
-      },
-      {
-        "<leader>fl",
-        function()
-          require("snacks").picker.loclist()
-        end,
-        desc = "[F]ind: [L]oclist",
-      },
-      {
-        "<leader>fL",
-        function()
-          require("snacks").picker.lines()
-        end,
-        desc = "[F]ind: [L]ines",
-      },
-      {
-        "<leader>fM",
-        function()
-          require("snacks").picker.man()
-        end,
-        desc = "[F]ind: [M]an",
-      },
-      {
-        "<leader>fn",
-        function()
-          require("snacks").picker.notifications()
-        end,
-        desc = "[F]ind: [N]otifications",
-      },
-      {
-        "<leader>fp",
-        function()
-          require("snacks").picker.projects()
-        end,
-        desc = "[F]ind: [P]rojects",
-      },
-      {
-        "<leader>fP",
-        function()
-          require("snacks").picker.pickers()
-        end,
-        desc = "[F]ind: [P]ickers",
-      },
-      {
-        "<leader>fm",
-        function()
-          require("snacks").picker.marks()
-        end,
-        desc = "[F]ind: [M]arks",
-      },
-      {
-        "<leader>fq",
-        function()
-          require("snacks").picker.qflist()
-        end,
-        desc = "[F]ind: [Q]uickfix",
-      },
-      {
-        "<leader>fr",
-        function()
-          require("snacks").picker.recent()
-        end,
-        desc = "[F]ind: [R]ecent",
-      },
-      {
-        "<leader>fR",
-        function()
-          require("snacks").picker.registers()
-        end,
-        desc = "[F]ind: [R]egisters",
-      },
-      {
-        "<leader>fs",
-        function()
-          require("snacks").picker.search_history()
-        end,
-        desc = "[F]ind: [S]earch History",
-      },
-      {
-        "<leader>ft",
-        function()
-          require("snacks").picker.treesitter()
-        end,
-        desc = "[F]ind: [T]reesitter",
-      },
-      {
-        "<leader>fu",
-        function()
-          require("snacks").picker.undo()
-        end,
-        desc = "[F]ind: [U]ndo",
-      },
-      {
-        "<leader>fz",
-        function()
-          require("snacks").picker.zoxide()
-        end,
-        desc = "[F]ind: [Z]oxide",
-      },
-      {
-        "<leader>lr",
-        function()
-          require("snacks").picker.lsp_references()
-        end,
-        desc = "[L]sp: [R]eferences",
-      },
-      {
-        "<leader>ls",
-        function()
-          require("snacks").picker.lsp_workspace_symbols()
-        end,
-        desc = "[L]sp: [S]ymbols",
-      },
-      {
-        "<leader>lS",
-        function()
-          require("snacks").picker.lsp_symbols()
-        end,
-        desc = "[L]sp: [S]ymbols",
-      },
-      {
-        "<leader>g/",
-        function()
-          require("snacks").picker.git_grep()
-        end,
-        desc = "[G]it: Grep",
-      },
-      {
-        "<leader>/",
-        function()
-          require("snacks").picker.grep()
-        end,
-        desc = "Grep",
-      },
-      {
-        "<leader>gl",
-        function()
-          require("snacks").picker.git_log()
-        end,
-        desc = "[G]it: [L]og (branch)",
-      },
-      {
-        "<leader>gL",
-        function()
-          require("snacks").picker.git_log_file()
-        end,
-        desc = "[G]it: [L]og (file)",
-      },
-      {
-        "<leader>g<C-l>",
-        function()
-          require("snacks").picker.git_log_line()
-        end,
-        desc = "[G]it: [L]og (line)",
-      },
-      {
-        "<leader>gs",
-        function()
-          require("snacks").picker.git_status()
-        end,
-        desc = "[G]it: [S]tatus",
-      },
-      {
-        "<leader>gS",
-        function()
-          require("snacks").picker.git_stash()
-        end,
-        desc = "[G]it: [S]tash",
-      },
+      { "<leader>fb", pick "buffers", desc = "[F]ind: [B]uffer" },
+      { "<leader>fT", pick "colorschemes", desc = "[F]ind: [T]heme" },
+      { "<leader>fc", pick "command_history", desc = "[F]ind: [C]ommand History" },
+      { "<leader>fC", pick "commands", desc = "[F]ind: [C]ommand" },
+      { "<leader>df", pick "diagnostics", desc = "[D]iagnostic: [F]ind (all)" },
+      { "<leader>dF", pick "diagnostics_buffer", desc = "[D]iagnostic: [F]ind (buffer)" },
+      { "<leader>ff", pick "files", desc = "[F]ind: [F]iles" },
+      { "<leader><leader>", pick "files", desc = "[F]ind: [F]iles" },
+      { "<leader>fF", pick "git_files", desc = "[F]ind: [F]iles (git)" },
+      { "<leader>fh", pick "help", desc = "[F]ind: [H]elp" },
+      { "<leader>fj", pick "jumps", desc = "[F]ind: [J]umps" },
+      { "<leader>fk", pick "keymaps", desc = "[F]ind: [K]eymaps" },
+      { "<leader>fl", pick "loclist", desc = "[F]ind: [L]oclist" },
+      { "<leader>fL", pick "lines", desc = "[F]ind: [L]ines" },
+      { "<leader>fM", pick "man", desc = "[F]ind: [M]an" },
+      { "<leader>fn", pick "notifications", desc = "[F]ind: [N]otifications" },
+      { "<leader>fp", pick "projects", desc = "[F]ind: [P]rojects" },
+      { "<leader>fP", pick "pickers", desc = "[F]ind: [P]ickers" },
+      { "<leader>fm", pick "marks", desc = "[F]ind: [M]arks" },
+      { "<leader>fq", pick "qflist", desc = "[F]ind: [Q]uickfix" },
+      { "<leader>fr", pick "recent", desc = "[F]ind: [R]ecent" },
+      { "<leader>fR", pick "registers", desc = "[F]ind: [R]egisters" },
+      { "<leader>fH", pick "search_history", desc = "[F]ind: Search [H]istory" },
+      { "<leader>ft", pick "treesitter", desc = "[F]ind: [T]reesitter" },
+      { "<leader>fu", pick "undo", desc = "[F]ind: [U]ndo" },
+      { "<leader>fz", pick "zoxide", desc = "[F]ind: [Z]oxide" },
+      { "<leader>g/", pick "git_grep", desc = "[G]it: Grep" },
+      { "<leader>/", pick "grep", desc = "Grep" },
+      { "<leader>gl", pick "git_log", desc = "[G]it: [L]og (branch)" },
+      { "<leader>gL", pick "git_log_file", desc = "[G]it: [L]og (file)" },
+      { "<leader>g<C-l>", pick "git_log_line", desc = "[G]it: [L]og (line)" },
+      { "<leader>gs", pick "git_status", desc = "[G]it: [S]tatus" },
+      { "<leader>gS", pick "git_stash", desc = "[G]it: [S]tash" },
     },
     ---@type snacks.Config
     opts = {
@@ -459,7 +187,7 @@ return {
           keys = {
             { icon = " ", key = "f", desc = "Find File", action = ":lua Snacks.dashboard.pick('files')" },
             { icon = " ", key = "n", desc = "New File", action = ":ene | startinsert" },
-            { icon = " ", key = "g", desc = "Find Text", action = ":lua Snacks.dashboard.pick('live_grep')" },
+            { icon = " ", key = "g", desc = "Grep", action = ":lua Snacks.dashboard.pick('live_grep')" },
             { icon = " ", key = "r", desc = "Recent Files", action = ":lua Snacks.dashboard.pick('oldfiles')" },
             {
               icon = " ",
@@ -467,9 +195,7 @@ return {
               desc = "Config",
               action = ":lua Snacks.dashboard.pick('files', {cwd = vim.fn.stdpath('config')})",
             },
-            { icon = " ", key = "s", desc = "Restore Session", section = "session" },
             { icon = "󰒲 ", key = "L", desc = "Lazy", action = ":Lazy", enabled = package.loaded.lazy ~= nil },
-            { icon = " ", key = "M", desc = "Mason", action = ":Mason", enabled = package.loaded.lazy ~= nil },
             { icon = " ", key = "q", desc = "Quit", action = ":qa" },
           },
         },
@@ -504,15 +230,46 @@ return {
       git = { enabled = true },
       gitbrowse = { enabled = true },
       image = { enabled = true },
-      indent = { enabled = false },
+      indent = { enabled = true }, -- indent guides + current scope
       input = { enabled = true },
       layout = { enabled = true },
       notifier = {
         enabled = true,
         timeout = 3000,
+        -- Hide LSP file-watcher noise: servers can register watches on
+        -- directories that don't exist ("watch.watch: ENOENT ..." at INFO).
+        filter = function(notif)
+          return not (notif.msg or ""):match "^watch%.watch"
+        end,
       },
       picker = {
         enabled = true,
+        icons = {
+          files = {
+            dir = " ",
+            dir_open = " ",
+          },
+          git = {
+            staged = "●",
+            added = "",
+            deleted = "",
+            ignored = " ",
+            modified = "󰏫",
+            renamed = "",
+            unmerged = " ",
+            untracked = "?",
+          },
+        },
+        sources = {
+          explorer = {
+            git_status = true,
+            git_status_open = true,
+            git_untracked = true,
+            hidden = true,
+            ignored = true,
+            exclude = { "*.uid", "godot.pipe" },
+          },
+        },
         win = {
           input = {
             keys = {
@@ -529,17 +286,27 @@ return {
       quickfile = { enabled = true },
       scope = { enabled = true },
       scroll = { enabled = false },
-      statuscolumn = { enabled = false },
+      -- Gutter: marks/signs (diagnostics) left of the number, folds/git right
+      statuscolumn = { enabled = true, folds = { open = true } },
       terminal = { enabled = true },
       toggle = { enabled = false },
       win = { enabled = false },
       words = { enabled = true },
-      -- styles = {
-      --   notification = {
-      --     wo = { wrap = true }, -- Wrap notifications
-      --   },
-      -- },
+      styles = {
+        dashboard = {
+          wo = {
+            number = false,
+            relativenumber = false,
+            cursorline = false,
+            cursorcolumn = false,
+            signcolumn = "no",
+            list = false,
+          },
+        },
+        notification = {
+          wo = { wrap = true }, -- Wrap notifications
+        },
+      },
     },
   },
-  -- "ElPiloto/sidekick.nvim",
 }

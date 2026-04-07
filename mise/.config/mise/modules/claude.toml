@@ -1,0 +1,9 @@
+# Claude Code CLI (native build; updates come from `mise upgrade`)
+# dotfiles packages: claude (linked while this module is enabled)
+[tools]
+"aqua:anthropics/claude-code" = "latest"
+"npm:ccstatusline" = "latest" # status line (settings.json statusLine)
+
+[env]
+# Its self-updater would install its own copy alongside mise's
+DISABLE_AUTOUPDATER = "1"

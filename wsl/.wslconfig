@@ -1,0 +1,15 @@
+# WSL 2 VM settings (Windows side). dotfiles.ps1 links this to
+# %USERPROFILE%\.wslconfig. Per-distro settings live in wsl.conf and are
+# installed to /etc/wsl.conf by the Linux platform installers.
+# Changes apply after `wsl --shutdown`.
+
+[wsl2]
+# WSL shares Windows' network: localhost, VPNs and the LAN work as on Windows
+networkingMode=mirrored
+# Keep the VM up for an hour after the last WSL process exits, so a new tab
+# doesn't wait for a cold boot (default 60s)
+vmIdleTimeout=3600000
+
+[general]
+# Same for the distro itself (default 15s)
+instanceIdleTimeout=3600000

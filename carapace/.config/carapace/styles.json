@@ -1,0 +1,16 @@
+{
+  "carapace": {
+    "Description": "dim #a6adc8",
+    "Error": "bold #f38ba8",
+    "FlagArg": "#cba6f7",
+    "FlagMultiArg": "#fab387",
+    "FlagNoArg": "#89b4fa",
+    "FlagOptArg": "#a6e3a1",
+    "KeywordAmbiguous": "#f9e2af",
+    "KeywordNegative": "#f38ba8",
+    "KeywordPositive": "#a6e3a1",
+    "KeywordUnknown": "#6c7086",
+    "Usage": "bold #94e2d5",
+    "Value": "#cdd6f4"
+  }
+}

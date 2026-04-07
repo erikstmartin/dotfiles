@@ -14,13 +14,41 @@ symbol = " "
 [conda]
 ignore_base = true
 
+[character]
+success_symbol = '[❯](green)'
+error_symbol = '[❯](red)'
+vimcmd_symbol = '[❮](mauve)'
+
+[cmd_duration]
+min_time = 2_000
+format = '[$duration](yellow) '
+show_milliseconds = false
+
+[git_branch]
+symbol = ' '
+style = 'bold mauve'
+
+[git_status]
+format = '([$all_status$ahead_behind]($style) )'
+style = 'dimmed white'
+ahead = '[⇡${count}](teal)'
+behind = '[⇣${count}](yellow)'
+diverged = '[⇕⇡${ahead_count}⇣${behind_count}](red)'
+conflicted = '[~${count}](bold red)'
+untracked = '[?${count}](blue)'
+stashed = '[*](mauve)'
+modified = '[!${count}](yellow)'
+staged = '[+${count}](green)'
+renamed = '[»${count}](peach)'
+deleted = '[✘${count}](red)'
 [golang]
 symbol = ' '
-
 [kubernetes]
 symbol = '☸  '
 disabled = false
-detect_files = ['Dockerfile']
+detect_files = []
+detect_extensions = []
+detect_folders = ['k8s', 'kubernetes', 'helm', 'charts']
 
 [palettes.catppuccin_mocha]
 rosewater = "#f5e0dc"
@@ -46,6 +74,6 @@ overlay0 = "#6c7086"
 surface2 = "#585b70"
 surface1 = "#45475a"
 surface0 = "#313244"
-base = "#1e1e2e"
+base = "#11111b"
 mantle = "#181825"
 crust = "#11111b"

@@ -1,0 +1,37 @@
+nerdfont: true
+merge_strategy: rebase
+merge_keep: true
+worktree_dir: ~/code/worktrees/{project}
+
+# Default agent for <agent>; override per worktree with -a claude / -a codex
+agent: copilot
+
+# workmux has no copilot type; Copilot takes the prompt via -i like Gemini
+agents:
+  copilot:
+    type: gemini
+    command: copilot
+
+# tmux.conf's window-status-format already shows #{@workmux_status}
+status_format: false
+
+mode: session
+
+windows:
+  - name: nvim
+    panes:
+      - command: <agent>
+        focus: true
+      - command: nvim
+        split: horizontal
+        percentage: 65
+
+  - name: fish
+    panes:
+      # Needs an explicit command: workmux starts the agent in a pane without one
+      - command: fish
+        focus: true
+
+post_create:
+  - "if [ -f .envrc ]; then direnv allow; fi"
+  - mise trust

@@ -1,0 +1,14 @@
+# Ruby is os-gated off Windows in modules/ruby.toml (use WSL)
+[tools]
+
+[settings.github]
+credential_command = 'gh auth token --hostname %MISE_CREDENTIAL_HOST%'
+
+# mise's embedded "aube" npm installer has Windows bin-path bugs and
+# false-positive trust checks; use the npm CLI instead
+[settings.npm]
+shell_out = true
+
+[settings.hook_env]
+cache_ttl = "10s"
+chpwd_only = true

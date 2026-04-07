@@ -1,0 +1,9 @@
+# Codex CLI settings to copy into ~/.codex/config.toml. The live file isn't
+# tracked: Codex writes per-machine [projects.*]/[marketplaces.*] state into it.
+# Never track ~/.codex/auth.json (tokens).
+
+model = "gpt-5.6-sol"
+model_reasoning_effort = "max"
+approval_policy = "on-request"
+sandbox_mode = "workspace-write"
+service_tier = "default"

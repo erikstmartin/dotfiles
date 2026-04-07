@@ -1,0 +1,21 @@
+# Rust: toolchain, rust-analyzer, cargo extensions, codelldb debugger
+[tools]
+# rust-analyzer as a rustup component: it matches the toolchain, and rustup's
+# rust-analyzer proxy in ~/.cargo/bin (ahead of mise's tools on PATH) works
+rust = { version = "latest", components = ["rust-analyzer", "rust-src"] }
+"aqua:EmbarkStudios/cargo-deny" = "latest"
+"github:taiki-e/cargo-hack" = "latest"
+"github:rustsec/rustsec" = { version = "latest", version_prefix = "cargo-audit/v", bin = "cargo-audit" }
+"cargo:cargo-edit" = "latest" # no prebuilt binaries; built from source
+
+# Also in cpp.toml (the same debugger)
+[tools."github:vadimcn/codelldb"]
+version = "latest"
+bin_path = "extension/adapter"
+
+[tools."github:vadimcn/codelldb".platforms]
+macos-arm64 = { asset_pattern = "codelldb-darwin-arm64.vsix" }
+macos-x64 = { asset_pattern = "codelldb-darwin-x64.vsix" }
+linux-x64 = { asset_pattern = "codelldb-linux-x64.vsix" }
+linux-arm64 = { asset_pattern = "codelldb-linux-arm64.vsix" }
+windows-x64 = { asset_pattern = "codelldb-win32-x64.vsix" }

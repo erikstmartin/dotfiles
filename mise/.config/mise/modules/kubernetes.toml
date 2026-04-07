@@ -1,0 +1,10 @@
+# Kubernetes: kubectl, helm, helm language server, k9s, kubectx/kubens, stern
+# dotfiles packages: k9s (linked while this module is enabled)
+[tools]
+"aqua:kubernetes/kubernetes/kubectl" = "latest"
+"aqua:helm/helm" = "latest" # plugins (helm-diff): `jg helm-plugins`, also run by `jg update`
+"aqua:mrjosh/helm-ls" = "latest"
+"aqua:derailed/k9s" = "latest"
+"aqua:ahmetb/kubectx" = "latest" # switch context (fzf picker with no args)
+"aqua:ahmetb/kubectx/kubens" = "latest" # switch namespace
+"aqua:stern/stern" = "latest" # follow logs from every pod matching a name

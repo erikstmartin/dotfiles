@@ -1,0 +1,95 @@
+# Catppuccin Mocha skin for k9s (bg uses terminal default for seamless blending)
+
+k9s:
+  body:
+    fgColor: '#cdd6f4'
+    bgColor: default
+    logoColor: '#89b4fa'
+
+  prompt:
+    fgColor: '#cdd6f4'
+    bgColor: default
+    suggestColor: '#585b70'
+
+  info:
+    fgColor: '#cba6f7'
+    sectionColor: '#cdd6f4'
+
+  dialog:
+    fgColor: '#cdd6f4'
+    bgColor: default
+    buttonFgColor: '#cdd6f4'
+    buttonBgColor: '#89b4fa'
+    buttonFocusFgColor: '#11111b'
+    buttonFocusBgColor: '#94e2d5'
+    labelFgColor: '#f9e2af'
+    fieldFgColor: '#cdd6f4'
+
+  frame:
+    border:
+      fgColor: '#313244'
+      focusColor: '#89b4fa'
+    menu:
+      fgColor: '#cdd6f4'
+      keyColor: '#cba6f7'
+      numKeyColor: '#cba6f7'
+    crumbs:
+      fgColor: '#cdd6f4'
+      bgColor: '#181825'
+      activeColor: '#89b4fa'
+    status:
+      newColor: '#a6e3a1'
+      modifyColor: '#89b4fa'
+      addColor: '#94e2d5'
+      errorColor: '#f38ba8'
+      highlightColor: '#f9e2af'
+      killColor: '#585b70'
+      completedColor: '#6c7086'
+    title:
+      fgColor: '#cdd6f4'
+      bgColor: default
+      highlightColor: '#89b4fa'
+      counterColor: '#cba6f7'
+      filterColor: '#cba6f7'
+
+  views:
+    charts:
+      bgColor: default
+      defaultDialColors:
+        - '#89b4fa'
+        - '#f38ba8'
+      defaultChartColors:
+        - '#89b4fa'
+        - '#f38ba8'
+
+    table:
+      fgColor: '#cdd6f4'
+      bgColor: default
+      cursorFgColor: '#11111b'
+      cursorBgColor: '#89b4fa'
+      markColor: '#94e2d5'
+      header:
+        fgColor: '#cdd6f4'
+        bgColor: default
+        sorterColor: '#94e2d5'
+
+    xray:
+      fgColor: '#cdd6f4'
+      bgColor: default
+      cursorColor: '#89b4fa'
+      graphicColor: '#89b4fa'
+      showIcons: false
+
+    yaml:
+      keyColor: '#94e2d5'
+      colonColor: '#45475a'
+      valueColor: '#a6e3a1'
+
+    logs:
+      fgColor: '#cdd6f4'
+      bgColor: default
+      indicator:
+        fgColor: '#cdd6f4'
+        bgColor: '#89b4fa'
+        toggleOnColor: '#94e2d5'
+        toggleOffColor: '#585b70'

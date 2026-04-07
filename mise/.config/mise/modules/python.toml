@@ -1,0 +1,5 @@
+# Python: pyright and ruff (runtime and uv are in the base config)
+# debugpy runs through uv, so there's nothing to install for debugging.
+[tools]
+"npm:pyright" = "latest"
+"aqua:astral-sh/ruff" = "latest"

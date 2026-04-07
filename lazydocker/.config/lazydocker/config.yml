@@ -1,1 +1,16 @@
 reporting: "off"
+gui:
+  theme:
+    activeBorderColor:
+      - '#89b4fa'
+      - bold
+    inactiveBorderColor:
+      - '#313244'
+    optionsTextColor:
+      - '#89b4fa'
+    selectedLineBgColor:
+      - '#313244'
+    selectedRangeBgColor:
+      - '#45475a'
+    defaultFgColor:
+      - '#cdd6f4'

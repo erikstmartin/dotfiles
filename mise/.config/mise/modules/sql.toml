@@ -1,0 +1,7 @@
+# SQL: sqls language server, sqlfluff linter, sql-formatter
+[tools]
+# sqls only publishes an Intel macOS binary, so it's built with Go
+go = "latest"
+"go:github.com/sqls-server/sqls" = "latest"
+"pypi:sqlfluff" = { version = "latest", os = ["linux", "macos"] } # Windows: uv tool, see dotfiles.ps1
+"npm:sql-formatter" = "latest"

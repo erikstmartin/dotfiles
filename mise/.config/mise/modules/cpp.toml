@@ -1,0 +1,18 @@
+# C/C++: clangd, CMake language server and formatter, codelldb debugger
+[tools]
+"github:clangd/clangd" = "latest"
+"github:Decodetalkers/neocmakelsp" = "latest"
+# CMake formatter; cmakelang is unmaintained since 2021 (Windows: uv tool, see dotfiles.ps1)
+"pypi:gersemi" = { version = "latest", os = ["linux", "macos"] }
+
+# Also in rust.toml (the same debugger)
+[tools."github:vadimcn/codelldb"]
+version = "latest"
+bin_path = "extension/adapter"
+
+[tools."github:vadimcn/codelldb".platforms]
+macos-arm64 = { asset_pattern = "codelldb-darwin-arm64.vsix" }
+macos-x64 = { asset_pattern = "codelldb-darwin-x64.vsix" }
+linux-x64 = { asset_pattern = "codelldb-linux-x64.vsix" }
+linux-arm64 = { asset_pattern = "codelldb-linux-arm64.vsix" }
+windows-x64 = { asset_pattern = "codelldb-win32-x64.vsix" }

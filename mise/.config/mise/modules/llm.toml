@@ -1,0 +1,4 @@
+# Local LLM tooling: llmfit (which models fit this hardware), models (models.dev browser)
+[tools]
+"github:AlexsJones/llmfit" = "latest"
+"github:reyamira/models" = "latest"

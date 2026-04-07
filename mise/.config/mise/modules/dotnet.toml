@@ -1,0 +1,6 @@
+# C#/.NET: SDK, Roslyn language server, csharpier, netcoredbg debugger
+[tools]
+dotnet = "10.0"
+"dotnet:roslyn-language-server" = "latest"
+"dotnet:csharpier" = "latest"
+"github:Samsung/netcoredbg" = "latest"

@@ -1,0 +1,8 @@
+# opencode CLI
+# dotfiles packages: opencode (linked while this module is enabled)
+[tools]
+"aqua:anomalyco/opencode" = "latest" # native build
+
+[env]
+# Its self-updater would install another copy behind mise's back
+OPENCODE_DISABLE_AUTOUPDATE = "1"

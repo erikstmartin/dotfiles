@@ -1,0 +1,36 @@
+# k9s plugins: extra shortcuts in the matching views (shown in the k9s help, ?)
+plugins:
+  # Follow logs from every pod of the selected pod/workload (stern, from the
+  # kubernetes mise module). k9s' built-in `l` shows one pod at a time.
+  stern:
+    shortCut: Ctrl-L
+    description: Logs (all pods, stern)
+    scopes:
+      - pods
+      - deployments
+      - statefulsets
+      - daemonsets
+      - replicasets
+      - jobs
+    command: stern
+    background: false
+    args:
+      - --tail
+      - "100"
+      - --context
+      - $CONTEXT
+      - --namespace
+      - $NAMESPACE
+      - $NAME
+
+  # Explore the selected container's image layer by layer (dive, from the
+  # containers mise module; needs the image in a local Docker daemon or pullable)
+  dive:
+    shortCut: Shift-D
+    description: Explore image (dive)
+    scopes:
+      - containers
+    command: dive
+    background: false
+    args:
+      - $COL-IMAGE

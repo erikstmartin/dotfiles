@@ -1,0 +1,102 @@
+// OMO configuration
+{
+  "$schema": "https://raw.githubusercontent.com/code-yeongyu/oh-my-openagent/dev/assets/omo.schema.json",
+  "[opencode]": {
+    "agents": {
+      "oracle": {
+        "model": "github-copilot/gpt-5.6-sol",
+        "reasoning": "high"
+      },
+      "librarian": {
+        "model": "github-copilot/gpt-5.6-luna"
+      },
+      "explore": {
+        "model": "github-copilot/gpt-5.6-luna"
+      },
+      "multimodal-looker": {
+        "model": "github-copilot/gpt-5.6-sol"
+      },
+      "prometheus": {
+        "model": "github-copilot/gpt-5.6-sol",
+        "reasoning": "max"
+      },
+      "metis": {
+        "model": "github-copilot/gpt-5.6-sol",
+        "reasoning": "max"
+      },
+      "momus": {
+        "model": "github-copilot/gpt-5.6-terra",
+        "reasoning": "high"
+      },
+      "hephaestus": {
+        "model": "github-copilot/gpt-5.6-sol",
+        "reasoning": "medium"
+      },
+      "atlas": {
+        "model": "github-copilot/gpt-5.6-sol",
+        "reasoning": "medium"
+      }
+    },
+    "categories": {
+      "visual-engineering": {
+        "model": "github-copilot/gpt-5.6-sol",
+        "reasoning": "medium"
+      },
+      "ultrabrain": {
+        "model": "github-copilot/gpt-5.6-sol",
+        "reasoning": "max"
+      },
+      "artistry": {
+        "model": "github-copilot/gpt-5.6-sol",
+        "reasoning": "max"
+      },
+      "quick": {
+        "model": "github-copilot/gpt-5.6-luna"
+      },
+      "unspecified-low": {
+        "model": "github-copilot/gpt-5.6-terra",
+        "reasoning": "high"
+      },
+      "unspecified-high": {
+        "model": "github-copilot/gpt-5.6-sol",
+        "reasoning": "high"
+      },
+      "writing": {
+        "model": "github-copilot/gpt-5.6-terra"
+      }
+    },
+    "experimental": {
+      "disable_omo_env": true,
+      "dynamic_context_pruning": {
+        "enabled": true,
+        "notification": "minimal",
+        "turn_protection": {
+          "enabled": true,
+          "turns": 3
+        },
+        "strategies": {
+          "deduplication": {
+            "enabled": true
+          },
+          "supersede_writes": {
+            "enabled": true,
+            "aggressive": false
+          },
+          "purge_errors": {
+            "enabled": true,
+            "turns": 5
+          }
+        }
+      }
+    },
+    "disabled_hooks": [
+      "agent-usage-reminder",
+      "startup-toast",
+      "think-mode"
+    ]
+  },
+  "_migrations": [
+    "2026-07-opencode-config-unification",
+    "2026-08-reasoning-unification"
+  ]
+}

@@ -1,0 +1,11 @@
+# XML: lemminx language server
+[tools."github:redhat-developer/vscode-xml"]
+version = "latest"
+rename_exe = "lemminx"
+
+[tools."github:redhat-developer/vscode-xml".platforms]
+macos-arm64 = { asset_pattern = "lemminx-osx-aarch_64.zip" }
+macos-x64 = { asset_pattern = "lemminx-osx-x86_64.zip" }
+linux-x64 = { asset_pattern = "lemminx-linux-x86_64.zip" }
+linux-arm64 = { asset_pattern = "lemminx-linux-aarch_64.zip" }
+windows-x64 = { asset_pattern = "lemminx-win32.zip" }

@@ -1,0 +1,15 @@
+# Azure: az CLI, Bicep CLI and language server, kubelogin (ARM template JSON is validated by jsonls)
+# dotfiles packages: azure (linked while this module is enabled)
+[tools]
+# Bicep's language server runs on .NET (same version as the dotnet module)
+dotnet = "10.0"
+# Windows installs it with WinGet instead (Microsoft.AzureCLI, see dotfiles.ps1)
+"pypi:azure-cli" = { version = "latest", os = ["linux", "macos"] }
+"aqua:Azure/bicep" = "latest"
+"aqua:Azure/kubelogin" = "latest" # sign in to AKS clusters that use Microsoft Entra ID
+# Bicep's language server: a .NET app, run with the dotnet above
+"github:Azure/bicep" = { version = "latest", asset_pattern = "bicep-langserver.zip" }
+
+[env]
+# `az bicep` uses the Bicep CLI above instead of downloading its own copy
+AZURE_BICEP_USE_BINARY_FROM_PATH = "true"

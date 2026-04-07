@@ -1,0 +1,11 @@
+{
+  "$schema": "https://raw.githubusercontent.com/JosXa/opencode-snippets/main/schema/config.schema.json",
+  "logging": {
+    "debug": false
+  },
+  "experimental": {
+    "injectBlocks": true,
+    "skillRendering": true
+  },
+  "hideCommandInOutput": true
+}

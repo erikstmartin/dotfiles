@@ -1,0 +1,4 @@
+# Oh My Pi coding agent (native build; updates come from `mise upgrade`)
+# dotfiles packages: omp (linked while this module is enabled)
+[tools]
+"github:can1357/oh-my-pi" = { version = "latest", bin = "omp" }

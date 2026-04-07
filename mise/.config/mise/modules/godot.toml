@@ -1,0 +1,3 @@
+# Godot: gdtoolkit (gdformat/gdlint). C# projects also want the dotnet module.
+[tools]
+"pypi:gdtoolkit" = { version = "latest", os = ["linux", "macos"] } # Windows: uv tool, see dotfiles.ps1

@@ -1,0 +1,21 @@
+# Global defaults (a project's .yamllint wins), tuned to agree with prettier
+extends: default
+
+rules:
+  # Manifests, Compose and CI files rarely start with `---`
+  document-start: disable
+  line-length:
+    max: 120
+    level: warning
+  # prettier writes `{ a: 1 }` and `key: value # comment`
+  braces:
+    min-spaces-inside: 0
+    max-spaces-inside: 1
+  brackets:
+    min-spaces-inside: 0
+    max-spaces-inside: 1
+  comments:
+    min-spaces-from-content: 1
+  # GitHub Actions' `on:` key isn't a boolean
+  truthy:
+    check-keys: false

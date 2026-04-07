@@ -1,0 +1,3 @@
+# Protocol Buffers: buf (CLI, formatter and language server)
+[tools]
+"aqua:bufbuild/buf" = "latest"

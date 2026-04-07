@@ -1,0 +1,8 @@
+# Containers: lazydocker, dive, hadolint, Dockerfile and Compose language servers
+# dotfiles packages: lazydocker (linked while this module is enabled)
+[tools]
+"aqua:jesseduffield/lazydocker" = "latest"
+"aqua:wagoodman/dive" = "latest" # explore an image layer by layer
+"aqua:hadolint/hadolint" = "latest"
+"npm:dockerfile-language-server-nodejs" = "latest"
+"npm:@microsoft/compose-language-service" = "latest"

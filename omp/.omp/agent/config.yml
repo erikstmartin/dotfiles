@@ -1,0 +1,61 @@
+providers:
+  webSearchOrder:
+    []
+  memoryModel: online
+  tinyModel: lfm2.5-230m
+setupVersion: 2
+tui:
+  resizeScrollback: rebuild
+  vimMode: true
+personality: default
+update:
+  channel: stable
+power:
+  sleepPrevention: idle
+features:
+  unexpectedStopDetection: smart
+memory:
+  backend: mnemopi
+autolearn:
+  enabled: true
+  autoContinue: true
+mnemopi:
+  dbPath: ""
+  scoping: per-project
+  llmMode: smol
+edit:
+  mode: hashline
+readLineNumbers: true
+read:
+  renderMarkdown: true
+dev:
+  autoqa: false
+task:
+  eager: default
+  enableEffort: true
+  enableLsp: true
+modelRoles:
+  openai: openai-codex/gpt-5.6-terra:medium
+  copilot: github-copilot/gpt-5.6-terra:medium
+  default: openai-codex/gpt-5.6-sol:medium
+cycleOrder:
+  - openai
+  - copilot
+modelProviderOrder:
+  - openai-codex
+  - github-copilot
+retry:
+  enabled: true
+  modelFallback: true
+  fallbackRevertPolicy: cooldown-expiry
+  fallbackChains:
+    openai-codex/*:
+      - github-copilot/*
+advisor:
+  enabled: true
+loop:
+  mode: prompt
+images:
+  blockImages: true
+startup:
+  checkUpdate: false # updates come from mise (modules/omp.toml)

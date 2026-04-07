@@ -1,0 +1,17 @@
+# Ruby: runtime, ruby-lsp, RuboCop, rubyfmt
+# Linux/macOS only: ruby-build and native gem extensions fail on Windows (use WSL)
+[tools]
+ruby = { version = "latest", os = ["linux", "macos"] }
+"gem:ruby-lsp" = { version = "latest", os = ["linux", "macos"] }
+"gem:rubocop" = { version = "latest", os = ["linux", "macos"] }
+
+# rubyfmt ships as a binary (the "rubyfmt" gem is an unrelated 0.0.1 stub).
+# Its archive nests it in tmp/releases/v<version>-<OS>/.
+[tools."github:fables-tales/rubyfmt"]
+version = "latest"
+os = ["linux", "macos"]
+
+[tools."github:fables-tales/rubyfmt".platforms]
+macos-arm64 = { bin_path = "tmp/releases/v{{version}}-Darwin" }
+linux-x64 = { bin_path = "tmp/releases/v{{version}}-Linux" }
+linux-arm64 = { bin_path = "tmp/releases/v{{version}}-Linux" }

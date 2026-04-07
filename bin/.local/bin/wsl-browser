@@ -1,0 +1,5 @@
+#!/bin/sh
+# BROWSER on WSL: opens URLs in the Windows default browser. explorer.exe exits
+# non-zero even when it succeeds, so its status is ignored.
+/mnt/c/Windows/explorer.exe "$@"
+exit 0

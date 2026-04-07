@@ -1,0 +1,5 @@
+# Terraform: CLI, terraform-ls, tflint
+[tools]
+"aqua:hashicorp/terraform" = "latest"
+"aqua:hashicorp/terraform-ls" = "latest"
+"aqua:terraform-linters/tflint" = "latest"

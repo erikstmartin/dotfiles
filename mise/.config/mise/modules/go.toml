@@ -1,0 +1,9 @@
+# Go: toolchain, gopls, formatters, golangci-lint, delve debugger
+[tools]
+go = "latest"
+"go:golang.org/x/tools/gopls" = "latest"
+"go:golang.org/x/tools/cmd/goimports" = "latest"
+"aqua:mvdan/gofumpt" = "latest"
+"aqua:golangci/golangci-lint" = "latest"
+"aqua:nametake/golangci-lint-langserver" = "latest"
+"go:github.com/go-delve/delve/cmd/dlv" = "latest"

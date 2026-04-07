@@ -1,20 +1,12 @@
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
 
--- Set highlight on search, but clear on pressing <Esc> in normal mode
-vim.opt.hlsearch = true
+-- Clear search highlighting on <Esc> in normal mode
 vim.keymap.set("n", "<Esc>", "<cmd>nohlsearch<CR>")
 
--- Diagnostic keymaps
-vim.keymap.set("n", "[d", function()
-  vim.diagnostic.jump { count = 1, float = true }
-end, { desc = "Go to previous [D]iagnostic message" })
-vim.keymap.set("n", "]d", function()
-  vim.diagnostic.jump { count = -1, float = true }
-end, { desc = "Go to next [D]iagnostic message" })
+-- Diagnostic keymaps (]d/[d/]D/[D are Neovim defaults; float on jump is set in
+-- lua/custom/options.lua)
 vim.keymap.set("n", "<leader>de", vim.diagnostic.open_float, { desc = "[D]iagnostic: [E]rror messages" })
-vim.keymap.set("n", "<leader>dq", vim.diagnostic.setqflist, { desc = "[D]iagnostic: [Q]uickfix list" })
-vim.keymap.set("n", "<leader>dl", vim.diagnostic.setloclist, { desc = "[D]iagnostic: [L]oclist list" })
 
 vim.keymap.set("n", "<leader>dL", function()
   local new_config = not vim.diagnostic.config().virtual_lines
@@ -40,22 +32,17 @@ vim.keymap.set("t", "<Esc><Esc>", "<C-\\><C-n>", { desc = "Exit terminal mode" }
 -- vim.keymap.set('n', '<up>', '<cmd>echo "Use k to move!!"<CR>')
 -- vim.keymap.set('n', '<down>', '<cmd>echo "Use j to move!!"<CR>')
 
--- Keybinds to make split navigation easier.
---  Use CTRL+<hjkl> to switch between windows
---
---  See `:help wincmd` for a list of all window commands--  disable when vim-tmux-navigator
---
---  disable when vim-tmux-navigator is loaded
--- vim.keymap.set("n", "<C-h>", "<C-w><C-h>", { desc = "Move focus to the left window" })
--- vim.keymap.set("n", "<C-l>", "<C-w><C-l>", { desc = "Move focus to the right window" })
--- vim.keymap.set("n", "<C-j>", "<C-w><C-j>", { desc = "Move focus to the lower window" })
--- vim.keymap.set("n", "<C-k>", "<C-w><C-k>", { desc = "Move focus to the upper window" })
+-- Window (split) navigation
+vim.keymap.set("n", "<C-h>", "<C-w>h", { desc = "Move focus to the left window" })
+vim.keymap.set("n", "<C-j>", "<C-w>j", { desc = "Move focus to the lower window" })
+vim.keymap.set("n", "<C-k>", "<C-w>k", { desc = "Move focus to the upper window" })
+vim.keymap.set("n", "<C-l>", "<C-w>l", { desc = "Move focus to the right window" })
 
--- These mappings control the size of splits (height/width)
-vim.keymap.set("n", "<M-h>", "<c-w>5<")
-vim.keymap.set("n", "<M-l>", "<c-w>5>")
-vim.keymap.set("n", "<M-k>", "<C-W>+")
-vim.keymap.set("n", "<M-j>", "<C-W>-")
+-- Resize windows
+vim.keymap.set("n", "<M-h>", "<C-w>5<", { desc = "Decrease window width" })
+vim.keymap.set("n", "<M-l>", "<C-w>5>", { desc = "Increase window width" })
+vim.keymap.set("n", "<M-k>", "<C-w>+", { desc = "Increase window height" })
+vim.keymap.set("n", "<M-j>", "<C-w>-", { desc = "Decrease window height" })
 
 vim.keymap.set("n", "<leader>q", "<cmd>q<CR>", { desc = "Quit" })
 vim.keymap.set("n", "<leader>Q", "<cmd>qall<CR>", { desc = "Quit All" })

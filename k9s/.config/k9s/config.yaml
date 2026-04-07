@@ -1,0 +1,4 @@
+# Only overrides; everything else uses k9s defaults.
+k9s:
+  ui:
+    skin: catppuccin-mocha

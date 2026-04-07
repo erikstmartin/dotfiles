@@ -1,0 +1,7 @@
+# JavaScript/TypeScript: vtsls, Tailwind CSS language server, eslint_d, bun
+# (HTML/CSS/JSON servers and prettier are in the base config)
+[tools]
+"npm:@vtsls/language-server" = "latest"
+"npm:@tailwindcss/language-server" = "latest"
+"npm:eslint_d" = "latest"
+bun = "latest"

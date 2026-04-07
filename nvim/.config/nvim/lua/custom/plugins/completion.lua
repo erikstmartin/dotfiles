@@ -1,16 +1,18 @@
 return {
   "saghen/blink.cmp",
+  -- Also loaded as a dependency of lsp-setup, so its capabilities are
+  -- registered (vim.lsp.config("*")) before any server starts.
+  event = { "InsertEnter", "CmdlineEnter" },
   -- optional: provides snippets for the snippet source
   dependencies = {
     "rafamadriz/friendly-snippets",
-    "fang2hou/blink-copilot",
     "mgalliou/blink-cmp-tmux",
   },
 
   -- use a release tag to download pre-built binaries
   version = "1.*",
-  -- AND/OR build from source, requires nightly: https://rust-lang.github.io/rustup/concepts/channels.html#working-with-nightly-rust
-  build = "cargo build --release",
+  -- If pre-built binaries aren't available for your platform, build from source:
+  -- build = "cargo build --release",
   -- If you use nix, you can build from source using latest nightly rust with:
   -- build = 'nix run .#build-plugin',
 
@@ -29,15 +31,23 @@ return {
     -- C-k: Toggle signature help (if signature.enabled = true)
     --
     -- See :h blink-cmp-config-keymap for defining your own keymap
-    keymap = { preset = "default" },
+    keymap = {
+      preset = "default",
+      -- Words from the other tmux panes, on demand (replaces Vim's thesaurus
+      -- completion): the source shells out to tmux and blocks while it does
+      ["<C-x><C-t>"] = {
+        function(cmp)
+          return cmp.show { providers = { "tmux" } }
+        end,
+      },
+    },
 
     appearance = {
       -- 'mono' (default) for 'Nerd Font Mono' or 'normal' for 'Nerd Font'
       -- Adjusts spacing to ensure icons are aligned
       nerd_font_variant = "mono",
-      -- Blink does not expose its default kind icons so you must copy them all (or set your custom ones) and add Copilot
+      -- Blink does not expose its default kind icons so you must copy them all (or set your custom ones)
       kind_icons = {
-        Copilot = "",
         Text = "󰉿",
         Method = "󰊕",
         Function = "󰊕",
@@ -71,13 +81,18 @@ return {
       },
     },
 
-    -- (Default) Only show the documentation popup when manually triggered
-    completion = { documentation = { auto_show = false } },
+    -- Borderless completion windows (they'd otherwise follow vim.o.winborder,
+    -- which is "rounded" for hover/diagnostic floats)
+    signature = { window = { border = "none" } },
+    completion = {
+      menu = { border = "none" },
+      documentation = { auto_show = false, window = { border = "none" } },
+    },
 
     -- Default list of enabled providers defined so that you can extend it
     -- elsewhere in your config, without redefining it, due to `opts_extend`
     sources = {
-      default = { "lsp", "path", "snippets", "buffer", "copilot" },
+      default = { "lsp", "snippets", "buffer" }, -- no path; tmux via <C-x><C-t>
       providers = {
         cmdline = {
           -- ignores cmdline completions when executing shell commands
@@ -85,16 +100,11 @@ return {
             return vim.fn.getcmdtype() ~= ":" or not vim.fn.getcmdline():match "^[%%0-9,'<>%-]*!"
           end,
         },
-        copilot = {
-          name = "copilot",
-          module = "blink-copilot",
-        },
         tmux = {
           module = "blink-cmp-tmux",
           name = "tmux",
-          -- default options
           opts = {
-            all_panes = false,
+            panes = "window", -- "window" | "session" | "all"
             capture_history = false,
             -- only suggest completions from `tmux` if the `trigger_chars` are
             -- used

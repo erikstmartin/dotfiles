@@ -1,0 +1,466 @@
+# Global shared justfile
+# This file contains common tasks that are available across all projects
+
+# Windows recipe lines are PowerShell; without this just would run them in sh
+set windows-shell := ["pwsh.exe", "-NoLogo", "-NoProfile", "-Command"]
+
+# List all available recipes
+default:
+    @just --global-justfile --list
+
+# Show system information
+info:
+    @echo "System: {{ os() }}/{{ arch() }}"
+    @echo "Home: $HOME"
+    @{{ if os == "windows" { "echo \"Shell: PowerShell\" && echo \"User: $USERNAME\"" } else { "echo \"Shell: $SHELL\" && echo \"User: $USER\"" } }}
+
+# Detect OS for package manager commands
+os := os()
+
+# The dotfiles checkout (scripts/dotfiles.sh, scripts/dotfiles.ps1)
+dotfiles := env("DOTFILES", home_directory() / "dotfiles")
+
+# Keeps going past failures and lists them at the end.
+# `scripts/dotfiles.sh update` and `dotfiles.ps1 update` run this recipe.
+[doc("Update everything: system packages, mise tools, shell/editor plugins, then clean up")]
+[group('update')]
+[unix]
+[script("bash")]
+update:
+    failed=""
+    section() { printf '\n═══ %s ═══\n' "$1"; }
+    # run <label> <command...>: run a step, remember it if it fails
+    run() {
+        local label="$1"
+        shift
+        "$@" || { echo "✗ $label failed"; failed="$failed
+      - $label"; }
+    }
+
+    section "System packages"
+    run "System packages" "{{ dotfiles }}/scripts/dotfiles.sh" system-update
+
+    section "mise"
+    # Homebrew updates mise on macOS; on Linux it comes from the mise.run installer
+    if [ "$(uname -s)" = Linux ] && [ "$(command -v mise)" = "$HOME/.local/bin/mise" ]; then
+        run "mise self-update" mise self-update --yes
+    fi
+    run "mise upgrade" mise upgrade
+    run "mise install" mise install
+    # Cached shell init scripts regenerate on the next shell, so upgraded and
+    # newly installed tools get their completions
+    rm -rf "$HOME/.cache/fish/init" "${XDG_CACHE_HOME:-$HOME/.cache}/zsh/init"
+
+    if command -v helm >/dev/null 2>&1; then
+        section "Helm plugins"
+        run "Helm plugins" just --global-justfile helm-plugins
+    fi
+
+    section "Python provider for Neovim (pynvim)"
+    run "pynvim" sh -c '"$(mise which python)" -m pip install --user --upgrade --quiet pynvim'
+
+    section "GitHub CLI extensions"
+    if command -v gh >/dev/null 2>&1; then run "gh extensions" gh extension upgrade --all; fi
+
+    section "Shell and tmux plugins"
+    if [ -d "$HOME/.tmux/plugins/tpm" ]; then
+        run "TPM" git -C "$HOME/.tmux/plugins/tpm" pull --ff-only
+        run "TPM plugins (install)" "$HOME/.tmux/plugins/tpm/scripts/install_plugins.sh"
+        run "TPM plugins (update)" "$HOME/.tmux/plugins/tpm/scripts/update_plugin.sh" all
+    fi
+    if [ -d "$HOME/.local/share/zinit/zinit.git" ]; then
+        run "zinit" env TERM=xterm-256color zsh -i -c "zinit self-update && zinit update --all"
+    fi
+    if command -v fish >/dev/null 2>&1 && fish -c 'type -q fisher' 2>/dev/null; then
+        run "fisher" fish -c 'fisher update'
+    fi
+    if [ -d "$HOME/.local/share/fzf-git" ]; then
+        run "fzf-git" git -C "$HOME/.local/share/fzf-git" pull --ff-only
+    fi
+    # OpenCode re-resolves @latest plugins only when their sandbox is gone
+    if [ -d "$HOME/.cache/opencode/packages" ]; then
+        find "$HOME/.cache/opencode/packages" -maxdepth 1 -name "*@latest" -exec rm -rf {} +
+    fi
+
+    section "Neovim plugins and Treesitter parsers"
+    if command -v nvim >/dev/null 2>&1; then
+        run "Neovim plugins" nvim --headless '+Lazy! sync' +qa
+        # Parsers must match the updated nvim-treesitter's queries
+        run "Treesitter parsers" nvim --headless \
+            -c 'lua require("lazy").load({ plugins = { "nvim-treesitter" } }); require("nvim-treesitter").update():wait(600000)' \
+            -c qa
+    fi
+
+    section "Dotfile links"
+    # A tool that saves by replacing its config file turns the link into a copy
+    run "Dotfile links" "{{ dotfiles }}/scripts/dotfiles.sh" check-links
+
+    section "Cleanup"
+    run "mise prune" mise prune -y
+    if command -v brew >/dev/null 2>&1; then run "brew cleanup" brew cleanup; fi
+
+    section "Python tool repair"
+    # Python-based tools are tied to the interpreter they were built with; once
+    # a Python upgrade has been pruned, reinstall the ones that lost it
+    for dir in "${MISE_DATA_DIR:-$HOME/.local/share/mise}"/installs/pypi-*/latest; do
+        [ -d "$dir" ] || continue
+        python="$(find "$dir/" -maxdepth 4 -path '*/bin/python' 2>/dev/null | head -n 1)"
+        if [ -n "$python" ] && [ ! -e "$python" ]; then
+            tool="pypi:$(basename "$(dirname "$dir")" | sed 's/^pypi-//')"
+            echo "Reinstalling $tool (its Python was removed)"
+            run "$tool" mise install --force "$tool"
+        fi
+    done
+    if command -v uv >/dev/null 2>&1; then
+        for tool in $(uv tool list 2>&1 | sed -n 's/.*Tool `\([^`]*\)` environment not found.*/\1/p'); do
+            echo "Reinstalling uv tool $tool (its Python was removed)"
+            run "uv tool $tool" uv tool install --reinstall --python-preference only-managed "$tool"
+        done
+    fi
+
+    if [ -n "$failed" ]; then
+        printf '\n✗ Finished with failures:%s\n' "$failed"
+        exit 1
+    fi
+    printf '\n✓ All updates complete!\n'
+
+[doc("Update everything: system packages, mise tools, shell/editor plugins, then clean up")]
+[group('update')]
+[windows]
+[script("pwsh", "-NoLogo", "-NoProfile", "-File")]
+[extension(".ps1")]
+update:
+    $failed = @()
+    function Section([string]$Title) { Write-Host "`n═══ $Title ═══" }
+    # Run a step, remember it if it fails (non-zero exit code or an exception)
+    function Step([string]$Label, [scriptblock]$Action) {
+        $global:LASTEXITCODE = 0
+        try { & $Action } catch { Write-Host $_ -ForegroundColor Red; $global:LASTEXITCODE = 1 }
+        if ($LASTEXITCODE -ne 0) { Write-Host "✗ $Label failed" -ForegroundColor Red; $script:failed += $Label }
+    }
+
+    Section "System packages"
+    Step "System packages" { & "{{ dotfiles }}\scripts\dotfiles.ps1" system-update }
+
+    Section "mise"
+    Step "mise upgrade" { mise upgrade }
+    Step "mise install" { mise install }
+    # Cached shell init scripts regenerate on the next shell, so upgraded and
+    # newly installed tools get their completions
+    $initCache = Join-Path $HOME ".cache\pwsh-init"
+    if (Test-Path $initCache) { Remove-Item -Recurse -Force $initCache }
+
+    if (Get-Command helm -ErrorAction SilentlyContinue) {
+        Section "Helm plugins"
+        Step "Helm plugins" { just --global-justfile helm-plugins }
+    }
+
+    Section "Python tools"
+    Step "pynvim" { & (mise which python) -m pip install --user --upgrade --quiet pynvim }
+    # Windows installs the pipx tools with `uv tool` (see dotfiles.ps1)
+    Step "uv tools" { mise exec -- uv tool upgrade --all }
+
+    Section "GitHub CLI extensions"
+    if (Get-Command gh -ErrorAction SilentlyContinue) { Step "gh extensions" { gh extension upgrade --all } }
+
+    # OpenCode re-resolves @latest plugins only when their sandbox is gone
+    # (its cache is XDG-style on Windows too: ~\.cache\opencode)
+    $cacheHome = if ($env:XDG_CACHE_HOME) { $env:XDG_CACHE_HOME } else { Join-Path $HOME ".cache" }
+    $opencodePackages = Join-Path $cacheHome "opencode\packages"
+    if (Test-Path -LiteralPath $opencodePackages) {
+        Get-ChildItem -LiteralPath $opencodePackages -Directory -Filter "*@latest" | Remove-Item -Recurse -Force
+    }
+
+    Section "Neovim plugins and Treesitter parsers"
+    if (Get-Command nvim -ErrorAction SilentlyContinue) {
+        Step "Neovim plugins" { nvim --headless "+Lazy! sync" +qa }
+        Step "Treesitter parsers" {
+            nvim --headless -c 'lua require("lazy").load({ plugins = { "nvim-treesitter" } }); require("nvim-treesitter").update():wait(600000)' -c qa
+        }
+    }
+
+    Section "Dotfile links"
+    # A tool that saves by replacing its config file turns the link into a copy
+    Step "Dotfile links" { & "{{ dotfiles }}\scripts\dotfiles.ps1" check-links }
+
+    Section "Cleanup"
+    Step "mise prune" { mise prune -y }
+    if (Get-Command scoop -ErrorAction SilentlyContinue) { Step "scoop cleanup" { scoop cleanup --all } }
+
+    Section "Python tool repair"
+    # uv tools are tied to the Python they were built with; reinstall any whose
+    # interpreter was removed by an upgrade
+    $broken = mise exec -- uv tool list 2>&1 | Select-String 'Tool `([^`]+)` environment not found' | ForEach-Object { $_.Matches[0].Groups[1].Value }
+    foreach ($tool in $broken) {
+        Write-Host "Reinstalling uv tool $tool (its Python was removed)"
+        Step "uv tool $tool" { mise exec -- uv tool install --reinstall --python-preference only-managed $tool }
+    }
+
+    if ($failed.Count -gt 0) {
+        Write-Host "`n✗ Finished with failures:" -ForegroundColor Red
+        $failed | ForEach-Object { Write-Host "  - $_" }
+        exit 1
+    }
+    Write-Host "`n✓ All updates complete!"
+
+[doc("Show what `update` would change, without changing anything")]
+[group('update')]
+[unix]
+[script("bash")]
+outdated:
+    printf '═══ mise ═══\n'
+    mise outdated
+    if command -v brew >/dev/null 2>&1; then
+        printf '\n═══ Homebrew ═══\n'
+        brew update --quiet >/dev/null && brew outdated
+    elif command -v checkupdates >/dev/null 2>&1; then
+        printf '\n═══ pacman ═══\n'
+        checkupdates || true
+    elif command -v apt >/dev/null 2>&1; then
+        printf '\n═══ apt ═══\n'
+        apt list --upgradable 2>/dev/null | tail -n +2
+    fi
+
+[doc("Show what `update` would change, without changing anything")]
+[group('update')]
+[windows]
+[script("pwsh", "-NoLogo", "-NoProfile", "-File")]
+[extension(".ps1")]
+outdated:
+    Write-Host "═══ mise ═══"
+    mise outdated
+    Write-Host "`n═══ WinGet ═══"
+    winget upgrade --accept-source-agreements
+    if (Get-Command scoop -ErrorAction SilentlyContinue) {
+        Write-Host "`n═══ Scoop ═══"
+        scoop status
+    }
+
+# helm-diff (https://github.com/databus23/helm-diff) is installed from its
+# signed release, with Helm 4's provenance check left on. The maintainer's key
+# is checked against the fingerprint published in the project's README and
+# kept in its own keyring, separate from the personal GnuPG keyring.
+helm_diff_fingerprint := "C5645EF47482257A1F806D2BEA17A2A206AFF8CD"
+
+[doc("Install or update Helm plugins (helm-diff), verifying their signatures")]
+[group('update')]
+[unix]
+[script("bash")]
+helm-plugins:
+    set -euo pipefail
+    command -v helm >/dev/null 2>&1 || { echo "helm not installed (kubernetes mise module); skipping"; exit 0; }
+    command -v gpg >/dev/null 2>&1 || { echo "gpg is needed to verify Helm plugin signatures" >&2; exit 1; }
+
+    keyring="${XDG_DATA_HOME:-$HOME/.local/share}/helm/plugin-keyring.gpg"
+    if [ ! -s "$keyring" ]; then
+        tmp="$(mktemp -d)"
+        trap 'rm -rf "$tmp"' EXIT
+        curl -fsSL https://github.com/databus23.gpg | gpg --homedir "$tmp" --quiet --import
+        if ! gpg --homedir "$tmp" --with-colons --list-keys | grep -q "^fpr:*{{ helm_diff_fingerprint }}:"; then
+            echo "helm-diff signing key doesn't match the expected fingerprint" >&2
+            exit 1
+        fi
+        mkdir -p "$(dirname "$keyring")"
+        gpg --homedir "$tmp" --export "{{ helm_diff_fingerprint }}" > "$keyring"
+    fi
+
+    latest="$(curl -fsSL https://api.github.com/repos/databus23/helm-diff/releases/latest | sed -n 's/.*"tag_name": *"v\([^"]*\)".*/\1/p')"
+    [ -n "$latest" ] || { echo "couldn't look up the latest helm-diff release" >&2; exit 1; }
+    installed="$(helm plugin list 2>/dev/null | awk '$1 == "diff" { print $2 }')"
+    if [ "$installed" = "$latest" ]; then
+        echo "helm-diff $latest is up to date"
+        exit 0
+    fi
+
+    case "$(uname -s)" in Darwin) os=macos ;; *) os=linux ;; esac
+    case "$(uname -m)" in arm64 | aarch64) arch=arm64 ;; *) arch=amd64 ;; esac
+    if [ -n "$installed" ]; then helm plugin uninstall diff; fi
+    helm plugin install --keyring "$keyring" \
+        "https://github.com/databus23/helm-diff/releases/download/v$latest/diff-$latest-$os-$arch.tgz"
+
+[doc("Install or update Helm plugins (helm-diff), verifying their signatures")]
+[group('update')]
+[windows]
+[script("pwsh", "-NoLogo", "-NoProfile", "-File")]
+[extension(".ps1")]
+helm-plugins:
+    $ErrorActionPreference = "Stop"
+    if (-not (Get-Command helm -ErrorAction SilentlyContinue)) { Write-Host "helm not installed (kubernetes mise module); skipping"; exit 0 }
+    # Git for Windows ships gpg, but not on PATH
+    $gpg = (Get-Command gpg -ErrorAction SilentlyContinue).Source
+    if (-not $gpg) { $gpg = Join-Path $env:ProgramFiles "Git\usr\bin\gpg.exe" }
+    if (-not (Test-Path $gpg)) { Write-Error "gpg is needed to verify Helm plugin signatures (install Git for Windows)" }
+
+    $keyring = Join-Path $env:APPDATA "helm\plugin-keyring.gpg"
+    if (-not (Test-Path $keyring) -or (Get-Item $keyring).Length -eq 0) {
+        $tmp = New-Item -ItemType Directory -Path (Join-Path ([IO.Path]::GetTempPath()) ([guid]::NewGuid()))
+        try {
+            $key = Join-Path $tmp "key.asc"
+            Invoke-WebRequest https://github.com/databus23.gpg -OutFile $key
+            & $gpg --homedir $tmp --quiet --import $key
+            $fingerprints = & $gpg --homedir $tmp --with-colons --list-keys | Select-String '^fpr:+([0-9A-F]+):' | ForEach-Object { $_.Matches[0].Groups[1].Value }
+            if ($fingerprints -notcontains "{{ helm_diff_fingerprint }}") { Write-Error "helm-diff signing key doesn't match the expected fingerprint" }
+            New-Item -ItemType Directory -Force -Path (Split-Path $keyring) | Out-Null
+            & $gpg --homedir $tmp --output $keyring --export "{{ helm_diff_fingerprint }}"
+        } finally {
+            Remove-Item -Recurse -Force $tmp
+        }
+    }
+
+    $latest = (Invoke-RestMethod https://api.github.com/repos/databus23/helm-diff/releases/latest).tag_name.TrimStart("v")
+    $match = helm plugin list | Select-String '^diff\s+(\S+)' | Select-Object -First 1
+    $installed = if ($match) { $match.Matches[0].Groups[1].Value } else { $null }
+    if ($installed -eq $latest) { Write-Host "helm-diff $latest is up to date"; exit 0 }
+    $arch = if ($env:PROCESSOR_ARCHITECTURE -eq "ARM64") { "arm64" } else { "amd64" }
+    if ($installed) { helm plugin uninstall diff }
+    helm plugin install --keyring $keyring "https://github.com/databus23/helm-diff/releases/download/v$latest/diff-$latest-windows-$arch.tgz"
+    if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+# Clean rebuildable package and language caches
+[group('cleanup')]
+clean:
+    @just --global-justfile clean-language-caches
+    @echo "Cleaning mise cache..."
+    mise cache clear
+    mise prune -y
+    {{ if os == "macos" { "echo 'Cleaning Homebrew...' && brew cleanup" } else if os == "windows" { "Write-Host 'Cleaning Scoop...'; scoop.cmd cleanup --all; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }; scoop.cmd cache rm --all" } else { "" } }}
+
+# Remove caches that their owning tools can safely rebuild
+[group('cleanup')]
+clean-language-caches:
+    @{{ if os == "windows" { "if (Get-Command npm -ErrorAction SilentlyContinue) { Write-Host 'Verifying npm cache...'; npm cache verify }" } else { "if command -v npm >/dev/null 2>&1; then echo 'Verifying npm cache...'; npm cache verify; fi" } }}
+    @{{ if os == "windows" { "if (Get-Command python -ErrorAction SilentlyContinue) { Write-Host 'Purging pip cache...'; python -m pip cache purge }" } else { "if command -v pip >/dev/null 2>&1; then echo 'Purging pip cache...'; pip cache purge; fi" } }}
+    @{{ if os == "windows" { "if (Get-Command uv -ErrorAction SilentlyContinue) { Write-Host 'Pruning uv cache...'; uv cache prune }" } else { "if command -v uv >/dev/null 2>&1; then echo 'Pruning uv cache...'; uv cache prune; fi" } }}
+    @{{ if os == "windows" { "if (Get-Command go -ErrorAction SilentlyContinue) { Write-Host 'Cleaning Go build and test caches...'; go clean -cache -testcache }" } else { "if command -v go >/dev/null 2>&1; then echo 'Cleaning Go build and test caches...'; go clean -cache -testcache; fi" } }}
+
+# Remove user-level .log files older than 30 days; application data is not touched
+[group('cleanup')]
+clean-old-logs:
+    @{{ if os == "windows" { "$root = if ($env:LOCALAPPDATA) { $env:LOCALAPPDATA } else { Join-Path $HOME \"AppData/Local\" }; if (Test-Path -LiteralPath $root) { Get-ChildItem -LiteralPath $root -Recurse -File -Filter \"*.log\" | Where-Object { $_.LastWriteTime -lt (Get-Date).AddDays(-30) } | Remove-Item -Force }" } else if os == "macos" { "if [ -d \"$HOME/Library/Logs\" ]; then find \"$HOME/Library/Logs\" -type f -name '*.log' -mtime +30 -delete; fi" } else { "root=\"${XDG_STATE_HOME:-$HOME/.local/state}\"; if [ -d \"$root\" ]; then find \"$root\" -type f -name '*.log' -mtime +30 -delete; fi" } }}
+
+# Docker shortcuts
+
+[doc("Remove unused Docker images, containers, networks and build cache")]
+[group('docker')]
+docker-clean:
+    docker system prune -af
+
+# Also remove unused anonymous Docker volumes; named volumes are preserved
+[group('docker')]
+docker-clean-anonymous-volumes:
+    docker system prune -af --volumes
+
+# AI data cleanup (OpenCode keeps its data XDG-style on every OS, Windows too)
+
+[doc("Delete OpenCode's logs")]
+[group('ai')]
+[unix]
+opencode-clean-logs:
+    @echo "Cleaning OpenCode logs..."
+    @if [ -d "$HOME/.local/share/opencode/log" ]; then \
+        find "$HOME/.local/share/opencode/log" -mindepth 1 -maxdepth 1 -exec rm -rf {} +; \
+    fi
+
+[doc("Delete OpenCode's logs")]
+[group('ai')]
+[windows]
+[script("pwsh", "-NoLogo", "-NoProfile", "-File")]
+[extension(".ps1")]
+opencode-clean-logs:
+    Write-Host "Cleaning OpenCode logs..."
+    $dir = Join-Path $HOME ".local\share\opencode\log"
+    if (Test-Path -LiteralPath $dir) { Get-ChildItem -LiteralPath $dir -Force | Remove-Item -Recurse -Force }
+
+[doc("Delete OpenCode's stored sessions")]
+[group('ai')]
+[unix]
+opencode-clean-sessions:
+    @echo "Cleaning OpenCode sessions..."
+    @if [ -d "$HOME/.local/share/opencode/project" ]; then \
+        find "$HOME/.local/share/opencode/project" -type d -name storage -prune -exec rm -rf {} +; \
+    fi
+
+[doc("Delete OpenCode's stored sessions")]
+[group('ai')]
+[windows]
+[script("pwsh", "-NoLogo", "-NoProfile", "-File")]
+[extension(".ps1")]
+opencode-clean-sessions:
+    Write-Host "Cleaning OpenCode sessions..."
+    $dir = Join-Path $HOME ".local\share\opencode\project"
+    if (Test-Path -LiteralPath $dir) {
+        Get-ChildItem -LiteralPath $dir -Recurse -Directory -Filter storage -ErrorAction SilentlyContinue |
+            Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
+    }
+
+[doc("Delete OpenCode's logs and stored sessions")]
+[group('ai')]
+opencode-clean:
+    @just --global-justfile opencode-clean-logs
+    @just --global-justfile opencode-clean-sessions
+
+# Usage: just skills audio
+#        just skills godot audio
+# Domains: audio godot rust frontend infra cpp database
+[doc("Set up AI skills for the current project")]
+[group('skills')]
+skills *domains:
+    {{ if os == "windows" { "bash \"" + dotfiles + "/bin/.local/bin/project-skills\"" } else { "project-skills" } }} {{domains}}
+
+# ---
+
+# Usage: just clean-junk          (cleans current directory)
+#        just clean-junk ~/src    (cleans a specific path)
+[doc("Remove common junk files recursively from a directory")]
+[group('files')]
+[unix]
+clean-junk path=".":
+    @echo "Cleaning junk files from {{path}}..."
+    @# macOS metadata
+    @find "{{path}}" -name ".DS_Store" -delete
+    @find "{{path}}" -name "._.DS_Store" -delete
+    @find "{{path}}" -name ".Spotlight-V100" -type d -exec rm -rf {} + 2>/dev/null; true
+    @find "{{path}}" -name ".fseventsd" -type d -exec rm -rf {} + 2>/dev/null; true
+    @find "{{path}}" -name ".Trashes" -type d -exec rm -rf {} + 2>/dev/null; true
+    @# macOS archive artifacts
+    @find "{{path}}" -name "__MACOSX" -type d -exec rm -rf {} + 2>/dev/null; true
+    @find "{{path}}" -name ".AppleDouble" -type d -exec rm -rf {} + 2>/dev/null; true
+    @# Windows metadata
+    @find "{{path}}" -name "Thumbs.db" -delete
+    @find "{{path}}" -name "ehthumbs.db" -delete
+    @find "{{path}}" -name "Desktop.ini" -delete
+    @find "{{path}}" -name '$RECYCLE.BIN' -type d -exec rm -rf {} + 2>/dev/null; true
+    @# Python bytecode
+    @find "{{path}}" -name "__pycache__" -type d -exec rm -rf {} + 2>/dev/null; true
+    @find "{{path}}" -name "*.pyc" -delete
+    @find "{{path}}" -name "*.pyo" -delete
+    @# Editor temp/swap files
+    @find "{{path}}" -name "*.swp" -delete
+    @find "{{path}}" -name "*.swo" -delete
+    @find "{{path}}" -name "*~" -delete
+    @find "{{path}}" -name ".#*" -delete
+    @# Tool caches
+    @find "{{path}}" -name ".eslintcache" -delete
+    @find "{{path}}" -name ".stylelintcache" -delete
+    @find "{{path}}" -name ".sass-cache" -type d -exec rm -rf {} + 2>/dev/null; true
+    @echo "✓ Done"
+
+# ---
+
+# Dotfiles management
+
+[doc("Link the dotfiles (scripts/dotfiles.sh link / dotfiles.ps1 link)")]
+[group('dotfiles')]
+dotfiles-link:
+    {{ if os == "windows" { "& \"" + dotfiles + "\\scripts\\dotfiles.ps1\" link" } else { "\"" + dotfiles + "/scripts/dotfiles.sh\" link" } }}
+
+[doc("Unlink the dotfiles (scripts/dotfiles.sh unlink / dotfiles.ps1 unlink)")]
+[group('dotfiles')]
+dotfiles-unlink:
+    {{ if os == "windows" { "& \"" + dotfiles + "\\scripts\\dotfiles.ps1\" unlink" } else { "\"" + dotfiles + "/scripts/dotfiles.sh\" unlink" } }}
+
+[doc("Pull the latest dotfiles, then update everything")]
+[group('dotfiles')]
+dotfiles-update:
+    git -C "{{ dotfiles }}" pull --ff-only
+    @just --global-justfile update

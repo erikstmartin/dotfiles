@@ -1,0 +1,84 @@
+# Base toolset: installed on every machine. Language- and work-specific tools
+# live in modules/*.toml and are enabled per machine by linking them into
+# conf.d/ (git-ignored), which mise loads automatically:
+#   scripts/dotfiles.sh mise list | enable <module>... | disable <module>...
+
+# Older versions lack the pypi: backend. Soft: an outdated mise warns but keeps
+# activating, so shells don't lose every tool. `mise self-update` (or `jg update`) upgrades
+min_version = { soft = "2026.10.0" }
+
+[tools]
+# Runtimes the base tools need: node (npm: tools), python + uv (pypi: tools
+# install through uv; python is also Neovim's Python provider)
+node = "latest"
+python = "latest"
+"aqua:astral-sh/uv" = "latest" # also used by mise's pypi backend
+
+# Shell and terminal tools
+"aqua:starship/starship" = "latest"
+"aqua:carapace-sh/carapace-bin" = "latest"
+"aqua:ajeetdsouza/zoxide" = "latest"
+"aqua:direnv/direnv" = { version = "latest", os = ["linux", "macos"] }
+"aqua:junegunn/fzf" = "latest"
+"aqua:BurntSushi/ripgrep" = "latest"
+"aqua:sharkdp/fd" = "latest"
+"aqua:sharkdp/bat" = "latest"
+# eza: no macOS release binaries (macOS gets it from Homebrew, see scripts/lib/macos.sh)
+"aqua:eza-community/eza" = { version = "latest", os = ["linux", "windows"] }
+"aqua:sxyazi/yazi" = "latest"
+"aqua:johnkerl/miller" = "latest" # mlr: CSV/TSV tables in yazi previews
+"aqua:casey/just" = "latest"
+"aqua:PowerShell/PowerShell" = { version = "latest", os = ["linux", "macos"] } # Windows: winget (dotfiles.ps1 needs it before mise)
+
+# Data and text
+"aqua:jqlang/jq" = "latest"
+"aqua:noahgorstein/jqp" = "latest"
+"aqua:mikefarah/yq" = "latest"
+"github:vitor-mariano/regex-tui" = { version = "latest", bin = "regex-tui" }
+
+# Git and GitHub
+"aqua:cli/cli" = "latest" # gh
+"aqua:jesseduffield/lazygit" = "latest"
+"aqua:dandavison/delta" = "latest"
+"aqua:Wilfred/difftastic" = "latest"
+"github:dlvhdr/diffnav" = "latest"
+
+# Agents, APIs, security
+"github:raine/workmux" = { version = "latest", os = ["linux", "macos"] }
+"pypi:posting" = { version = "latest", os = ["linux", "macos"] } # Windows: uv tool, see dotfiles.ps1
+"aqua:aquasecurity/trivy" = "latest" # scans images, repos, filesystems, IaC
+
+# Neovim, plus language support for files found on every machine
+"aqua:neovim/neovim" = "latest"
+"aqua:tree-sitter/tree-sitter" = "latest"
+"github:github/copilot-language-server-release" = "latest" # native build, no Node needed
+"aqua:LuaLS/lua-language-server" = "latest"
+"aqua:JohnnyMorganz/StyLua" = "latest"
+"npm:bash-language-server" = "latest"
+"aqua:koalaman/shellcheck" = "latest"
+"npm:vscode-langservers-extracted" = "latest" # HTML, CSS, JSON
+"npm:yaml-language-server" = "latest"
+"pypi:yamllint" = { version = "latest", os = ["linux", "macos"] } # Windows: uv tool, see dotfiles.ps1
+"aqua:tamasfe/taplo" = "latest" # TOML
+"aqua:artempyanykh/marksman" = "latest" # Markdown
+"npm:markdownlint-cli2" = "latest"
+"npm:prettier" = "latest"
+
+[env]
+# Personal installs (~/.local/bin, cargo/go install) take precedence over mise's tools.
+# /usr/local/bin is left out: other installers drop copies there (e.g. Docker Desktop's kubectl).
+_.path = ["~/.local/bin", "~/.cargo/bin", "~/go/bin"]
+
+[settings]
+windows_shim_mode = "exe"
+# Tools track `latest` and modules are per machine, so a shared lock would only churn
+lockfile = false
+# Keep GOBIN at ~/go/bin: mise's default (go/<version>/bin) loses `go install`ed
+# binaries on every Go upgrade
+go_set_gobin = false
+# Agent CLIs (modules claude, codex, copilot) ship often and are first-party;
+# exempt them from the minimum release age delay
+minimum_release_age_excludes = ["aqua:anthropics/claude-code", "aqua:openai/codex", "aqua:github/copilot-cli"]
+
+[settings.github]
+credential_command = 'gh auth token --hostname "$MISE_CREDENTIAL_HOST"'

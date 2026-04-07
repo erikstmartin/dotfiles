@@ -1,0 +1,19 @@
+# Global fd ignores, also applied to fzf (Ctrl-T/Alt-C) and Neovim's file
+# pickers, which run fd. `fd -u` still searches everything.
+# A leading / anchors to where the search starts, e.g. ~/Library from ~.
+node_modules/
+/Library/
+/AppData/
+/.Trash/
+/.cache/
+/.local/share/
+/.local/state/
+/.rustup/
+/.cargo/registry/
+/.cargo/git/
+/.npm/
+/.bun/install/
+/.nuget/
+/.lmstudio/
+/.vscode/extensions/
+/go/pkg/

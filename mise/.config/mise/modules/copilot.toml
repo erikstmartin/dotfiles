@@ -1,0 +1,8 @@
+# GitHub Copilot CLI (native build; updates come from `mise upgrade`)
+# dotfiles packages: copilot (linked while this module is enabled)
+[tools]
+"aqua:github/copilot-cli" = "latest"
+
+[env]
+# Its self-updater would replace the binary behind mise's back
+COPILOT_AUTO_UPDATE = "false"
