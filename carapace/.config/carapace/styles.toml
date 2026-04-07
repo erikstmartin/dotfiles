@@ -1,0 +1,39 @@
+# Carapace completion styles — Catppuccin Mocha
+# https://carapace-sh.github.io/carapace-bin/carapace/styling.html
+
+[description]
+  color = "rgb(166,173,200)"  # Subtext1 (#a6adc8)
+  dim   = true
+
+[value]
+  color = "rgb(205,214,244)"  # Text (#cdd6f4)
+
+[usage]
+  color = "rgb(148,226,213)"  # Teal (#94e2d5)
+  bold  = true
+
+[shorthand]
+  color = "rgb(137,180,250)"  # Blue (#89b4fa)
+
+[flag]
+  color = "rgb(203,166,247)"  # Mauve (#cba6f7)
+
+[arg]
+  color = "rgb(166,227,161)"  # Green (#a6e3a1)
+
+[positional]
+  color = "rgb(250,179,135)"  # Peach (#fab387)
+
+[error]
+  color = "rgb(243,139,168)"  # Red (#f38ba8)
+  bold  = true
+
+[message]
+  color = "rgb(249,226,175)"  # Yellow (#f9e2af)
+
+[separator]
+  color = "rgb(88,91,112)"    # Surface2 (#585b70)
+
+[header]
+  color = "rgb(116,199,236)"  # Sapphire (#74c7ec)
+  bold  = true

@@ -1,0 +1,34 @@
+#:schema https://github.com/joshmedeski/sesh/raw/main/sesh.schema.json
+
+# Don't exit tmux when the last pane/window of a session closes
+# Add this to tmux.conf: set -g detach-on-destroy off
+
+# Sessions to exclude from the picker
+blacklist = ["scratch"]
+
+# Use last 2 path components for session names (e.g. "projects/myapp" vs "myapp")
+dir_length = 1
+
+# Cache session list for faster repeated lookups
+cache = false
+
+# Default behavior for any session not matched by a [[session]] or [[wildcard]] block
+[default_session]
+startup_command = "nvim ."
+preview_command = "eza --all --git --icons --color=always {}"
+
+# Per-directory wildcard configs — apply to any path matching the glob
+[[wildcard]]
+pattern = "~/projects/*"
+startup_command = "nvim ."
+preview_command = "eza --all --git --icons --color=always {}"
+
+[[wildcard]]
+pattern = "~/work/*"
+startup_command = "nvim ."
+preview_command = "eza --all --git --icons --color=always {}"
+
+[[wildcard]]
+pattern = "~/dotfiles"
+startup_command = "nvim ."
+preview_command = "eza --all --git --icons --color=always {}"

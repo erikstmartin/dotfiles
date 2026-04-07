@@ -1,0 +1,252 @@
+#!/usr/bin/env bash
+# project-skills — copy catalog skills into a project and write/update AGENTS.md
+#
+# Usage:
+#   project-skills <domain> [domain...] [--dir <path>]
+#
+# Domains:
+#   audio       audio/audio-engineering-principles, juce-framework, audio-dsp, ffmpeg
+#   godot       godot/godot-core, godot-architecture, godot-audio
+#   rust        rust/rust-best-practices, rust-async-patterns
+#   frontend    frontend/shadcn-ui, tailwind-design-system, vite, vitest
+#   infra       infra/kubernetes-specialist, terraform, docker-expert
+#   cpp         cpp/cpp-development, cpp-testing
+#   sql         (routing hints only; auto-included by postgres/sqlite)
+#   postgres    sql/postgres  (includes sql routing hints)
+#   sqlite      sql/sqlite    (includes sql routing hints)
+#   csharp      csharp/csharp
+#   ruby        ruby/ruby-rails
+#
+# Examples:
+#   project-skills audio
+#   project-skills godot audio
+#   project-skills frontend rust --dir ~/projects/my-app
+#   project-skills postgres
+#   project-skills sqlite
+
+set -euo pipefail
+
+DOTFILES_DIR="${DOTFILES_DIR:-$HOME/dotfiles}"
+CATALOG_DIR="$DOTFILES_DIR/skills/catalog"
+TARGET_DIR="$(pwd)"
+
+# --- argument parsing ---
+
+DOMAINS=()
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --dir)
+            TARGET_DIR="$2"
+            shift 2
+            ;;
+        --help|-h)
+            sed -n '2,/^set /p' "$0" | grep '^#' | sed 's/^# \?//'
+            exit 0
+            ;;
+        -*)
+            echo "Unknown option: $1" >&2
+            exit 1
+            ;;
+        *)
+            DOMAINS+=("$1")
+            shift
+            ;;
+    esac
+done
+
+if [[ ${#DOMAINS[@]} -eq 0 ]]; then
+    echo "Usage: project-skills <domain> [domain...] [--dir <path>]" >&2
+    echo "Domains: audio godot rust frontend infra cpp sql postgres sqlite csharp ruby" >&2
+    exit 1
+fi
+
+SKILLS_DIR="$TARGET_DIR/.agents/skills"
+AGENTS_FILE="$TARGET_DIR/AGENTS.md"
+
+# --- domain definitions ---
+
+declare -A domain_skills
+declare -A domain_always_on
+declare -A domain_routing
+declare -A domain_deps
+
+domain_skills[audio]="audio/audio-engineering-principles audio/juce-framework audio/audio-dsp audio/ffmpeg"
+domain_always_on[audio]="audio-engineering-principles"
+domain_routing[audio]='- "JUCE, AudioProcessor, VST3, AU, processBlock, APVTS" → load juce-framework
+- "filter, EQ, compressor, limiter, saturation, resample, FFT, STFT" → load audio-dsp
+- "ffmpeg, transcode, convert, encode, decode, stream, codec, video, format" → load ffmpeg'
+
+domain_skills[godot]="godot/godot-core godot/godot-architecture godot/godot-audio"
+domain_always_on[godot]="godot-core"
+domain_routing[godot]='- "scene, node, @onready, input, camera, tilemap, UI, GDScript" → load godot-core
+- "architecture, multiplayer, physics, performance, porting, large-scale" → load godot-architecture
+- "AudioBus, Wwise, FMOD, adaptive music, sound effects, UI audio" → load godot-audio'
+
+domain_skills[rust]="rust/rust-best-practices rust/rust-async-patterns"
+domain_always_on[rust]="rust-best-practices"
+domain_routing[rust]='- "async, await, tokio, channel, task, spawn, concurrency" → load rust-async-patterns'
+
+domain_skills[frontend]="frontend/shadcn-ui frontend/tailwind-design-system frontend/vite frontend/vitest"
+domain_always_on[frontend]=""
+domain_routing[frontend]='- "shadcn, component, dialog, form, table, combobox" → load shadcn-ui
+- "tailwind, theme, token, design system, responsive" → load tailwind-design-system
+- "vite, bundle, plugin, SSR, build config" → load vite
+- "vitest, test, mock, coverage, fixture" → load vitest'
+
+domain_skills[infra]="infra/kubernetes-specialist infra/terraform infra/docker-expert"
+domain_always_on[infra]=""
+domain_routing[infra]='- "kubernetes, k8s, helm, pod, deployment, RBAC, NetworkPolicy" → load kubernetes-specialist
+- "terraform, HCL, module, provider, variable, output" → load terraform
+- "dockerfile, image, compose, container, multi-stage" → load docker-expert'
+
+domain_skills[cpp]="cpp/cpp-development cpp/cpp-testing"
+domain_always_on[cpp]="cpp-development"
+domain_routing[cpp]='- "concepts, ranges, coroutines, SIMD, C++20, C++23, performance" → load cpp-development
+- "googletest, gtest, ctest, sanitizer, coverage, catch2" → load cpp-testing'
+
+domain_skills[sql]=""
+domain_always_on[sql]=""
+domain_routing[sql]='- "slow query, index, EXPLAIN ANALYZE, query plan, N+1" → load postgres or sqlite
+- "schema, migration, normalization, ERD, foreign key, constraint" → load postgres or sqlite'
+
+domain_skills[postgres]="sql/postgres"
+domain_always_on[postgres]="postgres"
+domain_routing[postgres]='- "postgres, postgresql, pg, vacuum, replication, EXPLAIN, pgbouncer, extensions" → load postgres'
+
+domain_skills[sqlite]="sql/sqlite"
+domain_always_on[sqlite]="sqlite"
+domain_routing[sqlite]='- "sqlite, WAL, embedded database, bun:sqlite, ATTACH" → load sqlite'
+
+domain_skills[csharp]="csharp/csharp"
+domain_always_on[csharp]="csharp"
+domain_routing[csharp]='- "ASP.NET, Blazor, EF Core, MediatR, minimal API, CQRS" → load csharp'
+
+domain_skills[ruby]="ruby/ruby-rails"
+domain_always_on[ruby]="ruby-rails"
+domain_routing[ruby]='- "Rails, ActiveRecord, migration, controller, Hotwire, Turbo, background job" → load ruby-rails'
+
+domain_deps[postgres]="sql"
+domain_deps[sqlite]="sql"
+
+# --- validate domains ---
+
+VALID_DOMAINS="audio godot rust frontend infra cpp sql postgres sqlite csharp ruby"
+
+for domain in "${DOMAINS[@]}"; do
+    if [[ -z "${domain_skills[$domain]+x}" ]]; then
+        echo "Unknown domain: '$domain'" >&2
+        echo "Valid domains: $VALID_DOMAINS" >&2
+        exit 1
+    fi
+done
+
+# --- resolve dependencies ---
+
+declare -A seen_domains=()
+resolved_domains=()
+for domain in "${DOMAINS[@]}"; do
+    # inject deps first so they appear before the dependent domain
+    for dep in ${domain_deps[$domain]:-}; do
+        if [[ -z "${seen_domains[$dep]+x}" ]]; then
+            resolved_domains+=("$dep")
+            seen_domains[$dep]=1
+        fi
+    done
+    if [[ -z "${seen_domains[$domain]+x}" ]]; then
+        resolved_domains+=("$domain")
+        seen_domains[$domain]=1
+    fi
+done
+DOMAINS=("${resolved_domains[@]}")
+
+# --- copy skills ---
+
+mkdir -p "$SKILLS_DIR"
+
+declare -a all_skills_copied=()
+
+for domain in "${DOMAINS[@]}"; do
+    for skill_path in ${domain_skills[$domain]}; do
+        src="$CATALOG_DIR/$skill_path"
+        skill_name="$(basename "$skill_path")"
+        dst="$SKILLS_DIR/$skill_name"
+
+        if [[ ! -d "$src" ]]; then
+            echo "Warning: skill source not found: $src" >&2
+            continue
+        fi
+
+        if [[ -d "$dst" ]]; then
+            echo "  updating .agents/skills/$skill_name"
+            rm -rf "$dst"
+        else
+            echo "  copying  .agents/skills/$skill_name"
+        fi
+        cp -r "$src" "$dst"
+        all_skills_copied+=("$skill_name")
+    done
+
+    # collect always-on skills for this domain (space-separated)
+    for ao_skill in ${domain_always_on[$domain]:-}; do
+        : # no-op; always-on tracking retained for potential future use
+    done
+done
+
+echo "Skills ready in $SKILLS_DIR"
+
+# --- build AGENTS.md skills block ---
+
+build_skills_block() {
+    printf "## Skills\n\n"
+    printf "Skills are in: \`./.agents/skills/\`\n\n"
+
+    if [[ ${#all_skills_copied[@]} -gt 0 ]]; then
+        printf "### Available skills\n\n"
+        for skill in "${all_skills_copied[@]}"; do
+            printf -- "- %s\n" "$skill"
+        done
+        printf "\n"
+    fi
+
+    printf "### Routing hints\n\n"
+    for domain in "${DOMAINS[@]}"; do
+        printf "%s\n" "${domain_routing[$domain]}"
+    done
+}
+
+SKILLS_BLOCK="$(build_skills_block)"
+
+# --- write or update AGENTS.md ---
+
+MARKER_START="<!-- project-skills:start -->"
+MARKER_END="<!-- project-skills:end -->"
+
+if [[ ! -f "$AGENTS_FILE" ]]; then
+    cat > "$AGENTS_FILE" <<EOF
+# Project AI Rules
+
+$MARKER_START
+$SKILLS_BLOCK
+$MARKER_END
+EOF
+    echo "Created $AGENTS_FILE"
+else
+    if grep -q "$MARKER_START" "$AGENTS_FILE"; then
+        python3 - "$AGENTS_FILE" "$MARKER_START" "$MARKER_END" "$SKILLS_BLOCK" <<'PYEOF'
+import sys
+path, start, end, block = sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4]
+with open(path) as f:
+    content = f.read()
+before = content[:content.index(start)]
+after = content[content.index(end) + len(end):]
+with open(path, 'w') as f:
+    f.write(before + start + "\n" + block + "\n" + end + after)
+PYEOF
+        echo "Updated skills block in $AGENTS_FILE"
+    else
+        printf "\n%s\n%s\n%s\n" "$MARKER_START" "$SKILLS_BLOCK" "$MARKER_END" >> "$AGENTS_FILE"
+        echo "Appended skills block to $AGENTS_FILE"
+    fi
+fi
+
+echo "Done. Review $AGENTS_FILE and commit both .agents/skills/ and AGENTS.md to your repo."

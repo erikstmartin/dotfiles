@@ -1,0 +1,25 @@
+# Fisher plugin files — managed by fisher, not stow.
+# Fisher writes directly here because ~/.config/fish is a directory-level symlink into dotfiles.
+# Only personal files and fish_plugins manifest are tracked.
+
+# jorgebucaran/fisher
+functions/fisher.fish
+completions/fisher.fish
+
+# edc/bass
+functions/bass.fish
+functions/__bass.py
+
+# gazorby/fish-abbreviation-tips
+functions/__abbr_tips_*.fish
+conf.d/abbr_tips.fish
+
+# nickeb96/puffer-fish
+functions/_puffer_fish_*.fish
+conf.d/puffer_fish_key_bindings.fish
+
+# franciscolourenco/done
+conf.d/done.fish
+
+# jorgebucaran/autopair.fish / acomagu/fish-async-prompt / etc.
+conf.d/sponge.fish

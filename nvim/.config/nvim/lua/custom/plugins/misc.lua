@@ -1,4 +1,9 @@
 return {
+  {
+    "nvim-tree/nvim-web-devicons",
+    lazy = true,
+  },
+
   -- NOTE: Plugins can be added with a link (or for a github repo: 'owner/repo' link).
   "tpope/vim-sleuth", -- Detect tabstop and shiftwidth automatically
 
@@ -30,11 +35,38 @@ return {
   },
   {
     "sindrets/diffview.nvim",
+    opts = {
+      enhanced_diff_hl = true,
+      hooks = {},
+      keymaps = {
+        file_panel = {
+          { "n", "<C-t>", function() require("diffview.actions").goto_file_tab() end, { desc = "Open file in new tab" } },
+        },
+        file_history_panel = {
+          { "n", "<C-t>", function() require("diffview.actions").goto_file_tab() end, { desc = "Open file in new tab" } },
+        },
+      },
+    },
     keys = {
       {
         "<leader>gdb",
-        "<cmd>DiffviewOpen<cr>",
-        desc = "[G]it: [D]iff [B]ranch",
+        function()
+          local lib = require("diffview.lib")
+          local view = lib.get_current_view()
+          if view then
+            vim.cmd("DiffviewClose")
+          else
+            for _, v in ipairs(lib.views) do
+              if v.tabpage and vim.api.nvim_tabpage_is_valid(v.tabpage) then
+                local tabnr = vim.api.nvim_tabpage_get_number(v.tabpage)
+                vim.cmd("tabn " .. tabnr)
+                return
+              end
+            end
+            vim.cmd("DiffviewOpen")
+          end
+        end,
+        desc = "[G]it: [D]iff [B]ranch (toggle)",
       },
       {
         "<leader>gD",
@@ -107,17 +139,49 @@ return {
         sort = { "local", "order", "alphanum", "mod", "group" },
       }
 
+      local function set_diff_keymaps(buf)
+        local function buf_map(lhs, rhs, desc)
+          vim.keymap.set("n", lhs, rhs, { buffer = buf, desc = desc })
+        end
+
+        require("which-key").add {
+          { "<leader>gm", group = "[G]it: [M]erge", buffer = buf },
+        }
+
+        buf_map("<leader>gml", "<cmd>diffget LOCAL<CR>", "[G]it [M]erge: get [L]ocal")
+        buf_map("<leader>gmr", "<cmd>diffget REMOTE<CR>", "[G]it [M]erge: get [R]emote")
+        buf_map("<leader>gmb", "<cmd>diffget BASE<CR>", "[G]it [M]erge: get [B]ase")
+
+        buf_map("<leader>gmL", "<cmd>diffput LOCAL<CR>", "[G]it [M]erge: put [L]ocal")
+        buf_map("<leader>gmR", "<cmd>diffput REMOTE<CR>", "[G]it [M]erge: put [R]emote")
+        buf_map("<leader>gmB", "<cmd>diffput BASE<CR>", "[G]it [M]erge: put [B]ase")
+      end
+
+      local diff_keymaps_augroup = vim.api.nvim_create_augroup("diff-keymaps", { clear = true })
+      vim.api.nvim_create_autocmd({ "BufWinEnter", "OptionSet" }, {
+        group = diff_keymaps_augroup,
+        pattern = "*",
+        callback = function(event)
+          if vim.wo.diff then
+            set_diff_keymaps(event.buf)
+          end
+        end,
+      })
+
       -- Document existing key chains
       require("which-key").add {
         { "<leader>a", group = "[A]I", mode = { "v", "n" } },
+        { "<leader>c", group = "[C]oPilot", mode = { "v", "n" } },
         { "<leader>d", group = "[D]iagnostics" },
         { "<leader>f", group = "[F]ind" },
         { "<leader>g", group = "[G]it" },
         { "<leader>gd", group = "[G]it [D]iff" },
-        { "<leader>G", group = "[G]odot" },
         { "<leader>l", group = "[L]SP" },
         { "<leader>r", group = "[R]EPL", mode = { "v", "n" } },
+        { "<leader>s", group = "[S]wap" },
         { "<leader>t", group = "[T]erminal", mode = { "v", "n" } },
+        { "<leader>n", group = "[N]otes" },
+        { "<leader>x", group = "Trouble" },
       }
     end,
   },
@@ -170,6 +234,7 @@ return {
       {
         "\\",
         function()
+          if vim.fn.getcmdwintype() ~= "" then return end
           require("snacks").explorer()
         end,
         desc = "Explorer Toggle",
@@ -242,14 +307,14 @@ return {
       {
         "<leader>ff",
         function()
-          require("snacks").picker.smart()
+          require("snacks").picker.files()
         end,
         desc = "[F]ind: [F]iles",
       },
       {
         "<leader><leader>",
         function()
-          require("snacks").picker.smart()
+          require("snacks").picker.files()
         end,
         desc = "[F]ind: [F]iles",
       },
@@ -459,7 +524,7 @@ return {
           keys = {
             { icon = " ", key = "f", desc = "Find File", action = ":lua Snacks.dashboard.pick('files')" },
             { icon = " ", key = "n", desc = "New File", action = ":ene | startinsert" },
-            { icon = " ", key = "g", desc = "Find Text", action = ":lua Snacks.dashboard.pick('live_grep')" },
+            { icon = " ", key = "g", desc = "Grep", action = ":lua Snacks.dashboard.pick('live_grep')" },
             { icon = " ", key = "r", desc = "Recent Files", action = ":lua Snacks.dashboard.pick('oldfiles')" },
             {
               icon = " ",
@@ -469,7 +534,6 @@ return {
             },
             { icon = " ", key = "s", desc = "Restore Session", section = "session" },
             { icon = "󰒲 ", key = "L", desc = "Lazy", action = ":Lazy", enabled = package.loaded.lazy ~= nil },
-            { icon = " ", key = "M", desc = "Mason", action = ":Mason", enabled = package.loaded.lazy ~= nil },
             { icon = " ", key = "q", desc = "Quit", action = ":qa" },
           },
         },
@@ -510,9 +574,39 @@ return {
       notifier = {
         enabled = true,
         timeout = 3000,
+        filter = function(notif)
+          local msg = notif.msg or ""
+          return not (msg:match("watch%.watch") or msg:match("ENOENT"))
+        end,
       },
       picker = {
         enabled = true,
+        icons = {
+          files = {
+            dir = " ",
+            dir_open = " ",
+          },
+          git = {
+            staged = "●",
+            added = "",
+            deleted = "",
+            ignored = " ",
+            modified = "󰏫",
+            renamed = "",
+            unmerged = " ",
+            untracked = "?",
+          },
+        },
+        sources = {
+          explorer = {
+            git_status = true,
+            git_status_open = true,
+            git_untracked = true,
+            hidden = true,
+            ignored = true,
+            exclude = { "*.uid", "godot.pipe" },
+          },
+        },
         win = {
           input = {
             keys = {
@@ -534,12 +628,34 @@ return {
       toggle = { enabled = false },
       win = { enabled = false },
       words = { enabled = true },
-      -- styles = {
-      --   notification = {
-      --     wo = { wrap = true }, -- Wrap notifications
-      --   },
-      -- },
+      styles = {
+        dashboard = {
+          wo = {
+            number = false,
+            relativenumber = false,
+            cursorline = false,
+            cursorcolumn = false,
+            signcolumn = "no",
+            list = false,
+          },
+        },
+        notification = {
+          wo = { wrap = true }, -- Wrap notifications
+        },
+      },
     },
+    config = function(_, opts)
+      require("snacks").setup(opts)
+      local snacks_notify = vim.notify
+      vim.notify = function(msg, level, notify_opts)
+        local is_watch_error = type(msg) == "string" and (msg:match("watch%.watch") or msg:match("ENOENT"))
+        if is_watch_error then
+          notify_opts = notify_opts or {}
+          notify_opts.history = false
+        end
+        return snacks_notify(msg, level, notify_opts)
+      end
+    end,
   },
   -- "ElPiloto/sidekick.nvim",
 }

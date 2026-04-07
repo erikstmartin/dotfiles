@@ -1,0 +1,38 @@
+name: "catppuccin-mocha-blue"
+primary: "#89b4fa"
+secondary: "#89b4fa"
+accent: "#bcd5fc"
+background: "#11111b"
+surface: "#313244"
+error: "#f38ba8"
+success: "#a6e3a1"
+warning: "#f9e2af"
+dark: "true"
+
+text_area:
+  cursor: "reverse #f5e0dc"
+  cursor_line: "underline #cdd6f4"
+  selection: "reverse #9399b2"
+  gutter: "bold #a6e3a1"
+  matched_bracket: "reverse #bac2de"
+
+url:
+  base: "italic #89b4fa"
+  protocol: "bold #94e2d5"
+  separator: "#cdd6f4"
+
+syntax:
+  json_key: "italic #89b4fa"
+  json_number: "#fab387"
+  json_string: "#a6e3a1"
+  json_boolean: "#89dceb"
+  json_null: "#9399b2"
+
+method:
+  get: "bold #89b4fa"
+  post: "bold #a6e3a1"
+  put: "bold #f9e2af"
+  delete: "bold #f38ba8"
+  patch: "bold #94e2d5"
+  options: "bold #b4befe"
+  head: "bold #cba6f7"

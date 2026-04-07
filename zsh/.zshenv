@@ -46,7 +46,7 @@ path=(
 # Set the default Less options.
 # Mouse-wheel scrolling has been disabled by -X (disable screen clearing).
 # Remove -X and -F (exit if the content fits on one screen) to enable it.
-export LESS='-F -g -i -M -R -S -w -X -z-4'
+export LESS='-F -g -i -M -R -S -w -X -z4'
 
 # Set the Less input preprocessor.
 if (( $+commands[lesspipe.sh] )); then
@@ -67,9 +67,6 @@ if [[ ! -d "$TMPPREFIX" ]]; then
   mkdir -p "$TMPPREFIX"
 fi
 
-# Aliases
-alias g='git'
-alias k=kubectl
 
 
 #
@@ -78,10 +75,42 @@ alias k=kubectl
 
 export QT_QPA_PLATFORMTHEME="gtk3"
 export GOPATH=~/go
-export PATH=~/bin:~/.fzf/bin:$GOPATH/bin:/usr/local/go/bin:~/.cargo/bin:$HOME/node_modules/.bin:/opt/local/bin:/usr/local/sbin:/usr/local/bin:/snap/bin:$PATH
+export PATH=~/bin:/opt/local/bin:/usr/local/sbin:/usr/local/bin:/snap/bin:$PATH
+
+if [[ "$OSTYPE" == darwin* ]]; then
+  export PATH="/opt/homebrew/opt/llvm/bin:$PATH"
+  export CC="/opt/homebrew/opt/llvm/bin/clang"
+  export CXX="/opt/homebrew/opt/llvm/bin/clang++"
+  export CLANGXX="/opt/homebrew/opt/llvm/bin/clang++"
+elif [[ "$OSTYPE" == linux* ]]; then
+  export CC="clang"
+  export CXX="clang++"
+  export CLANGXX="clang++"
+fi
 export XDG_CONFIG_HOME=~/.config
 export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
 export C_PLUS_INCLUDE_PATH=/usr/local/include:$C_PLUS_INCLUDE_PATH
 export C_INCLUDE_PATH=/usr/local/include:$C_INCLUDE_PATH
 export PATH=/mnt/c/bin:$PATH
 export ZSH_AUTOSUGGEST_HISTORY_IGNORE="git commit *"
+export AI_ASSISTANT="${AI_ASSISTANT:-opencode}"
+
+
+# Machine-local environment overrides — not tracked in dotfiles.
+# Format: KEY=value (one per line, no export keyword, no spaces around =)
+# Shared with fish via fish/conf.d/env.fish which parses the same file.
+# Example ~/.env.local:
+#   GIT_AUTHOR_EMAIL=erik@company.com
+#   WORK_PROXY=http://proxy.company.com:8080
+if [[ -f ~/.env.local ]]; then
+  set -a
+  source ~/.env.local
+  set +a
+fi
+
+# Derive GITHUB_TOKEN from gh keychain if not already set (e.g. via .env.local)
+if (( $+commands[gh] )) && [[ -z "$GITHUB_TOKEN" ]]; then
+  _gh_token=$(gh auth token 2>/dev/null)
+  [[ -n "$_gh_token" ]] && export GITHUB_TOKEN="$_gh_token"
+  unset _gh_token
+fi

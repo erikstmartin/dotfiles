@@ -1,3 +1,17 @@
+[delta]
+  navigate = true
+  side-by-side = true
+  features = erik
+
+[include]
+  path = ~/.config/delta/delta.toml
+
+[diff]
+  colorMoved = default
+  tool = nvimdiff
+
+[init]
+	defaultBranch = main
 [user]
 	name = Erik St. Martin
 	email = alakriti@gmail.com
@@ -31,25 +45,50 @@
   st = stash
   stp = stash pop
   d = diff
+  dft = difftool --tool=difftastic --no-prompt
+  dn = !git diff | diffnav
   co = checkout
   l = log --graph --topo-order --pretty='%w(100,0,6)%C(yellow)%h%C(bold)%C(black)%d %C(cyan)%ar %C(green)%an%n%C(bold)%C(white)%s %N' --abbrev-commit
   unstage = reset HEAD
   staged = diff --cached
   unstaged = diff
+  mt = mergetool
+  mt3 = mergetool -t nvimdiff3
+  me = "!f() { nvim -d <(git show \"$1:$2\") \"$2\"; }; f"
 [core]
   excludesfile = ~/.gitignore
   editor = nvim
   pager = delta
 
+
+[difftool]
+  prompt = false
+
+[difftool "nvimdiff"]
+  cmd = nvim -d "$LOCAL" "$REMOTE"
+
+[difftool "difftastic"]
+  cmd = difft "$LOCAL" "$REMOTE"
+
+[merge]
+  tool = nvimdiff2
+  conflictstyle = diff3
+  prompt = false
+  keepBackup = false
+  [mergetool "nvimdiff2"]
+  cmd = nvim -d "$LOCAL" "$REMOTE" "$MERGED"
+
+[mergetool "nvimdiff3"]
+  cmd = nvim -d "$LOCAL" "$BASE" "$REMOTE" "$MERGED"
+
 [interactive]
   diffFilter = delta --color-only
 
-[delta]
-  navigate = true
-  side-by-side = true
 
-[merge]
-  conflictstyle = diff3
-
-[diff]
-  colorMoved = default
+# Machine-local identity overrides — file lives on each machine, not in dotfiles
+# Example ~/.gitconfig-local:
+#   [user]
+#     email = erik@company.com
+#     name = Erik St. Martin
+[include]
+  path = ~/.gitconfig-local

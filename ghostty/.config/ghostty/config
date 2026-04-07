@@ -1,0 +1,41 @@
+# Ghostty Terminal Configuration
+# https://ghostty.org/docs
+
+# Theme: Catppuccin Mocha Pitch Black
+background = #11111B
+foreground = #CDD6F4
+selection-foreground = #1E1E2E
+selection-background = #F5E0DC
+cursor-color = #F5E0DC
+cursor-text = #1E1E2E
+
+# 16 Color Palette (ANSI colors) - Catppuccin Mocha
+palette = 0=#45475A
+palette = 1=#F38BA8
+palette = 2=#A6E3A1
+palette = 3=#F9E2AF
+palette = 4=#89B4FA
+palette = 5=#F5C2E7
+palette = 6=#94E2D5
+palette = 7=#BAC2DE
+palette = 8=#585B70
+palette = 9=#F38BA8
+palette = 10=#A6E3A1
+palette = 11=#F9E2AF
+palette = 12=#89B4FA
+palette = 13=#F5C2E7
+palette = 14=#94E2D5
+palette = 15=#A6ADC8
+
+# Shell
+command = /bin/zsh
+
+# Font
+font-family = "JetBrainsMono Nerd Font Mono"
+font-size = 14
+window-padding-x = 12
+window-padding-y = 12
+
+# Behavior
+click-repeat-interval = 500
+auto-update-channel = stable
